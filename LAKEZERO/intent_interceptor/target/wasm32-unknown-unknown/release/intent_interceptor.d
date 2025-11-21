@@ -1,1 +1,1 @@
-C:\Users\olive\Documents\Antigravity_\ Projetos\intent_interceptor\target\wasm32-unknown-unknown\release\intent_interceptor.wasm: C:\Users\olive\Documents\Antigravity_\ Projetos\intent_interceptor\src\lib.rs
+C:\Users\olive\Documents\Lake_Technology_Stack\LAKEZERO\intent_interceptor\target\wasm32-unknown-unknown\release\intent_interceptor.wasm: C:\Users\olive\Documents\Lake_Technology_Stack\LAKEZERO\intent_interceptor\src\lib.rs

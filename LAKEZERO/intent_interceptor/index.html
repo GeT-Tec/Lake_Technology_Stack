@@ -165,7 +165,7 @@
             const sigResult = document.getElementById('signatureResult');
             const timeDisplay = document.getElementById('timeTaken');
 
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const message = input.value;
                 const apiKey = apiKeyInput.value;
 
@@ -179,7 +179,7 @@
                 const start = performance.now();
 
                 try {
-                    const signature = sign_message(message, apiKey);
+                    const signature = await sign_message(message, apiKey);
                     const end = performance.now();
 
                     sigResult.innerText = signature;

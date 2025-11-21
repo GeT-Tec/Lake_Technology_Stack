@@ -1,9 +1,19 @@
 import sqlite3
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 
 app = FastAPI()
+
+# Secure CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8000"],
+    allow_credentials=False, # Explicitly false as per "Privilégio Mínimo" interpretation (no cookies/auth headers requested)
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
+)
 
 DB_NAME = "licenses.db"
 
@@ -62,4 +72,4 @@ async def validate_license(license_check: LicenseCheck):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=3000)
