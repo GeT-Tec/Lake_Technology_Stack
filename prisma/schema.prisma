@@ -1,0 +1,103 @@
+// ARQUIVO: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ENUMS
+enum AssetStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  TOKENIZED
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  OPERATOR
+  AUDITOR
+}
+
+// 1. USUÁRIOS (Carteiras)
+model User {
+  walletAddress String   @id @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  credits       Int      @default(0)
+  assets        Asset[]
+  kycRecord     KycRecord?
+  actions       AuditLog[]
+
+  @@map("users")
+}
+
+// 2. ADMINISTRAÇÃO
+model AdminWhitelist {
+  walletAddress String    @id @unique
+  role          AdminRole @default(AUDITOR)
+  addedAt       DateTime  @default(now())
+  addedBy       String 
+
+  @@map("admins")
+}
+
+// 3. ATIVOS (RWA)
+model Asset {
+  id              String      @id @default(uuid())
+  ownerWallet     String
+  owner           User        @relation(fields: [ownerWallet], references: [walletAddress])
+  name            String
+  type            String
+  valuation       Decimal     @db.Decimal(20, 2)
+  tokenPrice      Decimal     @db.Decimal(20, 2)
+  totalTokens     Int
+  imageUrl        String?
+  contractUrl     String?
+  status          AssetStatus @default(DRAFT)
+  contractAddress String?
+  chainId         Int?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("assets")
+}
+
+// 4. KYC
+model KycRecord {
+  id            String    @id @default(uuid())
+  userWallet    String    @unique
+  user          User      @relation(fields: [userWallet], references: [walletAddress])
+  status        KycStatus @default(PENDING)
+  encryptedData String
+  verifiedAt    DateTime?
+  reviewedBy    String?
+
+  @@map("kyc_records")
+}
+
+// 5. AUDITORIA
+model AuditLog {
+  id          String   @id @default(uuid())
+  userWallet  String
+  user        User     @relation(fields: [userWallet], references: [walletAddress])
+  action      String
+  metadata    Json?
+  ipHash      String?
+  timestamp   DateTime @default(now())
+
+  @@map("audit_logs")
+}
