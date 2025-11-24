@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./tokenizacao-app/app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://tokenizacao-backend.onrender.com
+      - NEXT_PUBLIC_DEFAULT_NETWORK=zksync-sepolia
+      - NEXT_PUBLIC_RPC_URL=https://sepolia.era.zksync.dev
+      - NEXT_PUBLIC_CHAIN_ID=300
+      - NEXT_PUBLIC_ASSET_TOKEN_ADDRESS=0xC2B8d5aefD7d490314D4f9c7ff6dFa129670CE64
+      - NEXT_PUBLIC_MARKETPLACE_ADDRESS=0x61b2bC16fc652418FB15D4a319b31E1853f38B84
+      - NEXT_PUBLIC_WAITLIST_ADDRESS=0x019ab49cE22877EA615b5c544cAA178525266b51
+      - NEXT_PUBLIC_IPFS_GATEWAY=https://ipfs.io/ipfs/
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`tokenizacao.exemplo.com`)"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+
+  backend:
+    build:
+      context: ./tokenizacao-app/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - RPC_URL=https://sepolia.era.zksync.dev
+      - CHAIN_ID=300
+      - PRIVATE_KEY=0x5b161397b1a9d087665e3dde45bec7b382fc7cca66542ad587abc83848ff021c
+      - ASSETTOKEN_ADDRESS=0xC2B8d5aefD7d490314D4f9c7ff6dFa129670CE64
+      - MARKETPLACE_ADDRESS=0x61b2bC16fc652418FB15D4a319b31E1853f38B84
+      - WAITLIST_ADDRESS=0x019ab49cE22877EA615b5c544cAA178525266b51
+      - RUST_LOG=info
+      - DATABASE_URL=sqlite:./tokenizacao.db
+    volumes:
+      - backend_data:/app/data
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.tokenizacao.exemplo.com`)"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+
+volumes:
+  backend_data:
+
+networks:
+  default:
+    name: tokenizacao-network

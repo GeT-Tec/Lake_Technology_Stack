@@ -1,0 +1,30 @@
+{
+  "version": 2,  "framework": "nextjs",
+  "buildCommand": "npm install && npm run build",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://tokenizacao-backend.onrender.com",
+    "NEXT_PUBLIC_DEFAULT_NETWORK": "zksync-sepolia",
+    "NEXT_PUBLIC_RPC_URL": "https://sepolia.era.zksync.dev",
+    "NEXT_PUBLIC_CHAIN_ID": "300",
+    "NEXT_PUBLIC_ASSET_TOKEN_ADDRESS": "0xC2B8d5aefD7d490314D4f9c7ff6dFa129670CE64",
+    "NEXT_PUBLIC_MARKETPLACE_ADDRESS": "0x61b2bC16fc652418FB15D4a319b31E1853f38B84",
+    "NEXT_PUBLIC_WAITLIST_ADDRESS": "0x019ab49cE22877EA615b5c544cAA178525266b51",
+    "NEXT_PUBLIC_IPFS_GATEWAY": "https://ipfs.io/ipfs/"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    }
+  ]
+}

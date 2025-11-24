@@ -1,0 +1,20 @@
+{
+  "name": "onchain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/chai": "4.3.19",
+    "@types/mocha": "^10.0.10",
+    "chai": "4.4.1",
+    "ethers": "6.14.1",
+    "hardhat": "^2.24.3",
+    "mocha": "^11.5.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "4.9.3"
+  }
+}

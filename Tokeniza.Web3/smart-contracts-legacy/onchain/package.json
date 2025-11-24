@@ -1,0 +1,41 @@
+{
+  "name": "onchain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "connect": "node connect-deployed-contracts.js",
+    "asset:mint": "node manage-assets.js mint",
+    "asset:info": "node manage-assets.js info",
+    "asset:list": "node manage-assets.js list",
+    "market:list": "node manage-marketplace.js list",
+    "market:buy": "node manage-marketplace.js buy",
+    "market:cancel": "node manage-marketplace.js cancel",
+    "market:view": "node manage-marketplace.js view",
+    "market:stats": "node manage-marketplace.js stats",
+    "waitlist:join": "node manage-waitlist.js join",
+    "waitlist:status": "node manage-waitlist.js status",
+    "waitlist:approve": "node manage-waitlist.js approve",
+    "waitlist:remove": "node manage-waitlist.js remove",
+    "waitlist:list": "node manage-waitlist.js list",
+    "waitlist:stats": "node manage-waitlist.js stats",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/chai": "4.3.19",
+    "@types/mocha": "^10.0.10",
+    "chai": "4.4.1",
+    "ethers": "6.14.1",
+    "hardhat": "^2.24.3",
+    "mocha": "^11.5.0",
+    "dotenv": "^16.0.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "4.9.3"
+  }
+}

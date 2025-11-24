@@ -1,0 +1,12 @@
+{
+  "network": "zkSync Sepolia",
+  "chainId": 300,
+  "rpcUrl": "https://sepolia.era.zksync.dev",
+  "contracts": {
+    "AssetToken": "0xC2B8d5aefD7d490314D4f9c7ff6dFa129670CE64",
+    "Marketplace": "0x61b2bC16fc652418FB15D4a319b31E1853f38B84",
+    "Waitlist": "0x019ab49cE22877EA615b5c544cAA178525266b51"
+  },
+  "deployer": "0xa3d5737c037981F02275eD1f4a1dde3b3577355c",
+  "timestamp": "2025-06-19T04:19:05.899Z"
+}
