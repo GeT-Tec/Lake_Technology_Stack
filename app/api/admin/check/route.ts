@@ -1,33 +1,46 @@
-// ARQUIVO: app/api/admin/check/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getAdminProfile } from '@/services/adminService';
+import { NextRequest, NextResponse } from "next/server";
+// Importamos do nosso novo arquivo seguro
+import { prisma } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
     try {
-        // 1. Pega a carteira da URL (Ex: ?wallet=0x123...)
         const { searchParams } = new URL(req.url);
-        const wallet = searchParams.get('wallet');
+        const wallet = searchParams.get("wallet");
 
+        // 1. Validação Básica
         if (!wallet) {
-            return NextResponse.json({ isAdmin: false, role: null }, { status: 400 });
+            return NextResponse.json({ isAdmin: false, error: "Carteira não informada" }, { status: 400 });
         }
 
-        // 2. Consulta o Serviço Blindado (que fala com o Supabase)
-        const profile = await getAdminProfile(wallet);
+        // 2. Busca Segura (Try/Catch específico para o banco)
+        console.log(`[API] Buscando admin para wallet: ${wallet}`);
 
-        // 3. Responde para o Frontend
-        if (profile) {
-            return NextResponse.json({
-                isAdmin: true,
-                role: profile.role,
-                label: profile.role === 'SUPER_ADMIN' ? 'COMANDANTE' : 'OPERADOR'
-            });
+        // NOTA TÁTICA: O 'prisma.admins' abaixo depende do passo 'npx prisma db pull'.
+        // Se der erro de digitação aqui, verifique seu schema.prisma para ver o nome do model.
+        // ADJUSTMENT: Model name is AdminWhitelist in schema.prisma
+        const admin = await prisma.adminWhitelist.findFirst({
+            where: {
+                walletAddress: {
+                    equals: wallet,
+                    mode: 'insensitive', // Ignora maiúsculas/minúsculas
+                },
+            },
+        });
+
+        if (admin) {
+            console.log(`[API] SUCESSO! Admin encontrado: ${admin.role}`);
+            return NextResponse.json({ isAdmin: true, role: admin.role });
+        } else {
+            console.log(`[API] Acesso negado. Carteira não está na tabela admins.`);
+            return NextResponse.json({ isAdmin: false });
         }
 
-        return NextResponse.json({ isAdmin: false, role: null });
-
-    } catch (error) {
-        console.error('Erro na verificação de admin:', error);
-        return NextResponse.json({ isAdmin: false }, { status: 500 });
+    } catch (error: any) {
+        // 3. Log do Erro Real no Terminal (Para podermos ver o que houve)
+        console.error("💥 [ERRO CRÍTICO NO BACKEND]:", error);
+        return NextResponse.json(
+            { isAdmin: false, error: "Erro interno no servidor", details: error.message },
+            { status: 500 }
+        );
     }
 }

@@ -6,6 +6,7 @@ import { ChevronDown, LogOut, Copy, Check, Wallet, X, History, ExternalLink, Zap
 import { useWallet } from "@/context/wallet-context";
 import { useCredits } from "@/context/credits-context";
 import ChangeWalletModal from "./ChangeWalletModal";
+import AdminBadge from "@/components/admin/AdminBadge";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -58,6 +59,7 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <AdminBadge />
             {/* BOTÃO DE CRÉDITOS (Ao clicar, abre o histórico) */}
             {walletAddress && (
               <div className="hidden md:flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-200 transition-all" onClick={openHistory}>
