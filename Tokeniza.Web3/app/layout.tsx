@@ -4,7 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { WalletProvider } from "@/context/wallet-context"; // Importar Provider
 import { CreditsProvider } from "@/context/credits-context";
-
+import AdminBadge from '@/components/AdminBadge';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +27,7 @@ export default function RootLayout({
             <main className="flex-grow w-full">
               {children}
             </main>
+            <AdminBadge />
           </CreditsProvider>
         </WalletProvider>
       </body>

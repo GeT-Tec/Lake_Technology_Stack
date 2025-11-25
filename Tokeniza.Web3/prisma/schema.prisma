@@ -1,14 +1,95 @@
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id    String  @id @default(autoincrement())
-  email String
+  walletAddress String     @id @unique
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  credits       Int        @default(0)
+  assets        Asset[]
+  actions       AuditLog[]
+  kycRecord     KycRecord?
+
+  @@map("users")
+}
+
+model AdminWhitelist {
+  walletAddress String    @id @unique
+  role          AdminRole @default(AUDITOR)
+  addedAt       DateTime  @default(now())
+  addedBy       String
+
+  @@map("admins")
+}
+
+model Asset {
+  id              String      @id @default(uuid())
+  ownerWallet     String
+  name            String
+  type            String
+  valuation       Decimal     @db.Decimal(20, 2)
+  tokenPrice      Decimal     @db.Decimal(20, 2)
+  totalTokens     Int
+  imageUrl        String?
+  contractUrl     String?
+  status          AssetStatus @default(DRAFT)
+  contractAddress String?
+  chainId         Int?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  owner           User        @relation(fields: [ownerWallet], references: [walletAddress])
+
+  @@map("assets")
+}
+
+model KycRecord {
+  id            String    @id @default(uuid())
+  userWallet    String    @unique
+  status        KycStatus @default(PENDING)
+  encryptedData String
+  verifiedAt    DateTime?
+  reviewedBy    String?
+  user          User      @relation(fields: [userWallet], references: [walletAddress])
+
+  @@map("kyc_records")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userWallet String
+  action     String
+  metadata   Json?
+  ipHash     String?
+  timestamp  DateTime @default(now())
+  user       User     @relation(fields: [userWallet], references: [walletAddress])
+
+  @@map("audit_logs")
+}
+
+enum AssetStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  TOKENIZED
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  OPERATOR
+  AUDITOR
 }
