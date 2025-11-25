@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown, LogOut, Copy, Check, Wallet, X, History, ExternalLink, Zap, AlertTriangle } from "lucide-react";
 import { useWallet } from "@/context/wallet-context";
 import { useCredits } from "@/context/credits-context";
+import ChangeWalletModal from "./ChangeWalletModal";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -13,6 +14,7 @@ export function Navbar() {
   const { credits, buyCredits, history, isLoading, isHistoryOpen, openHistory, closeHistory } = useCredits();
 
   const [isWalletOpen, setIsWalletOpen] = useState(false);
+  const [isChangeModalOpen, setChangeModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -100,7 +102,9 @@ export function Navbar() {
                     <button onClick={openHistory} className="p-3 border rounded-lg hover:bg-slate-50 flex flex-col items-center gap-1 text-xs font-bold text-slate-700"><History className="w-4 h-4" /> Histórico</button>
                     <button onClick={() => { disconnectWallet(); setIsWalletOpen(false); }} className="p-3 border rounded-lg hover:bg-red-50 flex flex-col items-center gap-1 text-xs font-bold text-red-600"><LogOut className="w-4 h-4" /> Sair</button>
                   </div>
-                  <p className="text-[10px] text-center text-slate-400">Para trocar de conta, altere na extensão.</p>
+                  <p className="text-[10px] text-center text-slate-400">
+                    Para trocar de conta, <button onClick={() => setChangeModalOpen(true)} className="text-blue-500 hover:underline">clique aqui</button>.
+                  </p>
                 </>
               )}
             </div>
@@ -158,6 +162,11 @@ export function Navbar() {
           </div>
         </div>
       )}
+      {/* MODAL DE TROCA DE CARTEIRA */}
+      <ChangeWalletModal
+        isOpen={isChangeModalOpen}
+        onClose={() => setChangeModalOpen(false)}
+      />
     </>
   );
 }
