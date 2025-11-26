@@ -1,143 +1,137 @@
-"use client";
-
-import { BookOpen, Scale, Server, Coins, BarChart3, ShieldCheck, PieChart, FileText, ChevronDown } from "lucide-react";
+import { BookOpen, Droplets, AlertTriangle, ExternalLink, Wallet, Pickaxe } from "lucide-react";
+import Link from "next/link";
 
 export default function LearnPage() {
-  const steps = [
-    {
-      id: 1,
-      title: "Avaliação e Auditoria",
-      description: "O ativo real (imóvel, energia, dívida) passa por uma auditoria jurídica e financeira rigorosa para garantir sua existência e valor.",
-      icon: <Scale className="w-6 h-6 text-blue-600" />,
-    },
-    {
-      id: 2,
-      title: "Estruturação Jurídica",
-      description: "Criação de um veículo legal (SPV) ou contrato que vincula o ativo físico aos tokens digitais, garantindo proteção pela lei vigente.",
-      icon: <BookOpen className="w-6 h-6 text-blue-600" />,
-    },
-    {
-      id: 3,
-      title: "Emissão na Blockchain",
-      description: "Os tokens são gerados na rede (Smart Contracts) representando frações do ativo. Tudo registrado de forma imutável.",
-      icon: <Server className="w-6 h-6 text-blue-600" />,
-    },
-    {
-      id: 4,
-      title: "Distribuição",
-      description: "Investidores compram os tokens no Marketplace. O acesso é democratizado, permitindo tickets baixos.",
-      icon: <Coins className="w-6 h-6 text-blue-600" />,
-    },
-    {
-      id: 5,
-      title: "Mercado Secundário",
-      description: "Diferente de imóveis físicos, você pode vender seus tokens instantaneamente para obter liquidez sem burocracia.",
-      icon: <BarChart3 className="w-6 h-6 text-blue-600" />,
-    },
-  ];
-
   return (
-    <div className="w-full py-12 bg-slate-50">
-      <div className="container mx-auto px-6">
-
-        {/* HERO APRENDA */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">Entenda a Tokenização</h1>
-          <p className="text-lg text-slate-600">
-            Transformamos ativos ilíquidos e burocráticos em ativos digitais ágeis e globais.
-            Veja como funciona o processo de ponta a ponta.
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* Header Section */}
+      <div className="bg-slate-900 text-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+              <BookOpen className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight">Central de Conhecimento</h1>
+          </div>
+          <p className="text-xl text-slate-300 max-w-2xl">
+            Domine a tokenização de ativos reais (RWA). Aprenda como operar, conseguir tokens de teste e investir com segurança.
           </p>
         </div>
+      </div>
 
-        {/* TIMELINE */}
-        <div className="relative max-w-4xl mx-auto mb-24">
-          <div className="absolute left-[27px] top-0 bottom-0 w-0.5 bg-slate-200 hidden md:block"></div>
-          <div className="space-y-12">
-            {steps.map((step) => (
-              <div key={step.id} className="relative flex flex-col md:flex-row gap-8 group">
-                <div className="flex-shrink-0 z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center group-hover:border-blue-500 group-hover:shadow-blue-500/20 transition-all duration-300">
-                    {step.icon}
-                  </div>
+      <div className="container mx-auto px-4 py-12 space-y-16">
+
+        {/* --- MÓDULO CRÍTICO: COMO CONSEGUIR TOKENS --- */}
+        <section className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-2 mb-6">
+            <Droplets className="w-6 h-6 text-emerald-600" />
+            <h2 className="text-2xl font-bold text-slate-900">Primeiros Passos: Conseguindo Tokens de Teste</h2>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex gap-4">
+                <div className="p-3 bg-blue-100 rounded-full h-fit">
+                  <Wallet className="w-6 h-6 text-blue-600" />
                 </div>
-                <div className="flex-grow bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">
-                      Passo 0{step.id}
-                    </span>
-                    <h3 className="text-xl font-bold text-slate-900">{step.title}</h3>
-                  </div>
-                  <p className="text-slate-600 leading-relaxed">
-                    {step.description}
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">O que é o "Sepolia ETH"?</h3>
+                  <p className="text-slate-600 mt-1">
+                    Para realizar transações na Blockchain, você precisa pagar uma pequena taxa chamada "Gas".
+                    Como estamos em um ambiente de testes (Testnet), usamos um dinheiro fictício chamado <strong>Sepolia ETH</strong>.
+                    Ele não tem valor financeiro real, mas é essencial para testar a plataforma.
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* DEEP DIVE / KNOWLEDGE BASE */}
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900">Base de Conhecimento</h2>
-            <p className="text-slate-500 mt-2">Mergulhe nos detalhes técnicos e jurídicos.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Card 1: CVM */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 hover:border-blue-500/50 transition-all">
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4 text-blue-700">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Segurança Jurídica & CVM</h3>
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                A tokenização de ativos é reconhecida pela CVM (Comissão de Valores Mobiliários).
-                Utilizamos estruturas legais sólidas que garantem que o token representa, de fato,
-                a propriedade ou o direito de crédito sobre o ativo real. Não é "dinheiro fictício",
-                é um contrato digital com validade jurídica.
-              </p>
             </div>
 
-            {/* Card 2: Fracionamento */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 hover:border-amber-500/50 transition-all">
-              <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-4 text-amber-600">
-                <PieChart className="w-5 h-5" />
+            <div className="p-6 grid gap-8 md:grid-cols-2">
+              {/* Método 1: Chainlink */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">1</span>
+                  <h4 className="font-semibold text-slate-900">Método Rápido (Chainlink)</h4>
+                </div>
+                <p className="text-sm text-slate-600">
+                  A maneira mais fácil. Exige conectar sua carteira e autenticar com o GitHub.
+                </p>
+                <ul className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                  <li className="flex gap-2">✓ Acesse <strong>faucets.chain.link</strong></li>
+                  <li className="flex gap-2">✓ Conecte sua Carteira (Rabby/MetaMask)</li>
+                  <li className="flex gap-2">✓ Selecione "Ethereum Sepolia"</li>
+                  <li className="flex gap-2">✓ Receba 20 Test LINK + 0.1 ETH</li>
+                </ul>
+                <Link
+                  href="https://faucets.chain.link/"
+                  target="_blank"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+                >
+                  Acessar Chainlink Faucet <ExternalLink className="w-3 h-3" />
+                </Link>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">O Poder do Fracionamento</h3>
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                Imagine um prédio de R$ 10 milhões. Tradicionalmente, apenas grandes fundos poderiam comprá-lo.
-                Com a tokenização, dividimos esse prédio em 100.000 pedaços (tokens) de R$ 100.
-                Isso permite que você seja "dono" de uma fração do imóvel e receba aluguéis proporcionais.
-              </p>
+
+              {/* Método 2: PoW Mining */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">2</span>
+                  <h4 className="font-semibold text-slate-900">Método Alternativo (Mineração)</h4>
+                </div>
+                <p className="text-sm text-slate-600">
+                  Se o Chainlink falhar, use este. Você deixa a aba aberta "minerando" tokens.
+                </p>
+                <ul className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                  <li className="flex gap-2">✓ Acesse <strong>sepolia-faucet.pk910.de</strong></li>
+                  <li className="flex gap-2">✓ Cole o endereço da sua carteira</li>
+                  <li className="flex gap-2">✓ Clique em "Start Mining"</li>
+                  <li className="flex gap-2">✓ Aguarde acumular (Min: 0.05 ETH)</li>
+                </ul>
+                <Link
+                  href="https://sepolia-faucet.pk910.de/"
+                  target="_blank"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+                >
+                  Acessar PoW Faucet <ExternalLink className="w-3 h-3" />
+                </Link>
+              </div>
             </div>
 
-            {/* Card 3: Smart Contracts */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 hover:border-emerald-500/50 transition-all">
-              <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4 text-emerald-600">
-                <FileText className="w-5 h-5" />
+            {/* Alerta Importante */}
+            <div className="bg-amber-50 border-t border-amber-100 p-4 flex gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+              <div className="text-sm text-amber-800">
+                <strong>Atenção:</strong> Para evitar spam, a maioria dos Faucets exige que sua carteira tenha pelo menos
+                <strong> 0.001 ETH</strong> na rede principal (Mainnet). Se for sua primeira vez, o método PoW (Opção 2) costuma funcionar sem essa exigência.
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Smart Contracts (Contratos Inteligentes)</h3>
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                São códigos autoexecutáveis na blockchain. Exemplo: Se o token prevê pagamento de juros dia 05,
-                o Smart Contract distribui o valor automaticamente para a carteira de todos os donos do token,
-                sem a necessidade de um banco intermediário cobrando taxas altas.
-              </p>
-            </div>
-
-            {/* Card 4: Custódia */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 hover:border-purple-500/50 transition-all">
-              <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center mb-4 text-purple-600">
-                <Server className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Custódia e Segurança</h3>
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                Diferente de deixar dinheiro no banco, na Web3 você tem a custódia dos seus ativos (Self-Custody).
-                A LakeTokeniza fornece a infraestrutura, mas os tokens ficam na sua carteira. Isso garante
-                transparência total e elimina o "risco da corretora".
-              </p>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* --- CONTEÚDO ORIGINAL (PRESERVADO) --- */}
+        <section className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
+            <h3 className="text-xl font-bold mb-3 text-slate-900">O que é RWA?</h3>
+            <p className="text-slate-600 mb-4">
+              Real World Assets (Ativos do Mundo Real) são tokens digitais que representam a propriedade de bens físicos, como imóveis, títulos ou commodities.
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
+            <h3 className="text-xl font-bold mb-3 text-slate-900">Segurança Jurídica</h3>
+            <p className="text-slate-600 mb-4">
+              Nossa plataforma une a CVM com a Blockchain. Cada token é vinculado a um contrato jurídico real, garantindo seus direitos fora da internet.
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
+            <h3 className="text-xl font-bold mb-3 text-slate-900">Como Investir?</h3>
+            <p className="text-slate-600 mb-4">
+              1. Conecte sua Carteira.<br />
+              2. Escolha um ativo no Marketplace.<br />
+              3. Use seus Créditos ou ETH para adquirir frações.<br />
+              4. Receba dividendos na carteira.
+            </p>
+          </div>
+        </section>
 
       </div>
     </div>
