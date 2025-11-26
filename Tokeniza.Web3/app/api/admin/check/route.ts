@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 // Importamos do nosso novo arquivo seguro
 import { prisma } from "@/lib/db";
 
+// 🚨 COMANDO DE SEGURANÇA: FORÇAR MODO DINÂMICO
+// Isso impede que o Next.js tente rodar isso durante o Build e quebre no servidor.
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
