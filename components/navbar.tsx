@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { WalletConnect } from "@/components/wallet-connect-new";
+import { WalletControl } from "@/components/wallet-control";
 import AdminBadge from "@/components/admin/AdminBadge"; // Verifique se o caminho está correto na sua pasta
 import { Menu, X } from "lucide-react"; // Ícones essenciais
 import { useState } from "react";
@@ -57,7 +57,7 @@ export function Navbar() {
         {/* 3. AÇÕES DESKTOP (Direita) */}
         <div className="hidden md:flex items-center gap-4">
           <AdminBadge />
-          <WalletConnect />
+          <WalletControl />
         </div>
 
         {/* 4. BOTÃO MENU MOBILE (Aparece só no Mobile) */}
@@ -104,7 +104,7 @@ export function Navbar() {
           {/* Carteira no Mobile (Botão Grande) */}
           <div className="flex justify-center pb-2">
             <div className="w-full [&>button]:w-full [&>button]:justify-center">
-              <WalletConnect />
+              <WalletControl />
             </div>
           </div>
         </div>
