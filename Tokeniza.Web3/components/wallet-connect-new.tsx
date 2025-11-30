@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -39,7 +39,7 @@ export function WalletConnect() {
 
   const connectEthereumWallet = async () => {
     console.log("🚀 Iniciando conexão com carteira Ethereum (zkSync Sepolia)...");
-    
+
     try {
       // Verificar se estamos no navegador
       if (typeof window === "undefined") {
@@ -52,19 +52,25 @@ export function WalletConnect() {
         return;
       }
 
-      // Priorizar MetaMask nativo sobre outras extensões
+      // RETRY LOGIC: Espera a injeção da extensão (race condition protection)
       let ethereum = window.ethereum;
-      
+
+      if (!ethereum) {
+        console.log("⏳ Wallet provider não detectado imediatamente. Aguardando 1000ms...");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        ethereum = window.ethereum;
+      }
+
       // Se há múltiplos provedores, priorizar MetaMask nativo
       if ((window.ethereum as any)?.providers) {
         console.log("🔍 Múltiplos provedores detectados:", (window.ethereum as any).providers.length);
-        
+
         // Procurar MetaMask nativo (não Uniswap)
         const providers = (window.ethereum as any).providers;
         const metamaskProvider = providers.find(
           (provider: any) => provider.isMetaMask && !provider.isUniswap && !provider.isWalletConnect
         );
-        
+
         if (metamaskProvider) {
           ethereum = metamaskProvider;
           console.log("✅ MetaMask nativo selecionado (prioridade sobre extensões)");
@@ -120,22 +126,22 @@ export function WalletConnect() {
 
       const userAccount = accounts[0];
       console.log("👤 Conta conectada:", userAccount);
-      
+
       // Verificar rede atual
       console.log("🔍 Verificando rede atual...");
       const chainId = await ethereum.request({ method: "eth_chainId" });
       const networkId = parseInt(Array.isArray(chainId) ? chainId[0] : chainId, 16);
       console.log(`🌐 Rede detectada: ${networkId} (zkSync Sepolia = 300)`);
-      
+
       // Tratar configuração de rede
       let networkConfigured = false;
-      
+
       if (networkId === 300) {
         console.log("✅ Já na rede zkSync Sepolia");
         networkConfigured = true;
       } else {
         console.log("🔄 Tentando configurar rede zkSync Sepolia...");
-        
+
         // Primeiro tentar trocar
         try {
           console.log("🔀 Tentando trocar para zkSync Sepolia...");
@@ -147,7 +153,7 @@ export function WalletConnect() {
           networkConfigured = true;
         } catch (switchError: any) {
           console.log("⚠️ Erro ao trocar rede:", switchError.code, switchError.message);
-          
+
           // Se rede não existe, tentar adicionar
           if (switchError.code === 4902) {
             console.log("➕ Rede não existe, tentando adicionar...");
@@ -172,7 +178,7 @@ export function WalletConnect() {
               networkConfigured = true;
             } catch (addError: any) {
               console.log("⚠️ Erro ao adicionar rede:", addError.code, addError.message);
-              
+
               if (addError.code === 4001) {
                 console.log("❌ Usuário rejeitou adicionar rede zkSync Sepolia");
                 toast({
@@ -195,22 +201,22 @@ export function WalletConnect() {
           }
         }
       }
-      
+
       console.log("💾 Salvando dados da conexão...");
-      
+
       // Salvar dados da conexão independente da rede
       setAddress(userAccount);
       setConnected(true);
       setWalletType("ethereum");
-      
+
       // Armazenar informações de conexão no localStorage
       localStorage.setItem('walletConnection', JSON.stringify({
         address: userAccount,
         walletType: 'ethereum'
       }));
-      
+
       console.log("🎉 Conexão estabelecida com sucesso!");
-      
+
       // Toast de sucesso diferente dependendo da rede
       if (networkConfigured) {
         toast({
@@ -228,7 +234,7 @@ export function WalletConnect() {
       console.error("💥 Erro detalhado ao conectar carteira:", error);
       console.error("💥 Stack trace:", error.stack);
       console.error("💥 Erro completo:", JSON.stringify(error, null, 2));
-      
+
       // Tratar erros específicos
       if (error.code === 4001) {
         console.log("❌ Usuário rejeitou a conexão inicial");
@@ -270,13 +276,13 @@ export function WalletConnect() {
         setAddress(publicKey);
         setConnected(true);
         setWalletType("solana");
-        
+
         // Store connection info
         localStorage.setItem('walletConnection', JSON.stringify({
           address: publicKey,
           walletType: 'solana'
         }));
-        
+
         toast({
           title: "Carteira Solana conectada",
           description: `Endereço: ${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`,

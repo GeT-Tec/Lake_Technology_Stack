@@ -64,27 +64,57 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const connectWallet = async () => {
-        if (typeof window !== "undefined" && (window as any).ethereum) {
-            try {
-                // FORÇAR PERMISSÕES (SEGURANÇA)
-                await (window as any).ethereum.request({
-                    method: "wallet_requestPermissions",
-                    params: [{ eth_accounts: {} }]
-                });
+        let provider = typeof window !== "undefined" ? (window as any).ethereum : null;
 
-                const accounts = await (window as any).ethereum.request({ method: "eth_accounts" });
-                setWalletAddress(accounts[0]);
-                setWalletType(detectWallet());
+        // RETRY LOGIC: Espera a injeção da extensão (race condition protection)
+        if (!provider) {
+            console.log("Wallet provider não detectado imediatamente. Aguardando 1000ms...");
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            provider = typeof window !== "undefined" ? (window as any).ethereum : null;
+        }
 
-                // GRAVA A INTENÇÃO: "O usuário quer ficar conectado"
-                window.localStorage.setItem(STORAGE_KEY, 'true');
-
-            } catch (error) {
-                console.error("Usuário rejeitou conexão:", error);
-            }
-        } else {
+        // Verificação final: se ainda não existir, alerta o usuário
+        if (!provider) {
             alert("Nenhuma carteira Web3 detectada. Por favor instale Rabby, MetaMask ou similar.");
             window.open("https://rabby.io", "_blank");
+            return;
+        }
+
+        // SUPORTE PARA MÚLTIPLAS INJEÇÕES (Rabby + MetaMask)
+        // Se houver múltiplos providers, usa o primeiro disponível
+        if (provider.providers && Array.isArray(provider.providers)) {
+            console.log("Múltiplas carteiras detectadas:", provider.providers.length);
+            provider = provider.providers[0]; // Prioriza o primeiro
+        }
+
+        try {
+            // FORÇAR PERMISSÕES (SEGURANÇA)
+            await provider.request({
+                method: "wallet_requestPermissions",
+                params: [{ eth_accounts: {} }]
+            });
+
+            const accounts = await provider.request({ method: "eth_accounts" });
+
+            if (accounts.length === 0) {
+                alert("Nenhuma conta encontrada. Por favor desbloqueie sua carteira.");
+                return;
+            }
+
+            setWalletAddress(accounts[0]);
+            setWalletType(detectWallet());
+
+            // GRAVA A INTENÇÃO: "O usuário quer ficar conectado"
+            window.localStorage.setItem(STORAGE_KEY, 'true');
+
+        } catch (error) {
+            console.error("Erro ao conectar carteira:", error);
+            // Não mostra alert se o usuário apenas rejeitou a conexão
+            if ((error as any)?.code === 4001) {
+                console.log("Usuário rejeitou a conexão");
+            } else {
+                alert("Erro ao conectar. Por favor tente novamente.");
+            }
         }
     };
 
