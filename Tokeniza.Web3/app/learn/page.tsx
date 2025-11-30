@@ -14,7 +14,10 @@ import {
   Cpu,
   Coins,
   SearchCheck,
-  Key
+  Key,
+  Fingerprint,
+  UserCheck,
+  Ghost
 } from "lucide-react";
 import Link from "next/link";
 
@@ -66,6 +69,17 @@ export default function LearnPage() {
                 </nav>
               </div>
 
+              {/* Menu Identidade (NOVO) */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Privacidade</h3>
+                <nav className="flex flex-col space-y-1">
+                  <a href="#identity" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-cyan-700">
+                    <Fingerprint className="w-4 h-4" />
+                    <span className="font-medium">Identidade & Hash</span>
+                  </a>
+                </nav>
+              </div>
+
               {/* Menu Prático */}
               <div className="space-y-4">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Laboratório (Prática)</h3>
@@ -81,24 +95,13 @@ export default function LearnPage() {
                 </nav>
               </div>
 
-              {/* Card de Status */}
-              <div className="p-4 bg-slate-900 rounded-xl text-white shadow-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs font-bold text-emerald-400">SISTEMA ONLINE</span>
-                </div>
-                <p className="text-xs text-slate-400">
-                  Aproveite os tutoriais para configurar sua wallet e operar no nosso ambiente de testes sem custo.
-                </p>
-              </div>
-
             </div>
           </aside>
 
           {/* --- CONTEÚDO PRINCIPAL --- */}
           <main className="lg:w-3/4 space-y-24">
 
-            {/* SEÇÃO 1: RWA (A Tese) */}
+            {/* SEÇÃO 1: RWA */}
             <section id="intro-rwa" className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-emerald-200 pb-4">
                 <div className="p-3 bg-emerald-100 rounded-xl">
@@ -109,7 +112,6 @@ export default function LearnPage() {
                   <p className="text-slate-500">Por que a BlackRock chama isso de "A próxima geração de mercados".</p>
                 </div>
               </div>
-
               <div className="prose prose-lg text-slate-600 max-w-none">
                 <p>
                   <strong>Imagine poder comprar um pedaço de um prédio na Faria Lima ou de uma fazenda de soja no Mato Grosso com a mesma facilidade que envia um e-mail.</strong>
@@ -141,7 +143,6 @@ export default function LearnPage() {
                   <p className="text-slate-500">Código é Lei? Não. A Lei é a Lei. Nós unimos os dois.</p>
                 </div>
               </div>
-
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 space-y-6">
                 <div className="flex gap-4 items-start">
                   <FileText className="w-6 h-6 text-blue-600 mt-1 shrink-0" />
@@ -180,15 +181,10 @@ export default function LearnPage() {
                   <p className="text-slate-500">Por que cobramos uma taxa de sustentabilidade de $0.30?</p>
                 </div>
               </div>
-
               <div className="prose prose-lg text-slate-600 max-w-none">
                 <p>
                   O maior problema da Blockchain pura é o custo. Pagar R$ 15,00 de taxa ("Gas") para comprar R$ 50,00 de um ativo inviabiliza o negócio.
                 </p>
-                <p>
-                  <strong>A Inovação LakeZero:</strong> Desenvolvemos um motor híbrido.
-                </p>
-
                 <div className="bg-slate-900 text-white p-8 rounded-2xl my-8">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
@@ -226,6 +222,67 @@ export default function LearnPage() {
               </div>
             </section>
 
+            {/* SEÇÃO NOVO: IDENTIDADE & PRIVACIDADE (BUSINESS LENS) */}
+            <section id="identity" className="scroll-mt-24 space-y-6">
+              <div className="flex items-center gap-4 border-b border-cyan-200 pb-4">
+                <div className="p-3 bg-cyan-100 rounded-xl">
+                  <Fingerprint className="w-8 h-8 text-cyan-700" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900">Identidade: O "Código Estranho"</h2>
+                  <p className="text-slate-500">Por que usamos 0x71... em vez do seu Nome ou CPF?</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+                <div className="prose prose-lg text-slate-600 max-w-none mb-8">
+                  <p>
+                    Muitos usuários se assustam ao ver um código como <code>0x71C...9A2</code>. Parece um erro de computador, mas na verdade é a sua <strong>Blindagem de Privacidade</strong>.
+                  </p>
+                  <p>
+                    Pense nisso como uma "Conta Suíça Numerada". O sistema sabe que a conta existe e é válida, mas não precisa saber quem é o dono para deixar você operar. Isso garante que seus dados não vazem em ataques hackers.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-0 border border-slate-200 rounded-xl overflow-hidden">
+                  {/* Lado P2P */}
+                  <div className="bg-slate-50 p-6 border-b md:border-b-0 md:border-r border-slate-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Ghost className="w-6 h-6 text-slate-600" />
+                      <h3 className="font-bold text-lg text-slate-900">Modo P2P (Liberdade)</h3>
+                    </div>
+                    <p className="text-sm text-slate-600 mb-4 min-h-[40px]">
+                      Para trocas de créditos, tokens de utilidade e serviços digitais peer-to-peer.
+                    </p>
+                    <ul className="space-y-2 text-sm text-slate-600">
+                      <li className="flex gap-2">✅ <strong>Login:</strong> Apenas Carteira (0x...)</li>
+                      <li className="flex gap-2">✅ <strong>Dados:</strong> Zero Exposição</li>
+                      <li className="flex gap-2">✅ <strong>Velocidade:</strong> Instantânea</li>
+                    </ul>
+                  </div>
+
+                  {/* Lado KYC */}
+                  <div className="bg-blue-50/50 p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <UserCheck className="w-6 h-6 text-blue-600" />
+                      <h3 className="font-bold text-lg text-slate-900">Modo Investidor (RWA)</h3>
+                    </div>
+                    <p className="text-sm text-slate-600 mb-4 min-h-[40px]">
+                      Para comprar Imóveis ou Títulos de Dívida (Exigência da Lei/CVM).
+                    </p>
+                    <ul className="space-y-2 text-sm text-slate-600">
+                      <li className="flex gap-2">🛡️ <strong>Login:</strong> Carteira + LakeID</li>
+                      <li className="flex gap-2">🛡️ <strong>Dados:</strong> KYC (Validação de Doc)</li>
+                      <li className="flex gap-2">🛡️ <strong>Segurança:</strong> Proteção Legal Completa</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="text-center text-xs text-slate-400 mt-4">
+                  Na LakeTokeniza, você escolhe como quer operar. Privacidade quando possível, Identificação quando necessário.
+                </p>
+              </div>
+            </section>
+
             {/* SEÇÃO 4: WALLET MASTERCLASS (PRÁTICA) */}
             <section id="wallet-masterclass" className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-purple-200 pb-4">
@@ -239,26 +296,23 @@ export default function LearnPage() {
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-8">
-
-                {/* Conceito de Chave */}
                 <div className="flex flex-col md:flex-row gap-8 items-center">
                   <div className="flex-1 space-y-4">
                     <h3 className="text-xl font-bold text-slate-800">O Cofre de Vidro</h3>
                     <p className="text-slate-600 leading-relaxed">
                       Pense na Blockchain como um cofre de vidro gigante na praça da cidade. Todos podem ver quanto dinheiro tem em cada caixa, mas ninguém pode tocar.
-                      A sua <strong>Wallet (MetaMask/Rabby)</strong> não guarda as moedas dentro do seu computador. Ela guarda apenas a <strong>CHAVE</strong> que abre a sua caixa naquele cofre.
+                      A sua <strong>Wallet</strong> guarda a <strong>CHAVE</strong> que abre a sua caixa.
                     </p>
                   </div>
                   <div className="bg-purple-50 p-6 rounded-xl border border-purple-100 w-full md:w-1/3 text-center">
                     <Key className="w-12 h-12 text-purple-500 mx-auto mb-3" />
                     <div className="font-bold text-purple-900">Seed Phrase (Semente)</div>
                     <p className="text-xs text-purple-700 mt-2">
-                      Aquelas 12 palavras que você recebe ao criar a conta. <strong>ELAS SÃO O SEU DINHEIRO.</strong> Quem tiver as palavras, tem o dinheiro. Nunca digite em sites suspeitos.
+                      Aquelas 12 palavras são o seu dinheiro. Nunca digite em sites suspeitos.
                     </p>
                   </div>
                 </div>
 
-                {/* Passo a Passo de Instalação */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-slate-800">Tutorial de Instalação (Recomendado)</h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -274,17 +328,16 @@ export default function LearnPage() {
                       <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center font-bold text-orange-600">2</div>
                       <div>
                         <div className="font-bold text-slate-900 group-hover:text-orange-700">MetaMask (A Clássica)</div>
-                        <div className="text-xs text-slate-500">Padrão da indústria. Funciona em tudo.</div>
+                        <div className="text-xs text-slate-500">Padrão da indústria.</div>
                       </div>
                       <ExternalLink className="w-4 h-4 text-slate-400 ml-auto" />
                     </Link>
                   </div>
                 </div>
-
               </div>
             </section>
 
-            {/* SEÇÃO 5: FAUCETS (DINHEIRO DE MENTIRA) */}
+            {/* SEÇÃO 5: FAUCETS */}
             <section id="faucets" className="scroll-mt-24 space-y-6 pb-20">
               <div className="flex items-center gap-4 border-b border-indigo-200 pb-4">
                 <div className="p-3 bg-indigo-100 rounded-xl">
@@ -292,7 +345,7 @@ export default function LearnPage() {
                 </div>
                 <div>
                   <h2 className="text-3xl font-bold text-slate-900">Faucets: Dinheiro de Teste</h2>
-                  <p className="text-slate-500">Como conseguir "Sepolia ETH" para brincar na plataforma sem gastar nada.</p>
+                  <p className="text-slate-500">Como conseguir "Sepolia ETH" para brincar na plataforma.</p>
                 </div>
               </div>
 
@@ -302,7 +355,6 @@ export default function LearnPage() {
                     <SearchCheck className="w-12 h-12 text-slate-100" />
                   </div>
                   <h3 className="font-bold text-lg text-slate-900 mb-2">Opção 1: Chainlink (Rápido)</h3>
-                  <p className="text-sm text-slate-600 mb-4">Requer login com GitHub. É o método mais confiável.</p>
                   <ul className="text-sm text-slate-600 space-y-2 mb-6">
                     <li>1. Acesse o site</li>
                     <li>2. Conecte sua Carteira</li>
@@ -319,7 +371,6 @@ export default function LearnPage() {
                     <Pickaxe className="w-12 h-12 text-slate-100" />
                   </div>
                   <h3 className="font-bold text-lg text-slate-900 mb-2">Opção 2: PoW (Mineração)</h3>
-                  <p className="text-sm text-slate-600 mb-4">Não requer login. Você "troca" processamento do PC por moedas.</p>
                   <ul className="text-sm text-slate-600 space-y-2 mb-6">
                     <li>1. Acesse o site</li>
                     <li>2. Cole o endereço da sua carteira</li>
@@ -331,20 +382,6 @@ export default function LearnPage() {
                   </Link>
                 </div>
               </div>
-
-              {/* Alerta Final */}
-              <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
-                <div className="flex gap-4">
-                  <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
-                  <div>
-                    <h4 className="font-bold text-amber-800">Barreira Anti-Spam</h4>
-                    <p className="text-sm text-amber-700 mt-1">
-                      Muitos faucets (como o Alchemy) exigem que você tenha pelo menos <strong>0.001 ETH (aprox. $3 USD)</strong> na rede principal (Mainnet) para provar que é uma pessoa real. Se você é totalmente novo e não tem saldo, recomendamos usar a <strong>Opção 2 (PoW)</strong> acima, pois ela não tem essa exigência.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
             </section>
 
           </main>
@@ -354,7 +391,6 @@ export default function LearnPage() {
   );
 }
 
-// Pequeno componente Icon auxiliar para o PoW, caso não tenha importado
 function Pickaxe(props: any) {
   return (
     <svg
