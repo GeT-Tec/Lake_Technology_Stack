@@ -101,7 +101,34 @@ export function WalletProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
-            setWalletAddress(accounts[0]);
+            const userWalletAddress = accounts[0];
+
+            // DATABASE VALIDATION: Register/validate user in Supabase
+            try {
+                console.log("🔍 Validando usuário no banco de dados...");
+                const response = await fetch('/api/users/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ walletAddress: userWalletAddress }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha na validação do usuário');
+                }
+
+                const data = await response.json();
+                console.log("✅ Usuário validado no banco de dados:", data.user);
+
+            } catch (dbError) {
+                console.error("❌ Erro ao validar usuário no banco:", dbError);
+                alert("Erro ao validar usuário no banco de dados. Por favor, tente novamente.");
+                return; // Não permite conexão se validação DB falhar
+            }
+
+            // Só define como conectado se a validação DB foi bem-sucedida
+            setWalletAddress(userWalletAddress);
             setWalletType(detectWallet());
 
             // GRAVA A INTENÇÃO: "O usuário quer ficar conectado"

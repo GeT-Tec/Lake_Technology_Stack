@@ -9,14 +9,18 @@ datasource db {
 }
 
 model User {
-  walletAddress String     @id @unique
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  credits       Int        @default(0)
-  assets        Asset[]
-  actions       AuditLog[]
-  kycRecord     KycRecord?
+  id                  String                @id
+  walletAddress       String                @unique
+  nickname            String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  credits             Int                   @default(3)
+  assets              Asset[]
+  actions             AuditLog[]
+  credit_transactions credit_transactions[]
+  kycRecord           KycRecord?
 
+  @@index([walletAddress])
   @@map("users")
 }
 
@@ -71,6 +75,16 @@ model AuditLog {
   user       User     @relation(fields: [userWallet], references: [walletAddress])
 
   @@map("audit_logs")
+}
+
+model credit_transactions {
+  id        String   @id
+  userId    String
+  amount    Int
+  type      String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  users     User     @relation(fields: [userId], references: [id])
 }
 
 enum AssetStatus {
