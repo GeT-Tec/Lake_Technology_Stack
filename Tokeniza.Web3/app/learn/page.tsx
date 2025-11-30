@@ -134,90 +134,76 @@ export default function LearnPage() {
                 <h2 className="text-2xl font-bold text-slate-900">Laboratório Prático</h2>
               </div>
 
-              {/* TUTORIAL 1: CARTEIRA */}
-              <div id="wallet-tutorial" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="bg-purple-50 p-6 border-b border-purple-100">
-                  <h3 className="font-bold text-lg text-purple-900">1. Sua Primeira Carteira Digital</h3>
-                  <p className="text-purple-700 text-sm mt-1">O passo inicial para sua soberania financeira.</p>
-                </div>
-                <div className="p-8 space-y-8">
-
-                  <div className="relative pl-8 border-l-2 border-slate-200 space-y-8">
-                    {/* Passo A */}
-                    <div className="relative">
-                      <span className="absolute -left-[41px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white font-bold text-sm ring-4 ring-white">1</span>
-                      <h4 className="font-bold text-slate-900 mb-2">Escolha e Instale</h4>
-                      <p className="text-slate-600 text-sm mb-4">Recomendamos a <strong>Rabby Wallet</strong> (mais segura e amigável) ou a <strong>MetaMask</strong> (padrão de mercado). Instale a extensão no seu navegador.</p>
-                      <div className="flex gap-3">
-                        <Link href="https://rabby.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
-                          <Download className="w-4 h-4" /> Baixar Rabby
-                        </Link>
-                        <Link href="https://metamask.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
-                          <Download className="w-4 h-4" /> Baixar MetaMask
-                        </Link>
-                      </div>
-                    </div>
-
-                    {/* Passo B */}
-                    <div className="relative">
-                      <span className="absolute -left-[41px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white font-bold text-sm ring-4 ring-white">2</span>
-                      <h4 className="font-bold text-slate-900 mb-2">Guarde a Frase Secreta (Seed)</h4>
-                      <div className="bg-red-50 border border-red-100 p-4 rounded-lg">
-                        <p className="text-red-800 text-xs font-bold flex items-center gap-2 mb-2">
-                          <AlertTriangle className="w-4 h-4" /> ATENÇÃO MÁXIMA
-                        </p>
-                        <p className="text-red-700 text-sm">
-                          A carteira vai gerar 12 ou 24 palavras. <strong>Anote em papel e guarde em um cofre.</strong> Nunca tire print, nunca salve no computador. Quem tem essas palavras tem seu dinheiro.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
+              <div className="flex gap-3">
+                <Link href="https://rabby.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                  <Download className="w-4 h-4" /> Baixar Rabby
+                </Link>
+                <Link href="https://metamask.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                  <Download className="w-4 h-4" /> Baixar MetaMask
+                </Link>
               </div>
+            </div>
 
-              {/* TUTORIAL 2: TOKENS */}
-              <div id="faucet-tutorial" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="bg-blue-50 p-6 border-b border-blue-100">
-                  <h3 className="font-bold text-lg text-blue-900">2. Obtendo Dinheiro de Teste (Faucet)</h3>
-                  <p className="text-blue-700 text-sm mt-1">Como estamos na rede de testes (Sepolia), você não gasta dinheiro real.</p>
-                </div>
-                <div className="p-8 space-y-6">
-                  <p className="text-slate-600 text-sm">
-                    Para pagar as taxas da rede (Gas) e comprar ativos de teste, você precisa de <strong>Sepolia ETH</strong>. Existem sites chamados "Faucets" (Torneiras) que dão isso de graça.
-                  </p>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <Link href="https://faucets.chain.link/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-slate-900">Chainlink Faucet</span>
-                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-                      </div>
-                      <p className="text-xs text-slate-500">Requer login com Github. Rápido e confiável.</p>
-                    </Link>
-
-                    <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-slate-900">PoW Faucet</span>
-                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-                      </div>
-                      <p className="text-xs text-slate-500">Sem login. Requer deixar a aba aberta minerando.</p>
-                    </Link>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
-                    <MousePointerClick className="w-4 h-4" />
-                    <span>Após conseguir os tokens, volte aqui e clique em <strong>"Conectar Carteira"</strong> no topo da página.</span>
-                  </div>
-
-                </div>
+            {/* Passo B */}
+            <div className="relative">
+              <span className="absolute -left-[41px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white font-bold text-sm ring-4 ring-white">2</span>
+              <h4 className="font-bold text-slate-900 mb-2">Guarde a Frase Secreta (Seed)</h4>
+              <div className="bg-red-50 border border-red-100 p-4 rounded-lg">
+                <p className="text-red-800 text-xs font-bold flex items-center gap-2 mb-2">
+                  <AlertTriangle className="w-4 h-4" /> ATENÇÃO MÁXIMA
+                </p>
+                <p className="text-red-700 text-sm">
+                  A carteira vai gerar 12 ou 24 palavras. <strong>Anote em papel e guarde em um cofre.</strong> Nunca tire print, nunca salve no computador. Quem tem essas palavras tem seu dinheiro.
+                </p>
               </div>
-
-            </section>
-
-          </main>
+            </div>
         </div>
+
       </div>
     </div>
+
+              {/* TUTORIAL 2: TOKENS */ }
+  <div id="faucet-tutorial" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-blue-50 p-6 border-b border-blue-100">
+      <h3 className="font-bold text-lg text-blue-900">2. Obtendo Dinheiro de Teste (Faucet)</h3>
+      <p className="text-blue-700 text-sm mt-1">Como estamos na rede de testes (Sepolia), você não gasta dinheiro real.</p>
+    </div>
+    <div className="p-8 space-y-6">
+      <p className="text-slate-600 text-sm">
+        Para pagar as taxas da rede (Gas) e comprar ativos de teste, você precisa de <strong>Sepolia ETH</strong>. Existem sites chamados "Faucets" (Torneiras) que dão isso de graça.
+      </p>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Link href="https://faucets.chain.link/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-bold text-slate-900">Chainlink Faucet</span>
+            <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+          </div>
+          <p className="text-xs text-slate-500">Requer login com Github. Rápido e confiável.</p>
+        </Link>
+
+        <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-bold text-slate-900">PoW Faucet</span>
+            <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+          </div>
+          <p className="text-xs text-slate-500">Sem login. Requer deixar a aba aberta minerando.</p>
+        </Link>
+      </div>
+
+      <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+        <MousePointerClick className="w-4 h-4" />
+        <span>Após conseguir os tokens, volte aqui e clique em <strong>"Conectar Carteira"</strong> no topo da página.</span>
+      </div>
+
+    </div>
+  </div>
+
+            </section >
+
+          </main >
+        </div >
+      </div >
+    </div >
   );
 }
