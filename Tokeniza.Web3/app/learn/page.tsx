@@ -1,4 +1,4 @@
-import { BookOpen, Droplets, AlertTriangle, ExternalLink, Wallet, ShieldCheck, Zap, Globe, Lock, FileText, Landmark, KeyRound } from "lucide-react";
+import { BookOpen, Droplets, AlertTriangle, ExternalLink, Wallet, ShieldCheck, Zap, Globe, Lock, FileText, Landmark, KeyRound, Download, MousePointerClick, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LearnPage() {
@@ -15,147 +15,208 @@ export default function LearnPage() {
             <h1 className="text-4xl font-bold tracking-tight">Academia Lake</h1>
           </div>
           <p className="text-xl text-slate-300 max-w-2xl">
-            Entenda a tecnologia, a segurança jurídica e o ecossistema financeiro por trás da LakeTokeniza.
+            Seu guia definitivo para navegar na economia tokenizada com segurança e autonomia.
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 space-y-20">
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex flex-col lg:flex-row gap-12">
 
-        {/* --- MÓDULO 1: PILARES DO PROTOCOLO (RESPOSTA AOS CARDS DA HOME) --- */}
-        <section className="space-y-12">
-
-          {/* 1.1 SEGURANÇA JURÍDICA (Anchor: #security) */}
-          <div id="security" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
-            <div className="bg-blue-50 p-8 md:w-1/3 flex flex-col justify-center border-r border-blue-100">
-              <ShieldCheck className="w-12 h-12 text-blue-600 mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900">Segurança Jurídica & Compliance</h2>
-              <p className="text-slate-600 mt-2">
-                Não é apenas código. É a lei aplicada à tecnologia.
-              </p>
-            </div>
-            <div className="p-8 md:w-2/3 space-y-6">
+          {/* --- SIDEBAR DE NAVEGAÇÃO (STICKY) --- */}
+          <aside className="lg:w-1/4">
+            <div className="sticky top-24 space-y-8">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-500" /> O Contrato Inteligente é um Contrato Real?
-                </h3>
-                <p className="text-slate-600 mt-2 leading-relaxed">
-                  Sim. Na LakeTokeniza, cada token (ERC-20/ERC-1155) emitido está vinculado juridicamente a uma <strong>Cédula de Crédito Bancário (CCB)</strong> ou a um <strong>Contrato de Investimento Coletivo (CIC)</strong>. O "Smart Contract" na blockchain é o espelho digital de um documento físico registrado em cartório ou sob as normas da CVM (Comissão de Valores Mobiliários).
-                </p>
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Conceitos Fundamentais</h3>
+                <nav className="space-y-1">
+                  <a href="#security" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-blue-600 transition-colors text-sm font-medium">Segurança Jurídica</a>
+                  <a href="#liquidity" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-yellow-600 transition-colors text-sm font-medium">Liquidez LakeZero</a>
+                  <a href="#global" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-emerald-600 transition-colors text-sm font-medium">Acesso Global</a>
+                </nav>
               </div>
+
               <div>
-                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                  <Landmark className="w-5 h-5 text-blue-500" /> Proteção ao Investidor
-                </h3>
-                <p className="text-slate-600 mt-2 leading-relaxed">
-                  Se a internet acabar amanhã, seu direito de propriedade continua existindo. A Blockchain garante a transparência e a auditoria em tempo real, mas a segurança jurídica do "Mundo Real" (RWA) garante que seu ativo tem lastro, garantia e execução legal em caso de inadimplência.
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Laboratório Prático</h3>
+                <nav className="space-y-1">
+                  <a href="#wallet-tutorial" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-purple-600 transition-colors text-sm font-medium">1. Criar sua Carteira</a>
+                  <a href="#faucet-tutorial" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-blue-600 transition-colors text-sm font-medium">2. Obter Tokens (Grátis)</a>
+                </nav>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <p className="text-xs text-blue-800 leading-relaxed">
+                  <strong>Dica:</strong> Use este menu para navegar rapidamente entre a teoria e a prática.
                 </p>
               </div>
             </div>
-          </div>
+          </aside>
 
-          {/* 1.2 LIQUIDEZ LAKEZERO (Anchor: #liquidity) */}
-          <div id="liquidity" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
-            <div className="bg-yellow-50 p-8 md:w-1/3 flex flex-col justify-center border-r border-yellow-100">
-              <Zap className="w-12 h-12 text-yellow-600 mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900">Liquidez LakeZero</h2>
-              <p className="text-slate-600 mt-2">
-                Velocidade de HFT (High Frequency Trading) com a segurança da Blockchain.
-              </p>
-            </div>
-            <div className="p-8 md:w-2/3 space-y-6">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">O Problema da Blockchain Tradicional</h3>
-                <p className="text-slate-600 mt-2 leading-relaxed">
-                  Em plataformas comuns, você paga uma taxa ("Gas") a cada clique e espera segundos ou minutos para confirmar. Isso mata a agilidade de um mercado financeiro moderno.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">A Solução LakeZero (Híbrida)</h3>
-                <p className="text-slate-600 mt-2 leading-relaxed">
-                  Nós desenvolvemos um motor de assinatura <strong>Off-Chain</strong> (fora da rede) com liquidação <strong>On-Chain</strong>. Você negocia instantaneamente, sem taxas de gás para ordens de compra e venda dentro do ambiente. Apenas a custódia final é gravada na Blockchain.
-                </p>
-                <div className="mt-4 p-4 bg-yellow-50/50 rounded-lg border border-yellow-100 text-sm text-yellow-800">
-                  <strong>Taxa de Sustentabilidade ($0.30):</strong> Esta pequena contribuição serve para manter essa super-infraestrutura de servidores ativos, garantindo que você tenha latência zero sem depender de mineradores lentos.
+          {/* --- CONTEÚDO PRINCIPAL --- */}
+          <main className="lg:w-3/4 space-y-20">
+
+            {/* SEÇÃO 1: PILARES (TEORIA) */}
+            <section className="space-y-12">
+
+              {/* 1.1 SEGURANÇA JURÍDICA */}
+              <div id="security" className="scroll-mt-24">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600"><ShieldCheck className="w-6 h-6" /></div>
+                  <h2 className="text-2xl font-bold text-slate-900">Segurança Jurídica & Compliance</h2>
+                </div>
+                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                  <p className="text-slate-600 leading-relaxed">
+                    Na LakeTokeniza, a tecnologia blockchain não substitui a lei, ela a fortalece. Cada token emitido é um espelho digital de um contrato real.
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                      <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-500" /> Lastro Real</h4>
+                      <p className="text-sm text-slate-600">Tokens vinculados a CCBs (Cédulas de Crédito Bancário) ou CICs, registrados e auditáveis.</p>
+                    </div>
+                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                      <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Landmark className="w-4 h-4 text-blue-500" /> Garantia Legal</h4>
+                      <p className="text-sm text-slate-600">Seus direitos de propriedade são garantidos pela legislação vigente, independente da tecnologia.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* 1.3 ACESSO GLOBAL (Anchor: #global) */}
-          <div id="global" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
-            <div className="bg-emerald-50 p-8 md:w-1/3 flex flex-col justify-center border-r border-emerald-100">
-              <Globe className="w-12 h-12 text-emerald-600 mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900">Acesso Global & Liberdade</h2>
-              <p className="text-slate-600 mt-2">
-                O fim das fronteiras geográficas para o seu dinheiro.
-              </p>
-            </div>
-            <div className="p-8 md:w-2/3 space-y-6">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">Por que investir Globalmente?</h3>
-                <p className="text-slate-600 mt-2 leading-relaxed">
-                  Historicamente, apenas grandes fundos podiam comprar imóveis no Brasil estando no Japão, ou investir em Agronegócio sem ter conta em banco local. A burocracia bancária (SWIFT, Câmbio, Spread) comia 10% do lucro.
-                </p>
+              {/* 1.2 LIQUIDEZ LAKEZERO */}
+              <div id="liquidity" className="scroll-mt-24">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-yellow-100 rounded-lg text-yellow-600"><Zap className="w-6 h-6" /></div>
+                  <h2 className="text-2xl font-bold text-slate-900">Liquidez LakeZero</h2>
+                </div>
+                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                  <p className="text-slate-600 leading-relaxed">
+                    Resolvemos o maior problema das DEXs: a lentidão e o custo. Nossa arquitetura híbrida permite trading instantâneo.
+                  </p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3 text-slate-600 text-sm">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                      <span><strong>Assinatura Off-Chain:</strong> Ordens casadas em milissegundos em nossos servidores seguros.</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-600 text-sm">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                      <span><strong>Liquidação On-Chain:</strong> Apenas a troca final de custódia vai para a Blockchain, garantindo transparência.</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-600 text-sm">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                      <span><strong>Taxa de Sustentabilidade ($0.30):</strong> Uma contribuição fixa para manter a infraestrutura de alta performance.</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">A Vantagem da Tokenização</h3>
-                <p className="text-slate-600 mt-2 leading-relaxed">
-                  Com a LakeTokeniza, sua carteira digital é seu passaporte. Você usa <strong>USDT, USDC ou ETH</strong> (moedas globais) para comprar frações de ativos reais.
-                  <br /><br />
-                  Isso significa <strong>Proteção Patrimonial</strong> (seu ativo não pode ser confiscado por instabilidade política local) e <strong>Portabilidade</strong> (você leva seu patrimônio no bolso para qualquer país). É a verdadeira soberania financeira.
-                </p>
+
+              {/* 1.3 ACESSO GLOBAL */}
+              <div id="global" className="scroll-mt-24">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600"><Globe className="w-6 h-6" /></div>
+                  <h2 className="text-2xl font-bold text-slate-900">Acesso Global</h2>
+                </div>
+                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                  <p className="text-slate-600 leading-relaxed">
+                    Sua carteira digital é seu passaporte financeiro. Invista em ativos brasileiros de qualquer lugar do mundo, sem burocracia bancária.
+                  </p>
+                  <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-100 text-emerald-800 text-sm">
+                    <strong>Vantagem:</strong> Use USDT, USDC ou ETH. Proteja seu patrimônio contra instabilidades locais e tenha portabilidade total.
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-        </section>
+            </section>
 
-        {/* --- DIVISOR VISUAL --- */}
-        <div className="flex items-center gap-4">
-          <div className="h-px bg-slate-200 flex-1"></div>
-          <span className="text-slate-400 text-sm font-medium uppercase tracking-widest">Área Técnica</span>
-          <div className="h-px bg-slate-200 flex-1"></div>
+            <div className="h-px bg-slate-200"></div>
+
+            {/* SEÇÃO 2: LABORATÓRIO (PRÁTICA) */}
+            <section className="space-y-12">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg text-purple-600"><Wallet className="w-6 h-6" /></div>
+                <h2 className="text-2xl font-bold text-slate-900">Laboratório Prático</h2>
+              </div>
+
+              {/* TUTORIAL 1: CARTEIRA */}
+              <div id="wallet-tutorial" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-purple-50 p-6 border-b border-purple-100">
+                  <h3 className="font-bold text-lg text-purple-900">1. Sua Primeira Carteira Digital</h3>
+                  <p className="text-purple-700 text-sm mt-1">O passo inicial para sua soberania financeira.</p>
+                </div>
+                <div className="p-8 space-y-8">
+
+                  <div className="relative pl-8 border-l-2 border-slate-200 space-y-8">
+                    {/* Passo A */}
+                    <div className="relative">
+                      <span className="absolute -left-[41px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white font-bold text-sm ring-4 ring-white">1</span>
+                      <h4 className="font-bold text-slate-900 mb-2">Escolha e Instale</h4>
+                      <p className="text-slate-600 text-sm mb-4">Recomendamos a <strong>Rabby Wallet</strong> (mais segura e amigável) ou a <strong>MetaMask</strong> (padrão de mercado). Instale a extensão no seu navegador.</p>
+                      <div className="flex gap-3">
+                        <Link href="https://rabby.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                          <Download className="w-4 h-4" /> Baixar Rabby
+                        </Link>
+                        <Link href="https://metamask.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                          <Download className="w-4 h-4" /> Baixar MetaMask
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Passo B */}
+                    <div className="relative">
+                      <span className="absolute -left-[41px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white font-bold text-sm ring-4 ring-white">2</span>
+                      <h4 className="font-bold text-slate-900 mb-2">Guarde a Frase Secreta (Seed)</h4>
+                      <div className="bg-red-50 border border-red-100 p-4 rounded-lg">
+                        <p className="text-red-800 text-xs font-bold flex items-center gap-2 mb-2">
+                          <AlertTriangle className="w-4 h-4" /> ATENÇÃO MÁXIMA
+                        </p>
+                        <p className="text-red-700 text-sm">
+                          A carteira vai gerar 12 ou 24 palavras. <strong>Anote em papel e guarde em um cofre.</strong> Nunca tire print, nunca salve no computador. Quem tem essas palavras tem seu dinheiro.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* TUTORIAL 2: TOKENS */}
+              <div id="faucet-tutorial" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-blue-50 p-6 border-b border-blue-100">
+                  <h3 className="font-bold text-lg text-blue-900">2. Obtendo Dinheiro de Teste (Faucet)</h3>
+                  <p className="text-blue-700 text-sm mt-1">Como estamos na rede de testes (Sepolia), você não gasta dinheiro real.</p>
+                </div>
+                <div className="p-8 space-y-6">
+                  <p className="text-slate-600 text-sm">
+                    Para pagar as taxas da rede (Gas) e comprar ativos de teste, você precisa de <strong>Sepolia ETH</strong>. Existem sites chamados "Faucets" (Torneiras) que dão isso de graça.
+                  </p>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Link href="https://faucets.chain.link/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-slate-900">Chainlink Faucet</span>
+                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+                      </div>
+                      <p className="text-xs text-slate-500">Requer login com Github. Rápido e confiável.</p>
+                    </Link>
+
+                    <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-slate-900">PoW Faucet</span>
+                        <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+                      </div>
+                      <p className="text-xs text-slate-500">Sem login. Requer deixar a aba aberta minerando.</p>
+                    </Link>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+                    <MousePointerClick className="w-4 h-4" />
+                    <span>Após conseguir os tokens, volte aqui e clique em <strong>"Conectar Carteira"</strong> no topo da página.</span>
+                  </div>
+
+                </div>
+              </div>
+
+            </section>
+
+          </main>
         </div>
-
-        {/* --- MÓDULO ANTERIOR: TUTORIAL DE WALLET/FAUCETS (MANTIDO) --- */}
-        <section className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-6">
-            <Wallet className="w-6 h-6 text-purple-600" />
-            <h2 className="text-2xl font-bold text-slate-900">Laboratório: Como Operar (Carteiras & Tokens)</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* O que é Wallet */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-slate-500" /> O que é uma Wallet?
-              </h3>
-              <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                Não é onde o dinheiro fica (ele fica na Blockchain). É onde ficam suas <strong>chaves</strong> para movimentar esse dinheiro. Se você perder a chave (frase secreta), perde o acesso. Instale a <strong>Rabby Wallet</strong> ou <strong>MetaMask</strong> para começar.
-              </p>
-            </div>
-
-            {/* Faucets */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                <Droplets className="w-5 h-5 text-purple-500" /> Tokens de Teste (Grátis)
-              </h3>
-              <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                Estamos na rede de testes <strong>Sepolia</strong>. O dinheiro aqui é fictício. Você pode pegar de graça nos "Faucets" (Torneiras).
-              </p>
-              <div className="flex flex-col gap-2">
-                <Link href="https://faucets.chain.link/" target="_blank" className="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                  Link 1: Chainlink Faucet (Requer Login) <ExternalLink className="w-3 h-3" />
-                </Link>
-                <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                  Link 2: PoW Mining (Sem Login) <ExternalLink className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
       </div>
     </div>
   );
