@@ -34,12 +34,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* CARDS DE VALOR (AGORA INTERATIVOS) */}
+      {/* CARDS DE VALOR - AGORA COM LINKS DIRETOS PARA A EXPLICAÇÃO */}
       <div className="w-full bg-white border-t border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <div className="grid md:grid-cols-3 gap-8">
 
-            {/* Card 1: Segurança -> Vai para Aprenda */}
+            {/* Card 1: Vai para a seção #security */}
             <Link href="/learn#security" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ArrowRight className="w-5 h-5 text-blue-500 -translate-x-2 group-hover:translate-x-0 transition-transform" />
@@ -53,7 +53,7 @@ export default function Home() {
               </p>
             </Link>
 
-            {/* Card 2: Liquidez LakeZero -> Vai para Aprenda (Tecnologia) */}
+            {/* Card 2: Vai para a seção #liquidity */}
             <Link href="/learn#liquidity" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-yellow-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ArrowRight className="w-5 h-5 text-yellow-500 -translate-x-2 group-hover:translate-x-0 transition-transform" />
@@ -67,8 +67,8 @@ export default function Home() {
               </p>
             </Link>
 
-            {/* Card 3: Acesso Global -> Vai para Marketplace (Conversão) */}
-            <Link href="/marketplace" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-emerald-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
+            {/* Card 3: AGORA VAI PARA A EXPLICAÇÃO #global (ATENDENDO SUA SOLICITAÇÃO) */}
+            <Link href="/learn#global" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-emerald-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ArrowRight className="w-5 h-5 text-emerald-500 -translate-x-2 group-hover:translate-x-0 transition-transform" />
               </div>
