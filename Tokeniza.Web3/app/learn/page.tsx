@@ -1,21 +1,41 @@
-import { BookOpen, Droplets, AlertTriangle, ExternalLink, Wallet, ShieldCheck, Zap, Globe, Lock, FileText, Landmark, KeyRound, Download, MousePointerClick, CheckCircle2 } from "lucide-react";
+import {
+  BookOpen,
+  Droplets,
+  AlertTriangle,
+  ExternalLink,
+  Wallet,
+  ShieldCheck,
+  Zap,
+  Globe,
+  Lock,
+  FileText,
+  Landmark,
+  GraduationCap,
+  Cpu,
+  Coins,
+  SearchCheck,
+  Key
+} from "lucide-react";
 import Link from "next/link";
 
 export default function LearnPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 scroll-smooth">
-      {/* Header Section */}
-      <div className="bg-slate-900 text-white py-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-              <BookOpen className="w-8 h-8 text-emerald-400" />
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight">Academia Lake</h1>
+
+      {/* --- HERO: AUTORIDADE IMEDIATA --- */}
+      <div className="bg-slate-900 text-white pt-24 pb-20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 border border-slate-700 mb-6">
+            <GraduationCap className="w-5 h-5 text-emerald-400" />
+            <span className="text-sm font-semibold tracking-wider uppercase text-emerald-400">Lake Academy</span>
           </div>
-          <p className="text-xl text-slate-300 max-w-2xl">
-            Seu guia definitivo para navegar na economia tokenizada com segurança e autonomia.
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
+            Domine a Nova Economia <br />
+            <span className="text-emerald-400">Tokenizada.</span>
+          </h1>
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+            De iniciante a investidor institucional. Este é o repositório definitivo de conhecimento sobre RWA, Blockchain e a infraestrutura LakeZero.
           </p>
         </div>
       </div>
@@ -24,186 +44,334 @@ export default function LearnPage() {
         <div className="flex flex-col lg:flex-row gap-12">
 
           {/* --- SIDEBAR DE NAVEGAÇÃO (STICKY) --- */}
-          <aside className="lg:w-1/4">
+          <aside className="lg:w-1/4 hidden lg:block">
             <div className="sticky top-24 space-y-8">
-              <div>
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Conceitos Fundamentais</h3>
-                <nav className="space-y-1">
-                  <a href="#security" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-blue-600 transition-colors text-sm font-medium">Segurança Jurídica</a>
-                  <a href="#liquidity" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-yellow-600 transition-colors text-sm font-medium">Liquidez LakeZero</a>
-                  <a href="#global" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-emerald-600 transition-colors text-sm font-medium">Acesso Global</a>
+
+              {/* Menu Conceitos */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Fundamentos (Teoria)</h3>
+                <nav className="flex flex-col space-y-1">
+                  <a href="#intro-rwa" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-emerald-700">
+                    <Globe className="w-4 h-4" />
+                    <span className="font-medium">O que é RWA?</span>
+                  </a>
+                  <a href="#juridico" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-blue-700">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="font-medium">Segurança Jurídica</span>
+                  </a>
+                  <a href="#lakezero" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-yellow-700">
+                    <Zap className="w-4 h-4" />
+                    <span className="font-medium">Tecnologia LakeZero</span>
+                  </a>
                 </nav>
               </div>
 
-              <div>
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Laboratório Prático</h3>
-                <nav className="space-y-1">
-                  <a href="#wallet-tutorial" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-purple-600 transition-colors text-sm font-medium">1. Criar sua Carteira</a>
-                  <a href="#faucet-tutorial" className="block px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-blue-600 transition-colors text-sm font-medium">2. Obter Tokens (Grátis)</a>
+              {/* Menu Prático */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Laboratório (Prática)</h3>
+                <nav className="flex flex-col space-y-1">
+                  <a href="#wallet-masterclass" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-purple-700">
+                    <Wallet className="w-4 h-4" />
+                    <span className="font-medium">Masterclass: Carteiras</span>
+                  </a>
+                  <a href="#faucets" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-purple-700">
+                    <Droplets className="w-4 h-4" />
+                    <span className="font-medium">Resgatar Tokens (Faucets)</span>
+                  </a>
                 </nav>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                <p className="text-xs text-blue-800 leading-relaxed">
-                  <strong>Dica:</strong> Use este menu para navegar rapidamente entre a teoria e a prática.
+              {/* Card de Status */}
+              <div className="p-4 bg-slate-900 rounded-xl text-white shadow-xl">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-bold text-emerald-400">SISTEMA ONLINE</span>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Aproveite os tutoriais para configurar sua wallet e operar no nosso ambiente de testes sem custo.
                 </p>
               </div>
+
             </div>
           </aside>
 
           {/* --- CONTEÚDO PRINCIPAL --- */}
-          <main className="lg:w-3/4 space-y-20">
+          <main className="lg:w-3/4 space-y-24">
 
-            {/* SEÇÃO 1: PILARES (TEORIA) */}
-            <section className="space-y-12">
-
-              {/* 1.1 SEGURANÇA JURÍDICA */}
-              <div id="security" className="scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600"><ShieldCheck className="w-6 h-6" /></div>
-                  <h2 className="text-2xl font-bold text-slate-900">Segurança Jurídica & Compliance</h2>
+            {/* SEÇÃO 1: RWA (A Tese) */}
+            <section id="intro-rwa" className="scroll-mt-24 space-y-6">
+              <div className="flex items-center gap-4 border-b border-emerald-200 pb-4">
+                <div className="p-3 bg-emerald-100 rounded-xl">
+                  <Globe className="w-8 h-8 text-emerald-700" />
                 </div>
-                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                  <p className="text-slate-600 leading-relaxed">
-                    Na LakeTokeniza, a tecnologia blockchain não substitui a lei, ela a fortalece. Cada token emitido é um espelho digital de um contrato real.
-                  </p>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                      <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-500" /> Lastro Real</h4>
-                      <p className="text-sm text-slate-600">Tokens vinculados a CCBs (Cédulas de Crédito Bancário) ou CICs, registrados e auditáveis.</p>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900">A Revolução RWA (Real World Assets)</h2>
+                  <p className="text-slate-500">Por que a BlackRock chama isso de "A próxima geração de mercados".</p>
+                </div>
+              </div>
+
+              <div className="prose prose-lg text-slate-600 max-w-none">
+                <p>
+                  <strong>Imagine poder comprar um pedaço de um prédio na Faria Lima ou de uma fazenda de soja no Mato Grosso com a mesma facilidade que envia um e-mail.</strong>
+                </p>
+                <p>
+                  Ativos do Mundo Real (RWA) são a ponte definitiva entre o mercado financeiro tradicional (Web2) e a Blockchain (Web3). Não estamos falando de moedas meme ou especulação vazia. Estamos falando de colocar ativos de trilhões de dólares — Imóveis, Agronegócio, Crédito Privado — dentro da segurança da Blockchain.
+                </p>
+                <div className="grid md:grid-cols-2 gap-6 my-8 not-prose">
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 className="font-bold text-slate-900 mb-2">💰 Fracionamento</h4>
+                    <p className="text-sm">Um imóvel de R$ 10 milhões é inacessível. Tokenizado, ele vira 1 milhão de pedaços de R$ 10,00. Qualquer um pode investir.</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 className="font-bold text-slate-900 mb-2">🌍 Liquidez Global 24/7</h4>
+                    <p className="text-sm">O mercado tradicional fecha às 17h e não funciona no fim de semana. A Blockchain nunca dorme. Venda seus ativos domingo às 3h da manhã.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* SEÇÃO 2: SEGURANÇA JURÍDICA */}
+            <section id="juridico" className="scroll-mt-24 space-y-6">
+              <div className="flex items-center gap-4 border-b border-blue-200 pb-4">
+                <div className="p-3 bg-blue-100 rounded-xl">
+                  <ShieldCheck className="w-8 h-8 text-blue-700" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900">O "Lastro" Jurídico</h2>
+                  <p className="text-slate-500">Código é Lei? Não. A Lei é a Lei. Nós unimos os dois.</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 space-y-6">
+                <div className="flex gap-4 items-start">
+                  <FileText className="w-6 h-6 text-blue-600 mt-1 shrink-0" />
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">O Token é o Espelho do Contrato</h3>
+                    <p className="text-slate-700 mt-2 leading-relaxed">
+                      Para cada ativo listado na LakeTokeniza, existe uma estrutura jurídica robusta no mundo real. Geralmente utilizamos:
+                    </p>
+                    <ul className="list-disc ml-5 mt-3 space-y-2 text-slate-700">
+                      <li><strong>CCB (Cédula de Crédito Bancário):</strong> Para dívidas e recebíveis.</li>
+                      <li><strong>SPE (Sociedade de Propósito Específico):</strong> Para projetos imobiliários.</li>
+                      <li><strong>Tokens de Recebíveis:</strong> Registrados conforme normas da CVM.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                  <Landmark className="w-6 h-6 text-blue-600 mt-1 shrink-0" />
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">Garantia de Execução</h3>
+                    <p className="text-slate-700 mt-2">
+                      Se a plataforma sair do ar, se a internet cair, seu direito de propriedade persiste. O Token serve como prova de titularidade irrefutável para execução judicial se necessário. Isso é segurança institucional.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* SEÇÃO 3: TECNOLOGIA LAKEZERO */}
+            <section id="lakezero" className="scroll-mt-24 space-y-6">
+              <div className="flex items-center gap-4 border-b border-yellow-200 pb-4">
+                <div className="p-3 bg-yellow-100 rounded-xl">
+                  <Cpu className="w-8 h-8 text-yellow-700" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900">Arquitetura LakeZero™</h2>
+                  <p className="text-slate-500">Por que cobramos uma taxa de sustentabilidade de $0.30?</p>
+                </div>
+              </div>
+
+              <div className="prose prose-lg text-slate-600 max-w-none">
+                <p>
+                  O maior problema da Blockchain pura é o custo. Pagar R$ 15,00 de taxa ("Gas") para comprar R$ 50,00 de um ativo inviabiliza o negócio.
+                </p>
+                <p>
+                  <strong>A Inovação LakeZero:</strong> Desenvolvemos um motor híbrido.
+                </p>
+
+                <div className="bg-slate-900 text-white p-8 rounded-2xl my-8">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                      <h4 className="text-emerald-400 font-bold text-lg mb-2 flex items-center gap-2">
+                        <Zap className="w-5 h-5" /> Off-Chain Speed
+                      </h4>
+                      <p className="text-slate-400 text-sm">
+                        Todas as ordens de compra, venda e troca dentro da plataforma acontecem em nossos servidores seguros (Rust).
+                        <strong>Custo de Gás: ZERO. Velocidade: MILISSEGUNDOS.</strong>
+                      </p>
                     </div>
-                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                      <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Landmark className="w-4 h-4 text-blue-500" /> Garantia Legal</h4>
-                      <p className="text-sm text-slate-600">Seus direitos de propriedade são garantidos pela legislação vigente, independente da tecnologia.</p>
+                    <div>
+                      <h4 className="text-emerald-400 font-bold text-lg mb-2 flex items-center gap-2">
+                        <Lock className="w-5 h-5" /> On-Chain Settlement
+                      </h4>
+                      <p className="text-slate-400 text-sm">
+                        O saldo final e a custódia são sincronizados com a Blockchain pública. Garantindo que ninguém (nem nós) possa alterar o histórico final.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-8 pt-6 border-t border-slate-700">
+                    <div className="flex items-start gap-4">
+                      <Coins className="w-6 h-6 text-yellow-400 shrink-0" />
+                      <div>
+                        <h5 className="font-bold text-white">Taxa de Sustentabilidade ($0.30)</h5>
+                        <p className="text-slate-400 text-sm mt-1">
+                          Manter servidores de alta performance, auditores de segurança e parcerias jurídicas custa caro.
+                          Cobramos uma taxa fixa simbólica para garantir que o sistema seja sustentável, auditável e livre de censura.
+                          Além disso, parte dessa taxa alimenta o <strong>Fundo de Liquidez</strong> do protocolo.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </section>
 
-              {/* 1.2 LIQUIDEZ LAKEZERO */}
-              <div id="liquidity" className="scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-yellow-100 rounded-lg text-yellow-600"><Zap className="w-6 h-6" /></div>
-                  <h2 className="text-2xl font-bold text-slate-900">Liquidez LakeZero</h2>
+            {/* SEÇÃO 4: WALLET MASTERCLASS (PRÁTICA) */}
+            <section id="wallet-masterclass" className="scroll-mt-24 space-y-6">
+              <div className="flex items-center gap-4 border-b border-purple-200 pb-4">
+                <div className="p-3 bg-purple-100 rounded-xl">
+                  <Wallet className="w-8 h-8 text-purple-700" />
                 </div>
-                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                  <p className="text-slate-600 leading-relaxed">
-                    Resolvemos o maior problema das DEXs: a lentidão e o custo. Nossa arquitetura híbrida permite trading instantâneo.
-                  </p>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3 text-slate-600 text-sm">
-                      <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                      <span><strong>Assinatura Off-Chain:</strong> Ordens casadas em milissegundos em nossos servidores seguros.</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-slate-600 text-sm">
-                      <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                      <span><strong>Liquidação On-Chain:</strong> Apenas a troca final de custódia vai para a Blockchain, garantindo transparência.</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-slate-600 text-sm">
-                      <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                      <span><strong>Taxa de Sustentabilidade ($0.30):</strong> Uma contribuição fixa para manter a infraestrutura de alta performance.</span>
-                    </li>
-                  </ul>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900">Masterclass: Carteiras Digitais</h2>
+                  <p className="text-slate-500">Se você não tem a chave, o dinheiro não é seu.</p>
                 </div>
               </div>
 
-              {/* 1.3 ACESSO GLOBAL */}
-              <div id="global" className="scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600"><Globe className="w-6 h-6" /></div>
-                  <h2 className="text-2xl font-bold text-slate-900">Acesso Global</h2>
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-8">
+
+                {/* Conceito de Chave */}
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                  <div className="flex-1 space-y-4">
+                    <h3 className="text-xl font-bold text-slate-800">O Cofre de Vidro</h3>
+                    <p className="text-slate-600 leading-relaxed">
+                      Pense na Blockchain como um cofre de vidro gigante na praça da cidade. Todos podem ver quanto dinheiro tem em cada caixa, mas ninguém pode tocar.
+                      A sua <strong>Wallet (MetaMask/Rabby)</strong> não guarda as moedas dentro do seu computador. Ela guarda apenas a <strong>CHAVE</strong> que abre a sua caixa naquele cofre.
+                    </p>
+                  </div>
+                  <div className="bg-purple-50 p-6 rounded-xl border border-purple-100 w-full md:w-1/3 text-center">
+                    <Key className="w-12 h-12 text-purple-500 mx-auto mb-3" />
+                    <div className="font-bold text-purple-900">Seed Phrase (Semente)</div>
+                    <p className="text-xs text-purple-700 mt-2">
+                      Aquelas 12 palavras que você recebe ao criar a conta. <strong>ELAS SÃO O SEU DINHEIRO.</strong> Quem tiver as palavras, tem o dinheiro. Nunca digite em sites suspeitos.
+                    </p>
+                  </div>
                 </div>
-                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                  <p className="text-slate-600 leading-relaxed">
-                    Sua carteira digital é seu passaporte financeiro. Invista em ativos brasileiros de qualquer lugar do mundo, sem burocracia bancária.
-                  </p>
-                  <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-100 text-emerald-800 text-sm">
-                    <strong>Vantagem:</strong> Use USDT, USDC ou ETH. Proteja seu patrimônio contra instabilidades locais e tenha portabilidade total.
+
+                {/* Passo a Passo de Instalação */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-slate-800">Tutorial de Instalação (Recomendado)</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Link href="https://rabby.io" target="_blank" className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600">1</div>
+                      <div>
+                        <div className="font-bold text-slate-900 group-hover:text-blue-700">Rabby Wallet (A Melhor)</div>
+                        <div className="text-xs text-slate-500">Mais segura, avisa sobre golpes.</div>
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-slate-400 ml-auto" />
+                    </Link>
+                    <Link href="https://metamask.io" target="_blank" className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl hover:border-orange-500 hover:bg-orange-50 transition-all group">
+                      <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center font-bold text-orange-600">2</div>
+                      <div>
+                        <div className="font-bold text-slate-900 group-hover:text-orange-700">MetaMask (A Clássica)</div>
+                        <div className="text-xs text-slate-500">Padrão da indústria. Funciona em tudo.</div>
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-slate-400 ml-auto" />
+                    </Link>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* SEÇÃO 5: FAUCETS (DINHEIRO DE MENTIRA) */}
+            <section id="faucets" className="scroll-mt-24 space-y-6 pb-20">
+              <div className="flex items-center gap-4 border-b border-indigo-200 pb-4">
+                <div className="p-3 bg-indigo-100 rounded-xl">
+                  <Coins className="w-8 h-8 text-indigo-700" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900">Faucets: Dinheiro de Teste</h2>
+                  <p className="text-slate-500">Como conseguir "Sepolia ETH" para brincar na plataforma sem gastar nada.</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                    <SearchCheck className="w-12 h-12 text-slate-100" />
+                  </div>
+                  <h3 className="font-bold text-lg text-slate-900 mb-2">Opção 1: Chainlink (Rápido)</h3>
+                  <p className="text-sm text-slate-600 mb-4">Requer login com GitHub. É o método mais confiável.</p>
+                  <ul className="text-sm text-slate-600 space-y-2 mb-6">
+                    <li>1. Acesse o site</li>
+                    <li>2. Conecte sua Carteira</li>
+                    <li>3. Autentique com GitHub</li>
+                    <li>4. Receba 0.1 ETH na hora</li>
+                  </ul>
+                  <Link href="https://faucets.chain.link/" target="_blank" className="w-full block text-center py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">
+                    Ir para Chainlink
+                  </Link>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                    <Pickaxe className="w-12 h-12 text-slate-100" />
+                  </div>
+                  <h3 className="font-bold text-lg text-slate-900 mb-2">Opção 2: PoW (Mineração)</h3>
+                  <p className="text-sm text-slate-600 mb-4">Não requer login. Você "troca" processamento do PC por moedas.</p>
+                  <ul className="text-sm text-slate-600 space-y-2 mb-6">
+                    <li>1. Acesse o site</li>
+                    <li>2. Cole o endereço da sua carteira</li>
+                    <li>3. Marque "Eu sou humano"</li>
+                    <li>4. Clique em "Start Mining" e aguarde</li>
+                  </ul>
+                  <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="w-full block text-center py-3 rounded-lg bg-slate-800 text-white font-bold hover:bg-slate-900 transition-colors">
+                    Ir para PoW Faucet
+                  </Link>
+                </div>
+              </div>
+
+              {/* Alerta Final */}
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
+                <div className="flex gap-4">
+                  <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-amber-800">Barreira Anti-Spam</h4>
+                    <p className="text-sm text-amber-700 mt-1">
+                      Muitos faucets (como o Alchemy) exigem que você tenha pelo menos <strong>0.001 ETH (aprox. $3 USD)</strong> na rede principal (Mainnet) para provar que é uma pessoa real. Se você é totalmente novo e não tem saldo, recomendamos usar a <strong>Opção 2 (PoW)</strong> acima, pois ela não tem essa exigência.
+                    </p>
                   </div>
                 </div>
               </div>
 
             </section>
 
-            <div className="h-px bg-slate-200"></div>
-
-            {/* SEÇÃO 2: LABORATÓRIO (PRÁTICA) */}
-            <section className="space-y-12">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg text-purple-600"><Wallet className="w-6 h-6" /></div>
-                <h2 className="text-2xl font-bold text-slate-900">Laboratório Prático</h2>
-              </div>
-
-              <div className="flex gap-3">
-                <Link href="https://rabby.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
-                  <Download className="w-4 h-4" /> Baixar Rabby
-                </Link>
-                <Link href="https://metamask.io" target="_blank" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
-                  <Download className="w-4 h-4" /> Baixar MetaMask
-                </Link>
-              </div>
-            </div>
-
-            {/* Passo B */}
-            <div className="relative">
-              <span className="absolute -left-[41px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white font-bold text-sm ring-4 ring-white">2</span>
-              <h4 className="font-bold text-slate-900 mb-2">Guarde a Frase Secreta (Seed)</h4>
-              <div className="bg-red-50 border border-red-100 p-4 rounded-lg">
-                <p className="text-red-800 text-xs font-bold flex items-center gap-2 mb-2">
-                  <AlertTriangle className="w-4 h-4" /> ATENÇÃO MÁXIMA
-                </p>
-                <p className="text-red-700 text-sm">
-                  A carteira vai gerar 12 ou 24 palavras. <strong>Anote em papel e guarde em um cofre.</strong> Nunca tire print, nunca salve no computador. Quem tem essas palavras tem seu dinheiro.
-                </p>
-              </div>
-            </div>
+          </main>
         </div>
-
       </div>
     </div>
-
-              {/* TUTORIAL 2: TOKENS */ }
-  <div id="faucet-tutorial" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-    <div className="bg-blue-50 p-6 border-b border-blue-100">
-      <h3 className="font-bold text-lg text-blue-900">2. Obtendo Dinheiro de Teste (Faucet)</h3>
-      <p className="text-blue-700 text-sm mt-1">Como estamos na rede de testes (Sepolia), você não gasta dinheiro real.</p>
-    </div>
-    <div className="p-8 space-y-6">
-      <p className="text-slate-600 text-sm">
-        Para pagar as taxas da rede (Gas) e comprar ativos de teste, você precisa de <strong>Sepolia ETH</strong>. Existem sites chamados "Faucets" (Torneiras) que dão isso de graça.
-      </p>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <Link href="https://faucets.chain.link/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-bold text-slate-900">Chainlink Faucet</span>
-            <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-          </div>
-          <p className="text-xs text-slate-500">Requer login com Github. Rápido e confiável.</p>
-        </Link>
-
-        <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-bold text-slate-900">PoW Faucet</span>
-            <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-          </div>
-          <p className="text-xs text-slate-500">Sem login. Requer deixar a aba aberta minerando.</p>
-        </Link>
-      </div>
-
-      <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
-        <MousePointerClick className="w-4 h-4" />
-        <span>Após conseguir os tokens, volte aqui e clique em <strong>"Conectar Carteira"</strong> no topo da página.</span>
-      </div>
-
-    </div>
-  </div>
-
-            </section >
-
-          </main >
-        </div >
-      </div >
-    </div >
   );
+}
+
+// Pequeno componente Icon auxiliar para o PoW, caso não tenha importado
+function Pickaxe(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14.5 2L22 9.5" />
+      <path d="M4.68 12.32a3 3 0 0 0 4.24 4.24l7.64-7.64a3 3 0 0 0-4.24-4.24l-7.64 7.64z" />
+      <path d="m9.62 17.26-6.68 6.68a2 2 0 0 1-2.72-2.95l6.46-6.47" />
+    </svg>
+  )
 }
