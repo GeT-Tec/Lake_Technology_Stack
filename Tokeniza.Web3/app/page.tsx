@@ -40,7 +40,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
 
             {/* Card 1: Segurança -> Vai para Aprenda */}
-            <Link href="/learn" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
+            <Link href="/learn#security" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ArrowRight className="w-5 h-5 text-blue-500 -translate-x-2 group-hover:translate-x-0 transition-transform" />
               </div>
@@ -54,7 +54,7 @@ export default function Home() {
             </Link>
 
             {/* Card 2: Liquidez LakeZero -> Vai para Aprenda (Tecnologia) */}
-            <Link href="/learn" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-yellow-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
+            <Link href="/learn#liquidity" className="group p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-yellow-200 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ArrowRight className="w-5 h-5 text-yellow-500 -translate-x-2 group-hover:translate-x-0 transition-transform" />
               </div>

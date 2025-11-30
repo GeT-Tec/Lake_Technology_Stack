@@ -1,14 +1,12 @@
-import { BookOpen, Droplets, AlertTriangle, ExternalLink, Wallet, ShieldCheck, Coins, KeyRound, Lock } from "lucide-react";
+import { BookOpen, Droplets, AlertTriangle, ExternalLink, Wallet, ShieldCheck, Zap, Globe, Lock, FileText, Landmark, KeyRound } from "lucide-react";
 import Link from "next/link";
 
 export default function LearnPage() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900 scroll-smooth">
       {/* Header Section */}
       <div className="bg-slate-900 text-white py-16 relative overflow-hidden">
-        {/* Background Element */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
-
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
@@ -17,182 +15,142 @@ export default function LearnPage() {
             <h1 className="text-4xl font-bold tracking-tight">Academia Lake</h1>
           </div>
           <p className="text-xl text-slate-300 max-w-2xl">
-            Sua jornada da Web2 para a Web3 começa aqui. Educação, segurança e liberdade financeira.
+            Entenda a tecnologia, a segurança jurídica e o ecossistema financeiro por trás da LakeTokeniza.
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 space-y-16">
+      <div className="container mx-auto px-4 py-12 space-y-20">
 
-        {/* --- NOVO MÓDULO: ENTENDENDO A WALLET (BÁSICO) --- */}
-        <section className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-6">
-            <KeyRound className="w-6 h-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-slate-900">O Básico: O que é uma Carteira (Wallet)?</h2>
-          </div>
+        {/* --- MÓDULO 1: PILARES DO PROTOCOLO (RESPOSTA AOS CARDS DA HOME) --- */}
+        <section className="space-y-12">
 
-          <div className="grid md:grid-cols-2 gap-8 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-slate-800">Não é onde você guarda dinheiro.</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Imagine que a Blockchain é um cofre gigante de vidro transparente. Todo mundo vê o dinheiro lá dentro, mas ninguém pode tocar.
+          {/* 1.1 SEGURANÇA JURÍDICA (Anchor: #security) */}
+          <div id="security" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+            <div className="bg-blue-50 p-8 md:w-1/3 flex flex-col justify-center border-r border-blue-100">
+              <ShieldCheck className="w-12 h-12 text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold text-slate-900">Segurança Jurídica & Compliance</h2>
+              <p className="text-slate-600 mt-2">
+                Não é apenas código. É a lei aplicada à tecnologia.
               </p>
-              <p className="text-slate-600 leading-relaxed">
-                A sua <strong>Wallet (Carteira)</strong> não guarda as moedas. Ela guarda as <strong>CHAVES</strong> e as <strong>SENHAS</strong> que permitem movimentar aquele dinheiro dentro do cofre.
-              </p>
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mt-4">
-                <h4 className="font-semibold text-blue-800 flex items-center gap-2">
-                  <Lock className="w-4 h-4" /> Regra de Ouro da Autocustódia
-                </h4>
-                <p className="text-sm text-blue-700 mt-1">
-                  "Not your keys, not your coins." (Sem chaves, sem moedas). Se você perder sua senha (Frase Semente), ninguém pode recuperar. Você é o seu próprio banco.
+            </div>
+            <div className="p-8 md:w-2/3 space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-500" /> O Contrato Inteligente é um Contrato Real?
+                </h3>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Sim. Na LakeTokeniza, cada token (ERC-20/ERC-1155) emitido está vinculado juridicamente a uma <strong>Cédula de Crédito Bancário (CCB)</strong> ou a um <strong>Contrato de Investimento Coletivo (CIC)</strong>. O "Smart Contract" na blockchain é o espelho digital de um documento físico registrado em cartório ou sob as normas da CVM (Comissão de Valores Mobiliários).
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <Landmark className="w-5 h-5 text-blue-500" /> Proteção ao Investidor
+                </h3>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Se a internet acabar amanhã, seu direito de propriedade continua existindo. A Blockchain garante a transparência e a auditoria em tempo real, mas a segurança jurídica do "Mundo Real" (RWA) garante que seu ativo tem lastro, garantia e execução legal em caso de inadimplência.
                 </p>
               </div>
             </div>
+          </div>
 
-            <div className="flex flex-col justify-center space-y-4">
-              <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
-                <div className="bg-white p-2 rounded-md shadow-sm text-2xl">🦊</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">MetaMask / Rabby</h4>
-                  <p className="text-sm text-slate-500">São "chaves digitais" que vivem no seu navegador. Elas assinam as transações.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
-                <div className="bg-white p-2 rounded-md shadow-sm text-2xl">📝</div>
-                <div>
-                  <h4 className="font-bold text-slate-900">Frase de Recuperação</h4>
-                  <p className="text-sm text-slate-500">São 12 palavras que geram suas chaves. Guarde num papel, jamais no computador.</p>
-                </div>
-              </div>
+          {/* 1.2 LIQUIDEZ LAKEZERO (Anchor: #liquidity) */}
+          <div id="liquidity" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+            <div className="bg-yellow-50 p-8 md:w-1/3 flex flex-col justify-center border-r border-yellow-100">
+              <Zap className="w-12 h-12 text-yellow-600 mb-4" />
+              <h2 className="text-2xl font-bold text-slate-900">Liquidez LakeZero</h2>
+              <p className="text-slate-600 mt-2">
+                Velocidade de HFT (High Frequency Trading) com a segurança da Blockchain.
+              </p>
             </div>
-          </div>
-        </section>
-
-        {/* --- MÓDULO: CONTRIBUIÇÃO E SEGURANÇA LAKEZERO --- */}
-        <section className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-6">
-            <ShieldCheck className="w-6 h-6 text-emerald-600" />
-            <h2 className="text-2xl font-bold text-slate-900">Por que cobramos $0.30? A Tecnologia LakeZero.</h2>
-          </div>
-
-          <div className="bg-slate-900 rounded-2xl p-8 text-white relative overflow-hidden">
-            {/* Decorative */}
-            <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl"></div>
-
-            <div className="grid md:grid-cols-2 gap-10 relative z-10">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-bold text-emerald-400 mb-2">Contribuição para a Liberdade</h3>
-                  <p className="text-slate-300 text-sm leading-relaxed">
-                    A taxa simbólica de <strong>$0.30 USD</strong> (Crédito) não é apenas uma cobrança. É uma contribuição para o <strong>Fundo de Tesouraria Lake</strong>. Este fundo garante a manutenção dos servidores de alta performance, auditorias de segurança contínuas e o desenvolvimento de ferramentas de educação financeira gratuitas.
-                  </p>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="bg-white/10 p-4 rounded-xl flex-1 border border-white/10">
-                    <Coins className="w-6 h-6 text-yellow-400 mb-2" />
-                    <div className="font-bold">Liquidez Futura</div>
-                    <div className="text-xs text-slate-400">Fundo garantidor para o ecossistema.</div>
-                  </div>
-                  <div className="bg-white/10 p-4 rounded-xl flex-1 border border-white/10">
-                    <ShieldCheck className="w-6 h-6 text-emerald-400 mb-2" />
-                    <div className="font-bold">Auditoria</div>
-                    <div className="text-xs text-slate-400">Monitoramento 24/7.</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4 border-l border-white/10 pl-8">
-                <h3 className="text-lg font-bold text-white">O Diferencial LakeZero API</h3>
-                <p className="text-slate-400 text-sm">
-                  Muitas plataformas expõem seus dados. O Protocolo LakeZero utiliza uma arquitetura de <strong>"Assinatura Criptográfica Isolada"</strong>.
+            <div className="p-8 md:w-2/3 space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">O Problema da Blockchain Tradicional</h3>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Em plataformas comuns, você paga uma taxa ("Gas") a cada clique e espera segundos ou minutos para confirmar. Isso mata a agilidade de um mercado financeiro moderno.
                 </p>
-                <ul className="space-y-3 text-sm text-slate-300">
-                  <li className="flex gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
-                    <span>Seus dados são validados em um ambiente blindado (Rust).</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
-                    <span>Integridade Zero-Trust: Nunca confiamos, sempre verificamos matematicamente.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
-                    <span>Latência Zero: Segurança de banco com velocidade de internet.</span>
-                  </li>
-                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">A Solução LakeZero (Híbrida)</h3>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Nós desenvolvemos um motor de assinatura <strong>Off-Chain</strong> (fora da rede) com liquidação <strong>On-Chain</strong>. Você negocia instantaneamente, sem taxas de gás para ordens de compra e venda dentro do ambiente. Apenas a custódia final é gravada na Blockchain.
+                </p>
+                <div className="mt-4 p-4 bg-yellow-50/50 rounded-lg border border-yellow-100 text-sm text-yellow-800">
+                  <strong>Taxa de Sustentabilidade ($0.30):</strong> Esta pequena contribuição serve para manter essa super-infraestrutura de servidores ativos, garantindo que você tenha latência zero sem depender de mineradores lentos.
+                </div>
               </div>
             </div>
           </div>
+
+          {/* 1.3 ACESSO GLOBAL (Anchor: #global) */}
+          <div id="global" className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+            <div className="bg-emerald-50 p-8 md:w-1/3 flex flex-col justify-center border-r border-emerald-100">
+              <Globe className="w-12 h-12 text-emerald-600 mb-4" />
+              <h2 className="text-2xl font-bold text-slate-900">Acesso Global & Liberdade</h2>
+              <p className="text-slate-600 mt-2">
+                O fim das fronteiras geográficas para o seu dinheiro.
+              </p>
+            </div>
+            <div className="p-8 md:w-2/3 space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Por que investir Globalmente?</h3>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Historicamente, apenas grandes fundos podiam comprar imóveis no Brasil estando no Japão, ou investir em Agronegócio sem ter conta em banco local. A burocracia bancária (SWIFT, Câmbio, Spread) comia 10% do lucro.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">A Vantagem da Tokenização</h3>
+                <p className="text-slate-600 mt-2 leading-relaxed">
+                  Com a LakeTokeniza, sua carteira digital é seu passaporte. Você usa <strong>USDT, USDC ou ETH</strong> (moedas globais) para comprar frações de ativos reais.
+                  <br /><br />
+                  Isso significa <strong>Proteção Patrimonial</strong> (seu ativo não pode ser confiscado por instabilidade política local) e <strong>Portabilidade</strong> (você leva seu patrimônio no bolso para qualquer país). É a verdadeira soberania financeira.
+                </p>
+              </div>
+            </div>
+          </div>
+
         </section>
 
-        {/* --- MÓDULO ANTERIOR: CONSEGUINDO TOKENS --- */}
+        {/* --- DIVISOR VISUAL --- */}
+        <div className="flex items-center gap-4">
+          <div className="h-px bg-slate-200 flex-1"></div>
+          <span className="text-slate-400 text-sm font-medium uppercase tracking-widest">Área Técnica</span>
+          <div className="h-px bg-slate-200 flex-1"></div>
+        </div>
+
+        {/* --- MÓDULO ANTERIOR: TUTORIAL DE WALLET/FAUCETS (MANTIDO) --- */}
         <section className="max-w-5xl mx-auto">
           <div className="flex items-center gap-2 mb-6">
-            <Droplets className="w-6 h-6 text-purple-600" />
-            <h2 className="text-2xl font-bold text-slate-900">Laboratório: Conseguindo Tokens de Teste (Faucets)</h2>
+            <Wallet className="w-6 h-6 text-purple-600" />
+            <h2 className="text-2xl font-bold text-slate-900">Laboratório: Como Operar (Carteiras & Tokens)</h2>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <div className="flex gap-4">
-                <div className="p-3 bg-purple-100 rounded-full h-fit">
-                  <Wallet className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">O que é o "Sepolia ETH"?</h3>
-                  <p className="text-slate-600 mt-1">
-                    Para usar a Blockchain, você paga uma taxa ("Gas"). Na nossa rede de testes (Sepolia), esse dinheiro é fictício e gratuito.
-                  </p>
-                </div>
-              </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* O que é Wallet */}
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-slate-500" /> O que é uma Wallet?
+              </h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                Não é onde o dinheiro fica (ele fica na Blockchain). É onde ficam suas <strong>chaves</strong> para movimentar esse dinheiro. Se você perder a chave (frase secreta), perde o acesso. Instale a <strong>Rabby Wallet</strong> ou <strong>MetaMask</strong> para começar.
+              </p>
             </div>
 
-            <div className="p-6 grid gap-8 md:grid-cols-2">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">1</span>
-                  <h4 className="font-semibold text-slate-900">Chainlink Faucet (Rápido)</h4>
-                </div>
-                <ul className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <li className="flex gap-2">✓ Acesse faucets.chain.link</li>
-                  <li className="flex gap-2">✓ Conecte com GitHub e Carteira</li>
-                  <li className="flex gap-2">✓ Receba 0.1 Test ETH</li>
-                </ul>
-                <Link
-                  href="https://faucets.chain.link/"
-                  target="_blank"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:underline"
-                >
-                  Ir para Chainlink <ExternalLink className="w-3 h-3" />
+            {/* Faucets */}
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                <Droplets className="w-5 h-5 text-purple-500" /> Tokens de Teste (Grátis)
+              </h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                Estamos na rede de testes <strong>Sepolia</strong>. O dinheiro aqui é fictício. Você pode pegar de graça nos "Faucets" (Torneiras).
+              </p>
+              <div className="flex flex-col gap-2">
+                <Link href="https://faucets.chain.link/" target="_blank" className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                  Link 1: Chainlink Faucet (Requer Login) <ExternalLink className="w-3 h-3" />
                 </Link>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">2</span>
-                  <h4 className="font-semibold text-slate-900">PoW Mining (Sem Login)</h4>
-                </div>
-                <ul className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <li className="flex gap-2">✓ Acesse sepolia-faucet.pk910.de</li>
-                  <li className="flex gap-2">✓ Cole sua carteira e inicie a mineração</li>
-                  <li className="flex gap-2">✓ Ótimo para quem não tem saldo na rede principal</li>
-                </ul>
-                <Link
-                  href="https://sepolia-faucet.pk910.de/"
-                  target="_blank"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:underline"
-                >
-                  Ir para PoW Faucet <ExternalLink className="w-3 h-3" />
+                <Link href="https://sepolia-faucet.pk910.de/" target="_blank" className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                  Link 2: PoW Mining (Sem Login) <ExternalLink className="w-3 h-3" />
                 </Link>
-              </div>
-            </div>
-
-            <div className="bg-amber-50 border-t border-amber-100 p-4 flex gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
-              <div className="text-sm text-amber-800">
-                <strong>Dica Pro:</strong> A maioria dos faucets exige que você tenha pelo menos <strong>0.001 ETH</strong> na rede principal (Mainnet) para evitar robôs. Se você é novo, use a opção 2 (PoW) que não tem essa exigência.
               </div>
             </div>
           </div>
