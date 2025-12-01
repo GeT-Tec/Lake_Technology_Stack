@@ -9,26 +9,24 @@ datasource db {
 }
 
 model User {
-  id                  String                @id
-  walletAddress       String                @unique
-  nickname            String?
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  credits             Int                   @default(3)
-  assets              Asset[]
-  actions             AuditLog[]
-  credit_transactions credit_transactions[]
-  kycRecord           KycRecord?
+  id            String   @id @default(uuid())
+  walletAddress String   @unique
+  nickname      String?
+  credits       Int      @default(5)
+  createdAt     DateTime @default(now())
+  role          String   @default("USER")
+  assets        Asset[]
+  actions       AuditLog[]
+  kycRecord     KycRecord?
 
-  @@index([walletAddress])
   @@map("users")
 }
 
 model AdminWhitelist {
-  walletAddress String    @id @unique
-  role          AdminRole @default(AUDITOR)
-  addedAt       DateTime  @default(now())
-  addedBy       String
+  walletAddress String   @id @unique
+  role          String   @default("SUPER_ADMIN")
+  addedBy       String?
+  addedAt       DateTime @default(now())
 
   @@map("admins")
 }
@@ -77,16 +75,6 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-model credit_transactions {
-  id        String   @id
-  userId    String
-  amount    Int
-  type      String
-  metadata  Json?
-  createdAt DateTime @default(now())
-  users     User     @relation(fields: [userId], references: [id])
-}
-
 enum AssetStatus {
   DRAFT
   PENDING_REVIEW
@@ -100,10 +88,4 @@ enum KycStatus {
   PENDING
   VERIFIED
   REJECTED
-}
-
-enum AdminRole {
-  SUPER_ADMIN
-  OPERATOR
-  AUDITOR
 }
