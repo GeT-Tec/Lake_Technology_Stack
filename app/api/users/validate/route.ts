@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (error: any) {
+        console.error('ERRO PRISMA:', error.message);
         console.error("💥 [ERRO NA VALIDAÇÃO DE USUÁRIO]:", error);
         return NextResponse.json(
             {
