@@ -2,7 +2,7 @@
 
 import { PrismaClient } from '@prisma/client'
 
-// Evita múltiplas instâncias do Prisma no ambiente de desenvolvimento (Hot Reload)
+// Evita múltiplas instâncias do Prisma no ambiente de desenvolvimento (Hot Reload) e Serverless
 const prismaClientSingleton = () => {
   return new PrismaClient()
 }
