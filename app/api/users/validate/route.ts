@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { walletAddress } = body;
+        console.log('API Recebeu carteira:', body);
 
         // Validation
         if (!walletAddress || typeof walletAddress !== 'string') {
@@ -19,26 +20,22 @@ export async function POST(req: NextRequest) {
 
         console.log(`[API] Validando usuário: ${walletAddress}`);
 
-        // Check if user exists
-        let user = await prisma.user.findUnique({
+        // Usar UPSERT para garantir atomicidade e evitar erros de constraint (Condition Race)
+        let user = await prisma.user.upsert({
             where: {
+                walletAddress: walletAddress.toLowerCase()
+            },
+            update: {
+                // Opcional: Atualizar último login se houver campo
+                // lastLogin: new Date()
+            },
+            create: {
                 walletAddress: walletAddress.toLowerCase(),
+                credits: 5, // Give 5 free credits to new users
             },
         });
 
-        // If user doesn't exist, create them
-        if (!user) {
-            console.log(`[API] Usuário não encontrado. Criando novo registro...`);
-            user = await prisma.user.create({
-                data: {
-                    walletAddress: walletAddress.toLowerCase(),
-                    credits: 5, // Give 5 free credits to new users
-                },
-            });
-            console.log(`[API] ✅ Usuário criado com sucesso! Credits: ${user.credits}`);
-        } else {
-            console.log(`[API] ✅ Usuário existente encontrado. Credits: ${user.credits}`);
-        }
+        console.log(`[API] ✅ Usuário validado/criado via UPSERT. Credits: ${user.credits}`);
 
         return NextResponse.json({
             success: true,

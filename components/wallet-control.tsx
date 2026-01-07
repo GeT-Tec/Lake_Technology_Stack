@@ -6,10 +6,11 @@ import { Copy, History, Shield, LogOut, Wallet } from "lucide-react";
 import Link from "next/link";
 
 export function WalletControl() {
-    const { walletAddress, connectWallet, disconnectWallet, isConnected } = useWallet();
+    const { walletAddress, connectWallet, disconnectWallet, isConnected, isConnecting } = useWallet();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Close dropdown when clicking outside
@@ -66,8 +67,16 @@ export function WalletControl() {
     if (!isConnected || !walletAddress) {
         return (
             <button
-                onClick={connectWallet}
-                className="
+                disabled={isConnecting}
+                onClick={async () => {
+                    try {
+                        await connectWallet();
+                    } catch (err) {
+                        console.error("Critical Wallet Error:", err);
+                        alert("Erro crítico ao carregar interface da carteira. Recarregue a página.");
+                    }
+                }}
+                className={`
           px-6 py-2.5 
           bg-gradient-to-r from-blue-600 to-blue-700 
           hover:from-blue-700 hover:to-blue-800
@@ -75,10 +84,20 @@ export function WalletControl() {
           shadow-md hover:shadow-lg
           transition-all duration-200
           flex items-center gap-2
-        "
+          ${isConnecting ? "opacity-75 cursor-wait" : ""}
+        `}
             >
-                <Wallet className="w-4 h-4" />
-                Conectar Carteira
+                {isConnecting ? (
+                    <>
+                        <span className="animate-spin mr-2">⏳</span>
+                        Conectando...
+                    </>
+                ) : (
+                    <>
+                        <Wallet className="w-4 h-4" />
+                        Conectar Carteira
+                    </>
+                )}
             </button>
         );
     }

@@ -13,7 +13,7 @@ const ACCESS_FEE_ETH = "0.0001"; // Valor maior para garantir visibilidade (~$0.
 
 // Endereço da carteira de destino para receber as taxas
 // Endereço do dono do projeto para receber as taxas simbólicas
-const PLATFORM_WALLET_ADDRESS = process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS || "0xa3d5737c037981F02275eD1f4a1dde3b3577355c";
+const PLATFORM_WALLET_ADDRESS = process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS || "0xa56d035c92B479c49Be359496564a8A598716ec4";
 
 // Configurações específicas para zkSync Era
 const ZKSYNC_SEPOLIA_CONFIG = {
@@ -47,23 +47,23 @@ async function checkAccountActivation(provider: ethers.BrowserProvider, address:
   try {
     // Verificar se a conta tem nonce > 0 (indicando atividade)
     const nonce = await provider.getTransactionCount(address);
-    
+
     // Verificar se há código na conta (pode ser um contrato)
     const code = await provider.getCode(address);
-    
+
     // Verificar o saldo da conta
     const balance = await provider.getBalance(address);
-    
+
     // Conta está ativada se tem nonce > 0 ou saldo > 0 ou código
     const isActivated = nonce > 0 || balance > 0 || code !== '0x';
-    
+
     console.log(`🔍 Verificação de conta ${address}:`, {
       nonce,
       balance: ethers.formatEther(balance),
       hasCode: code !== '0x',
       isActivated
     });
-    
+
     return isActivated;
   } catch (error) {
     console.warn('⚠️ Erro ao verificar ativação da conta:', error);
@@ -78,19 +78,19 @@ async function checkAccountActivation(provider: ethers.BrowserProvider, address:
 async function tryActivateAccount(signer: ethers.Signer): Promise<boolean> {
   try {
     console.log('🔄 Tentando ativar conta na zkSync Era...');
-    
+
     const address = await signer.getAddress();
-    
+
     // Usar valor zero - apenas para "tocar" a conta na rede
     const tx = await signer.sendTransaction({
       to: address, // Enviar para si mesmo
       value: BigInt(0), // Valor zero
       gasLimit: BigInt(50000) // Gas maior para zkSync Era
     });
-    
+
     console.log('⏳ Aguardando ativação da conta...');
     const receipt = await tx.wait();
-    
+
     if (receipt && receipt.status === 1) {
       console.log('✅ Conta ativada com sucesso!');
       return true;
@@ -108,36 +108,36 @@ async function tryActivateAccount(signer: ethers.Signer): Promise<boolean> {
  * Estima gas com retry logic para zkSync Era
  */
 async function estimateGasWithRetry(
-  provider: ethers.BrowserProvider, 
-  transaction: any, 
+  provider: ethers.BrowserProvider,
+  transaction: any,
   maxRetries: number = 3
 ): Promise<bigint> {
   let lastError: any;
-  
+
   for (let i = 0; i < maxRetries; i++) {
     try {
       const gasEstimate = await provider.estimateGas(transaction);
-      
+
       // Aplicar multiplicador específico para zkSync
       const gasWithMargin = gasEstimate * BigInt(ZKSYNC_SEPOLIA_CONFIG.gasMultiplier) / BigInt(100);
-      
+
       console.log(`⛽ Gas estimado (tentativa ${i + 1}):`, {
         estimated: gasEstimate.toString(),
         withMargin: gasWithMargin.toString(),
         multiplier: `${ZKSYNC_SEPOLIA_CONFIG.gasMultiplier}%`
       });
-      
+
       return gasWithMargin;
     } catch (error: any) {
       lastError = error;
       console.warn(`⚠️ Erro na estimativa de gas (tentativa ${i + 1}):`, error.message);
-      
+
       if (i < maxRetries - 1) {
         await new Promise(resolve => setTimeout(resolve, ZKSYNC_SEPOLIA_CONFIG.retryDelay));
       }
     }
   }
-  
+
   // Se todas as tentativas falharam, usar gas padrão
   console.warn('⚠️ Usando gas padrão após falhas na estimativa');
   const defaultGas = BigInt(100000); // Gas padrão para transferências na zkSync
@@ -160,7 +160,7 @@ export function convertUsdToEth(usdAmount: number): string {
   if (usdAmount === ACCESS_FEE_USD) {
     return ethers.parseEther(ACCESS_FEE_ETH).toString();
   }
-  
+
   // Para outros valores, usar conversão com limitação de decimais
   const ethAmount = (usdAmount / ETH_USD_RATE).toFixed(10); // Limitar a 10 decimais
   return ethers.parseEther(ethAmount).toString();
@@ -174,7 +174,7 @@ export function convertUsdToEth(usdAmount: number): string {
 export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
   try {
     console.log('🚀 Iniciando transação OTIMIZADA de taxa de acesso na zkSync Era...');
-    
+
     // Verificar se o ethereum está disponível
     if (typeof window === 'undefined' || !window.ethereum) {
       throw new Error('MetaMask não está instalado ou disponível');
@@ -182,11 +182,11 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
 
     // Obter o provider do MetaMask
     const provider = new ethers.BrowserProvider(window.ethereum);
-    
+
     // Verificar se está conectado à rede correta (zkSync Sepolia)
     const network = await provider.getNetwork();
     const expectedChainId = BigInt(ZKSYNC_SEPOLIA_CONFIG.chainId);
-    
+
     if (network.chainId !== expectedChainId) {
       throw new Error(
         `Rede incorreta. Conecte-se à ${ZKSYNC_SEPOLIA_CONFIG.name} (Chain ID: ${ZKSYNC_SEPOLIA_CONFIG.chainId}). Rede atual: ${network.chainId}`
@@ -196,10 +196,10 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
     // Obter o signer (conta ativa)
     const signer = await provider.getSigner();
     const userAddress = await signer.getAddress();
-    
+
     // Validar endereço da plataforma
     const validatedPlatformAddress = getValidatedAddress(PLATFORM_WALLET_ADDRESS);
-    
+
     console.log('👤 Usuário:', userAddress);
     console.log('🏦 Carteira da plataforma:', validatedPlatformAddress);
     console.log('🌐 Rede:', network.name, 'Chain ID:', network.chainId.toString());
@@ -207,11 +207,11 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
     // Verificar saldo do usuário
     const balance = await provider.getBalance(userAddress);
     const feeInWei = ethers.parseEther(ACCESS_FEE_ETH);
-    
+
     console.log('💰 Saldo do usuário:', ethers.formatEther(balance), 'ETH');
     console.log('💸 Taxa necessária:', ACCESS_FEE_ETH, 'ETH');
     console.log('💸 Saldo mínimo recomendado:', ethers.formatEther(ZKSYNC_SEPOLIA_CONFIG.minBalance), 'ETH');
-    
+
     // Verificar se tem saldo mínimo para operar na zkSync
     if (balance < ZKSYNC_SEPOLIA_CONFIG.minBalance) {
       throw new Error(
@@ -242,7 +242,7 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
     // Verificar saldos antes da transação
     const balanceBefore = await provider.getBalance(userAddress);
     const receiverBalanceBefore = await provider.getBalance(validatedPlatformAddress);
-    
+
     console.log('💰 Saldos ANTES da transação:', {
       sender: {
         address: userAddress,
@@ -264,7 +264,7 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
     // Aguardar confirmação com timeout estendido para L2
     const receipt = await Promise.race([
       txResponse.wait(),
-      new Promise<never>((_, reject) => 
+      new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Timeout: Transação demorou mais de 5 minutos')), 300000)
       )
     ]);
@@ -276,15 +276,15 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
         gasUsed: receipt.gasUsed.toString(),
         effectiveGasPrice: receipt.gasPrice ? ethers.formatUnits(receipt.gasPrice, 'gwei') + ' gwei' : 'N/A'
       });
-      
+
       // Aguardar um pouco para sincronização da blockchain
       console.log('⏳ Aguardando sincronização...');
       await new Promise(resolve => setTimeout(resolve, 5000));
-      
+
       // Verificar saldos após a transação
       const balanceAfter = await provider.getBalance(userAddress);
       const receiverBalanceAfter = await provider.getBalance(validatedPlatformAddress);
-      
+
       console.log('💰 Saldos APÓS a transação:', {
         sender: {
           address: userAddress,
@@ -297,11 +297,11 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
           difference: ethers.formatEther(receiverBalanceAfter - receiverBalanceBefore)
         }
       });
-      
+
       // Verificar se o valor foi transferido corretamente
       const expectedTransfer = ethers.parseEther(ACCESS_FEE_ETH);
       const actualTransfer = receiverBalanceAfter - receiverBalanceBefore;
-      
+
       if (actualTransfer === expectedTransfer) {
         console.log('✅ Transferência CONFIRMADA! Valor correto recebido na carteira de destino.');
       } else if (actualTransfer > 0) {
@@ -313,11 +313,11 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
         console.warn('⚠️ Transferência não detectada imediatamente. Pode ser delay da rede L2.');
         console.log('🔗 Verifique manualmente no explorer:', `https://sepolia.explorer.zksync.io/tx/${txResponse.hash}`);
       }
-      
+
       // Verificar detalhes da transação no explorer
       console.log(`🔗 Verificar transação no explorer: https://sepolia.explorer.zksync.io/tx/${txResponse.hash}`);
       console.log(`🔗 Verificar carteira de destino: https://sepolia.explorer.zksync.io/address/${validatedPlatformAddress}`);
-      
+
       return {
         success: true,
         hash: txResponse.hash,
@@ -329,10 +329,10 @@ export async function sendAccessFeeTransactionV2(): Promise<TransactionResult> {
 
   } catch (error: any) {
     console.error('❌ Erro na transação zkSync Era V2:', error);
-    
+
     // Tratar diferentes tipos de erro específicos da zkSync
     let errorMessage = 'Erro desconhecido na zkSync Era';
-    
+
     if (error.code === 'ACTION_REJECTED' || error.code === 4001) {
       errorMessage = 'Transação rejeitada pelo usuário';
     } else if (error.code === 'INSUFFICIENT_FUNDS' || error.code === -32000) {
@@ -391,14 +391,14 @@ export function markAccessFeePaid(userAddress: string, txHash: string): void {
   try {
     const paidUsers = JSON.parse(localStorage.getItem('accessFeePaidUsers') || '[]');
     const paidTransactions = JSON.parse(localStorage.getItem('accessFeeTransactions') || '{}');
-    
+
     if (!paidUsers.includes(userAddress.toLowerCase())) {
-      paidUsers.push(userAddress.toLowerCase());      paidTransactions[userAddress.toLowerCase()] = {
+      paidUsers.push(userAddress.toLowerCase()); paidTransactions[userAddress.toLowerCase()] = {
         txHash,
         timestamp: Date.now(),
         amount: ACCESS_FEE_ETH + ' ETH'
       };
-      
+
       localStorage.setItem('accessFeePaidUsers', JSON.stringify(paidUsers));
       localStorage.setItem('accessFeeTransactions', JSON.stringify(paidTransactions));
     }

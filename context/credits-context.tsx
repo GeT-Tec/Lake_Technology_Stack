@@ -18,7 +18,7 @@ export interface Transaction {
 
 interface CreditsContextType {
     credits: number;
-    buyCredits: () => Promise<void>;
+    buyCredits: (amount: number, price: string) => Promise<void>;
     spendCredit: () => Promise<boolean>;
     isLoading: boolean;
     history: Transaction[];
@@ -79,7 +79,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const buyCredits = async () => {
+    const buyCredits = async (amount: number, price: string) => {
         if (!walletAddress) return;
         setIsLoading(true);
 
@@ -88,7 +88,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
                 // Execute blockchain transaction
                 const txHash = await (window as any).ethereum.request({
                     method: "eth_sendTransaction",
-                    params: [{ from: walletAddress, to: TREASURY_WALLET, value: CREDIT_PACKAGE_PRICE }]
+                    params: [{ from: walletAddress, to: TREASURY_WALLET, value: price }]
                 });
 
                 // Add credits via API
@@ -97,7 +97,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         walletAddress,
-                        amount: CREDITS_PER_PACKAGE
+                        amount: amount
                     })
                 });
 
@@ -109,21 +109,21 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
                     const newTx: Transaction = {
                         id: Date.now().toString(),
                         type: "COMPRA",
-                        amount: `+${CREDITS_PER_PACKAGE} Créditos`,
+                        amount: `+${amount} Créditos`,
                         hash: txHash,
                         date: new Date().toLocaleString('pt-BR')
                     };
 
                     saveHistoryToLocal([newTx, ...history]);
                     setIsHistoryOpen(true);
-                    alert(`✅ Compra realizada! Você agora tem ${data.credits} créditos.`);
+                    return data; // Return data for UI to handle success message
                 } else {
                     throw new Error(data.error || "Erro ao adicionar créditos");
                 }
             }
         } catch (error) {
             console.error("Erro na compra de créditos:", error);
-            alert("Compra cancelada ou falhou.");
+            throw error; // Propagate error for UI to handle
         } finally {
             setIsLoading(false);
         }

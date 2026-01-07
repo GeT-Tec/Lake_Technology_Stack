@@ -47,7 +47,7 @@ export const NETWORK_CONFIG = {
 };
 
 // Ambiente atual
-export const CURRENT_ENV = process.env.NEXT_PUBLIC_NETWORK_ENV || 'development';
+export const CURRENT_ENV = process.env.NEXT_PUBLIC_NETWORK_ENV || 'testnet';
 
 // Obter configuração com base no ambiente
 export const getContractAddresses = () => CONTRACT_ADDRESSES[CURRENT_ENV as keyof typeof CONTRACT_ADDRESSES];
