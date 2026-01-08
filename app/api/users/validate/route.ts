@@ -50,10 +50,7 @@ export async function POST(req: NextRequest) {
         console.error('ERRO PRISMA:', error.message);
         console.error("💥 [ERRO NA VALIDAÇÃO DE USUÁRIO]:", error);
         return NextResponse.json(
-            {
-                error: "Erro ao validar usuário",
-                details: error.message,
-            },
+            { error: error.message },
             { status: 500 }
         );
     }

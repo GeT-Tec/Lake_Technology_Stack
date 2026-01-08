@@ -4,6 +4,9 @@ import { PrismaClient } from '@prisma/client'
 
 // Evita múltiplas instâncias do Prisma no ambiente de desenvolvimento (Hot Reload) e Serverless
 const prismaClientSingleton = () => {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is missing in environment variables');
+  }
   return new PrismaClient()
 }
 
