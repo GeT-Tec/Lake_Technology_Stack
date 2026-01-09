@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Environment files
+.env*
+!.env.example
+
+# Debug logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Git
+.git/
+.gitignore
+
+# Documentation (not needed in image)
+*.md
+docs/
+
+# Misc
+*.pem
+*.key
+*.cert
+LICENSE
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Legacy
+_legacy_scripts/
+smart-contracts-legacy/

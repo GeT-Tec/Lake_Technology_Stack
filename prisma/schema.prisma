@@ -9,24 +9,27 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  walletAddress String   @unique
-  nickname      String?
-  credits       Int      @default(5)
-  createdAt     DateTime @default(now())
-  role          String   @default("USER")
-  assets        Asset[]
-  actions       AuditLog[]
-  kycRecord     KycRecord?
+  id             String           @id @default(uuid())
+  walletAddress  String           @unique
+  nickname       String?
+  createdAt      DateTime         @default(now())
+  credits        Int              @default(5)
+  role           String           @default("USER")
+  assets         Asset[]
+  actions        AuditLog[]
+  credit_ledger  credit_ledger[]
+  kycRecord      KycRecord?
+  payment_orders payment_orders[]
+  user_credits   user_credits?
 
   @@map("users")
 }
 
 model AdminWhitelist {
   walletAddress String   @id @unique
-  role          String   @default("SUPER_ADMIN")
-  addedBy       String?
   addedAt       DateTime @default(now())
+  addedBy       String?
+  role          String   @default("SUPER_ADMIN")
 
   @@map("admins")
 }
@@ -75,6 +78,75 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model credit_ledger {
+  id               String          @id
+  user_id          String
+  operation_type   OperationType
+  amount           Int
+  balance_before   Int
+  balance_after    Int
+  related_order_id String?
+  description      String?
+  metadata         Json?
+  created_at       DateTime        @default(now())
+  payment_orders   payment_orders? @relation(fields: [related_order_id], references: [id])
+  users            User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([created_at])
+  @@index([operation_type])
+  @@index([related_order_id])
+  @@index([user_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payment_orders {
+  id                     String          @id
+  user_id                String
+  external_tid           BigInt          @unique
+  amount_brl             Decimal         @db.Decimal(20, 2)
+  amount_crypto          Decimal         @db.Decimal(30, 18)
+  currency_symbol        String          @db.VarChar(20)
+  status                 PaymentStatus   @default(PENDING)
+  smart_contract_address String?         @db.VarChar(255)
+  blockchain_network     String?         @db.VarChar(50)
+  created_at             DateTime        @default(now())
+  updated_at             DateTime
+  credit_ledger          credit_ledger[]
+  users                  User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  webhook_logs           webhook_logs[]
+
+  @@index([created_at])
+  @@index([status])
+  @@index([user_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_credits {
+  user_id      String   @id
+  balance      Int      @default(0)
+  last_updated DateTime @default(now())
+  users        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model webhook_logs {
+  id               String          @id
+  event_type       String?         @db.VarChar(50)
+  payload          Json
+  token_received   String?         @db.VarChar(255)
+  external_tid     BigInt?
+  related_order_id String?
+  ip_address       String?         @db.Inet
+  user_agent       String?
+  processed        Boolean         @default(false)
+  created_at       DateTime        @default(now())
+  payment_orders   payment_orders? @relation(fields: [related_order_id], references: [id])
+
+  @@index([created_at])
+  @@index([external_tid])
+  @@index([processed])
+}
+
 enum AssetStatus {
   DRAFT
   PENDING_REVIEW
@@ -88,4 +160,18 @@ enum KycStatus {
   PENDING
   VERIFIED
   REJECTED
+}
+
+enum OperationType {
+  DEPOSIT
+  USAGE
+  REFUND
+  ADJUSTMENT
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
 }

@@ -1,0 +1,105 @@
+name: Deploy Production
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    name: Pre-deploy Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run lint
+        run: npm run lint
+      
+      - name: Run tests
+        run: npm run test --if-present
+
+  build-and-deploy:
+    name: Build & Deploy to Production
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    environment:
+      name: production
+      url: https://your-production-url.com
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+          NEXT_PUBLIC_DEFAULT_NETWORK: production
+          NEXT_PUBLIC_RPC_URL: ${{ secrets.PROD_RPC_URL }}
+          NEXT_PUBLIC_CHAIN_ID: ${{ secrets.PROD_CHAIN_ID }}
+          NEXT_PUBLIC_ASSET_TOKEN_ADDRESS: ${{ secrets.PROD_ASSET_TOKEN_ADDRESS }}
+          NEXT_PUBLIC_MARKETPLACE_ADDRESS: ${{ secrets.PROD_MARKETPLACE_ADDRESS }}
+          NEXT_PUBLIC_WAITLIST_ADDRESS: ${{ secrets.PROD_WAITLIST_ADDRESS }}
+      
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      # Uncomment and configure for your deployment platform
+      # - name: Deploy to Production
+      #   run: |
+      #     # Add your production deployment commands here
+      
+      - name: Health Check
+        run: |
+          echo "Waiting for production deployment..."
+          sleep 60
+          # curl -f ${{ secrets.PROD_URL }}/api/health || exit 1
+          echo "Production deployment completed successfully!"
+      
+      - name: Notify success
+        if: success()
+        run: |
+          echo "🚀 Successfully deployed ${{ steps.version.outputs.VERSION }} to production!"

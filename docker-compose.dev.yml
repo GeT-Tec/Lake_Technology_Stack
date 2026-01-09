@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder # Para hot reload, use estágio builder
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/lake_db
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_DEFAULT_NETWORK=development
+      - NEXT_PUBLIC_RPC_URL=http://localhost:8545
+      - NEXT_PUBLIC_CHAIN_ID=1337
+      - NEXT_PUBLIC_ASSET_TOKEN_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
+      - NEXT_PUBLIC_MARKETPLACE_ADDRESS=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+      - NEXT_PUBLIC_WAITLIST_ADDRESS=0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - db
+    command: npm run dev
+    networks:
+      - lake-dev-network
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=lake_db
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - lake-dev-network
+
+networks:
+  lake-dev-network:
+    driver: bridge
+
+volumes:
+  postgres_dev_data:

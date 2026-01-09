@@ -2,11 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/context/wallet-context";
-import { Copy, History, Shield, LogOut, Wallet } from "lucide-react";
+import { useCredits } from "@/context/credits-context";
+import { Copy, History, Shield, LogOut, Wallet, Coins, Plus } from "lucide-react";
 import Link from "next/link";
 
 export function WalletControl() {
     const { walletAddress, connectWallet, disconnectWallet, isConnected } = useWallet();
+    const { credits, openModal, refreshCredits } = useCredits();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -26,7 +28,7 @@ export function WalletControl() {
         }
     }, [isDropdownOpen]);
 
-    // Check if user is admin (you can replace with actual admin check API call)
+    // Check if user is admin
     useEffect(() => {
         async function checkAdmin() {
             if (!walletAddress) return;
@@ -42,6 +44,7 @@ export function WalletControl() {
 
         if (isConnected && walletAddress) {
             checkAdmin();
+            refreshCredits(); // Refresh credits when wallet connects
         }
     }, [walletAddress, isConnected]);
 
@@ -60,6 +63,11 @@ export function WalletControl() {
     const handleDisconnect = () => {
         setIsDropdownOpen(false);
         disconnectWallet();
+    };
+
+    const handleOpenCreditsModal = () => {
+        setIsDropdownOpen(false);
+        openModal();
     };
 
     // ESTADO DESCONECTADO: Botão "Conectar Carteira"
@@ -87,8 +95,28 @@ export function WalletControl() {
     const truncatedAddress = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
 
     return (
-        <div className="relative" ref={dropdownRef}>
-            {/* Badge Clicável */}
+        <div className="relative flex items-center gap-2" ref={dropdownRef}>
+            {/* Credits Badge */}
+            <button
+                onClick={handleOpenCreditsModal}
+                className="
+                    px-3 py-2 
+                    bg-gradient-to-r from-amber-500 to-amber-600
+                    hover:from-amber-600 hover:to-amber-700
+                    text-white font-medium text-sm
+                    rounded-lg 
+                    shadow-sm hover:shadow-md
+                    transition-all duration-200
+                    flex items-center gap-1.5
+                "
+                title="Clique para comprar créditos"
+            >
+                <Coins className="w-4 h-4" />
+                <span>{credits}</span>
+                <Plus className="w-3 h-3 opacity-70" />
+            </button>
+
+            {/* Wallet Badge Clicável */}
             <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="
@@ -109,7 +137,7 @@ export function WalletControl() {
             {isDropdownOpen && (
                 <div
                     className="
-            absolute right-0 mt-2 w-56
+            absolute right-0 top-full mt-2 w-56
             bg-white rounded-lg shadow-xl
             py-2
             ring-1 ring-black ring-opacity-5
@@ -117,6 +145,31 @@ export function WalletControl() {
             animate-in fade-in slide-in-from-top-2 duration-200
           "
                 >
+                    {/* Saldo de Créditos */}
+                    <div className="px-4 py-2.5 border-b border-slate-100">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-slate-500">Seus créditos</span>
+                            <span className="font-bold text-slate-900">{credits}</span>
+                        </div>
+                    </div>
+
+                    {/* Comprar Créditos */}
+                    <button
+                        onClick={handleOpenCreditsModal}
+                        className="
+              w-full px-4 py-2.5
+              text-left text-sm text-amber-600 font-medium
+              hover:bg-amber-50
+              transition-colors
+              flex items-center gap-3
+            "
+                    >
+                        <Coins className="w-4 h-4 text-amber-600" />
+                        <span>Comprar Créditos</span>
+                    </button>
+
+                    <div className="h-px bg-slate-100 my-1" />
+
                     {/* Copiar Endereço */}
                     <button
                         onClick={handleCopyAddress}

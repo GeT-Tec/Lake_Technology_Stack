@@ -81,7 +81,20 @@ export async function POST(req: NextRequest) {
             data: { credits: { decrement: amount } }
         });
 
-        console.log(`Créditos gastos: ${amount}. Saldo restante: ${updatedUser.credits}`);
+        // Registrar no audit log
+        await prisma.auditLog.create({
+            data: {
+                userWallet: walletAddress.toLowerCase(),
+                action: "SPEND_CREDITS",
+                metadata: {
+                    amount,
+                    previousBalance: user.credits,
+                    newBalance: updatedUser.credits
+                }
+            }
+        });
+
+        console.log(`✅ Créditos gastos: ${amount}. Saldo restante: ${updatedUser.credits}`);
 
         return NextResponse.json({
             success: true,
@@ -102,7 +115,7 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
     try {
         const body = await req.json();
-        const { walletAddress, amount = 10 } = body;
+        const { walletAddress, amount = 10, planId, txHash } = body;
 
         if (!walletAddress) {
             return NextResponse.json(
@@ -111,17 +124,42 @@ export async function PATCH(req: NextRequest) {
             );
         }
 
+        // Buscar saldo anterior para o audit log
+        const previousUser = await prisma.user.findUnique({
+            where: { walletAddress: walletAddress.toLowerCase() },
+            select: { credits: true }
+        });
+
+        const previousBalance = previousUser?.credits || 0;
+
+        // Incrementar créditos
         const updatedUser = await prisma.user.update({
             where: { walletAddress: walletAddress.toLowerCase() },
             data: { credits: { increment: amount } }
         });
 
-        console.log(`Créditos adicionados: ${amount}. Novo saldo: ${updatedUser.credits}`);
+        // Registrar no audit log (BUY_CREDITS)
+        await prisma.auditLog.create({
+            data: {
+                userWallet: walletAddress.toLowerCase(),
+                action: "BUY_CREDITS",
+                metadata: {
+                    planId: planId || "unknown",
+                    credits: amount,
+                    txHash: txHash || null,
+                    previousBalance,
+                    newBalance: updatedUser.credits
+                }
+            }
+        });
+
+        console.log(`✅ Créditos adicionados: ${amount}. Plano: ${planId}. Novo saldo: ${updatedUser.credits}`);
 
         return NextResponse.json({
             success: true,
             credits: updatedUser.credits,
-            added: amount
+            added: amount,
+            planId
         });
 
     } catch (error: any) {

@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
-import { WalletProvider } from "@/context/wallet-context"; // Importar Provider
+import { WalletProvider } from "@/context/wallet-context";
 import { CreditsProvider } from "@/context/credits-context";
+import { CreditsModal } from "@/components/CreditsModal";
 import AdminBadge from '@/components/AdminBadge';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -28,6 +29,7 @@ export default function RootLayout({
               {children}
             </main>
             <AdminBadge />
+            <CreditsModal />
           </CreditsProvider>
         </WalletProvider>
       </body>

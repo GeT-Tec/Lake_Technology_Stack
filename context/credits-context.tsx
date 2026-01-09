@@ -2,9 +2,55 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useWallet } from "./wallet-context";
 
-const TREASURY_WALLET = "0xa56d035c92B479c49Be359496564a8A598716ec4"; // Sua Wallet
-const CREDIT_PACKAGE_PRICE = "0x5AF3107A4000"; // 0.0001 ETH
-const CREDITS_PER_PACKAGE = 10; // Pacote de 10 créditos
+// Treasury wallet for receiving payments
+const TREASURY_WALLET = process.env.NEXT_PUBLIC_TREASURY_WALLET || "0xa56d035c92B479c49Be359496564a8A598716ec4";
+
+// Credit Plans Configuration
+export interface CreditPlan {
+    id: string;
+    name: string;
+    credits: number;
+    priceEth: string;      // Price in ETH (hex format for transaction)
+    priceEthDisplay: string; // Price in ETH (display format)
+    priceUsdt: string;     // Price in USDT (display only)
+    popular?: boolean;
+}
+
+export const CREDIT_PLANS: CreditPlan[] = [
+    {
+        id: "trial",
+        name: "Trial",
+        credits: 5,
+        priceEth: "0x6C6B935B8BBD4000", // ~0.00012 ETH
+        priceEthDisplay: "0.00012",
+        priceUsdt: "~$0.35"
+    },
+    {
+        id: "starter",
+        name: "Starter",
+        credits: 10,
+        priceEth: "0x1550F7DCA70000", // ~0.00038 ETH
+        priceEthDisplay: "0.00038",
+        priceUsdt: "~$1.15"
+    },
+    {
+        id: "pro",
+        name: "Pro",
+        credits: 50,
+        priceEth: "0x20C855D7F50000", // ~0.00058 ETH
+        priceEthDisplay: "0.00058",
+        priceUsdt: "~$1.75",
+        popular: true
+    },
+    {
+        id: "expert",
+        name: "Expert",
+        credits: 100,
+        priceEth: "0x41C2141C148000", // ~0.00116 ETH
+        priceEthDisplay: "0.00116",
+        priceUsdt: "~$3.00"
+    }
+];
 
 type TransactionType = "COMPRA" | "USO";
 
@@ -14,11 +60,12 @@ export interface Transaction {
     amount: string;
     hash?: string;
     date: string;
+    planId?: string;
 }
 
 interface CreditsContextType {
     credits: number;
-    buyCredits: () => Promise<void>;
+    buyCredits: (plan: CreditPlan) => Promise<boolean>;
     spendCredit: () => Promise<boolean>;
     isLoading: boolean;
     history: Transaction[];
@@ -26,6 +73,10 @@ interface CreditsContextType {
     isHistoryOpen: boolean;
     closeHistory: () => void;
     refreshCredits: () => Promise<void>;
+    // Modal controls
+    isModalOpen: boolean;
+    openModal: () => void;
+    closeModal: () => void;
 }
 
 const CreditsContext = createContext<CreditsContextType | undefined>(undefined);
@@ -36,6 +87,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     const [history, setHistory] = useState<Transaction[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Fetch credits from database when wallet connects
     const refreshCredits = async () => {
@@ -79,25 +131,44 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const buyCredits = async () => {
-        if (!walletAddress) return;
+    /**
+     * Compra créditos com base no plano selecionado
+     * @param plan - Plano de créditos selecionado
+     * @returns true se a compra foi bem-sucedida
+     */
+    const buyCredits = async (plan: CreditPlan): Promise<boolean> => {
+        if (!walletAddress) {
+            alert("Conecte sua carteira primeiro.");
+            return false;
+        }
+
         setIsLoading(true);
 
         try {
             if (typeof window !== "undefined" && (window as any).ethereum) {
-                // Execute blockchain transaction
+                console.log(`🛒 Iniciando compra: ${plan.name} (${plan.credits} créditos)`);
+
+                // Execute blockchain transaction to Treasury Wallet
                 const txHash = await (window as any).ethereum.request({
                     method: "eth_sendTransaction",
-                    params: [{ from: walletAddress, to: TREASURY_WALLET, value: CREDIT_PACKAGE_PRICE }]
+                    params: [{
+                        from: walletAddress,
+                        to: TREASURY_WALLET,
+                        value: plan.priceEth
+                    }]
                 });
 
-                // Add credits via API
+                console.log(`📤 Transação enviada: ${txHash}`);
+
+                // Add credits via API (with audit log)
                 const response = await fetch('/api/users/credits', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         walletAddress,
-                        amount: CREDITS_PER_PACKAGE
+                        amount: plan.credits,
+                        planId: plan.id,
+                        txHash: txHash
                     })
                 });
 
@@ -109,34 +180,53 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
                     const newTx: Transaction = {
                         id: Date.now().toString(),
                         type: "COMPRA",
-                        amount: `+${CREDITS_PER_PACKAGE} Créditos`,
+                        amount: `+${plan.credits} Créditos`,
                         hash: txHash,
-                        date: new Date().toLocaleString('pt-BR')
+                        date: new Date().toLocaleString('pt-BR'),
+                        planId: plan.id
                     };
 
                     saveHistoryToLocal([newTx, ...history]);
-                    setIsHistoryOpen(true);
+                    setIsModalOpen(false);
+
+                    console.log(`✅ Compra realizada! Novo saldo: ${data.credits}`);
                     alert(`✅ Compra realizada! Você agora tem ${data.credits} créditos.`);
+
+                    return true;
                 } else {
                     throw new Error(data.error || "Erro ao adicionar créditos");
                 }
+            } else {
+                alert("Carteira Web3 não detectada. Instale MetaMask ou Rabby.");
+                return false;
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Erro na compra de créditos:", error);
-            alert("Compra cancelada ou falhou.");
+
+            if (error.code === 4001) {
+                alert("Transação cancelada pelo usuário.");
+            } else {
+                alert("Compra cancelada ou falhou. Tente novamente.");
+            }
+            return false;
         } finally {
             setIsLoading(false);
         }
     };
 
-    const spendCredit = async () => {
+    /**
+     * Gasta 1 crédito para usar funcionalidade paga
+     * @returns true se o crédito foi debitado com sucesso
+     */
+    const spendCredit = async (): Promise<boolean> => {
         if (!walletAddress) {
             alert("Conecte sua carteira primeiro.");
             return false;
         }
 
         if (credits <= 0) {
-            alert("Saldo insuficiente.");
+            alert("Saldo insuficiente. Compre mais créditos.");
+            setIsModalOpen(true); // Open modal to buy credits
             return false;
         }
 
@@ -191,7 +281,11 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
             isHistoryOpen,
             openHistory: () => setIsHistoryOpen(true),
             closeHistory: () => setIsHistoryOpen(false),
-            refreshCredits
+            refreshCredits,
+            // Modal controls
+            isModalOpen,
+            openModal: () => setIsModalOpen(true),
+            closeModal: () => setIsModalOpen(false)
         }}>
             {children}
         </CreditsContext.Provider>
