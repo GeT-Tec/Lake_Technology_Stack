@@ -10,9 +10,10 @@ export interface CreditPlan {
     id: string;
     name: string;
     credits: number;
-    priceEth: string;      // Price in ETH (hex format for transaction)
-    priceEthDisplay: string; // Price in ETH (display format)
-    priceUsdt: string;     // Price in USDT (display only)
+    priceUSD: number;          // Base price in USD
+    priceEth: string;          // Price in ETH (hex format for transaction)
+    priceEthDisplay: string;   // Price in ETH (display format)
+    priceUsdt: string;         // Price in USDT (display only)
     popular?: boolean;
 }
 
@@ -21,7 +22,8 @@ export const CREDIT_PLANS: CreditPlan[] = [
         id: "trial",
         name: "Trial",
         credits: 5,
-        priceEth: "0x6C6B935B8BBD4000", // ~0.00012 ETH
+        priceUSD: 0.35,
+        priceEth: "0x6C6B935B8BBD4000",
         priceEthDisplay: "0.00012",
         priceUsdt: "~$0.35"
     },
@@ -29,7 +31,8 @@ export const CREDIT_PLANS: CreditPlan[] = [
         id: "starter",
         name: "Starter",
         credits: 10,
-        priceEth: "0x1550F7DCA70000", // ~0.00038 ETH
+        priceUSD: 1.15,
+        priceEth: "0x1550F7DCA70000",
         priceEthDisplay: "0.00038",
         priceUsdt: "~$1.15"
     },
@@ -37,7 +40,8 @@ export const CREDIT_PLANS: CreditPlan[] = [
         id: "pro",
         name: "Pro",
         credits: 50,
-        priceEth: "0x20C855D7F50000", // ~0.00058 ETH
+        priceUSD: 1.75,
+        priceEth: "0x20C855D7F50000",
         priceEthDisplay: "0.00058",
         priceUsdt: "~$1.75",
         popular: true
@@ -46,9 +50,10 @@ export const CREDIT_PLANS: CreditPlan[] = [
         id: "expert",
         name: "Expert",
         credits: 100,
-        priceEth: "0x41C2141C148000", // ~0.00116 ETH
-        priceEthDisplay: "0.00116",
-        priceUsdt: "~$3.00"
+        priceUSD: 3.50,
+        priceEth: "0x51DAC207A00000",
+        priceEthDisplay: "0.00117",
+        priceUsdt: "~$3.50"
     }
 ];
 

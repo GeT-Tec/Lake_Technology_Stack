@@ -2,6 +2,7 @@
 
 import { useCredits, CREDIT_PLANS, CreditPlan } from "@/context/credits-context";
 import { useWallet } from "@/context/wallet-context";
+import { getEthPriceAndHex } from "@/lib/token-prices";
 import { X, Zap, Loader2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,19 +12,30 @@ export function CreditsModal() {
 
     if (!isModalOpen) return null;
 
-    const handlePurchase = async (plan: CreditPlan) => {
+    const handlePurchase = async (originalPlan: CreditPlan) => {
         if (!isConnected) {
             alert("Conecte sua carteira primeiro.");
             return;
         }
-        await buyCredits(plan);
+
+        // Calculate dynamic ETH price from USD
+        const { ethDisplay, weiHex } = getEthPriceAndHex(originalPlan.priceUSD);
+
+        // Create synthetic plan with updated ETH values
+        const finalPlan: CreditPlan = {
+            ...originalPlan,
+            priceEth: weiHex,
+            priceEthDisplay: ethDisplay
+        };
+
+        await buyCredits(finalPlan);
     };
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-black/70 backdrop-blur-sm"
                 onClick={closeModal}
             />
 
@@ -33,41 +45,47 @@ export function CreditsModal() {
                 <button
                     onClick={closeModal}
                     className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 transition-colors z-10"
+                    aria-label="Fechar"
                 >
-                    <X className="w-5 h-5 text-slate-500" />
+                    <X className="w-5 h-5 text-slate-400" />
                 </button>
 
                 <div className="flex flex-col md:flex-row">
-                    {/* Left Panel - Branding */}
-                    <div className="bg-slate-900 text-white p-8 md:w-72 flex flex-col justify-center">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
-                                <Zap className="w-6 h-6" />
+                    {/* Left Panel - Branding (Dark) */}
+                    <div className="bg-slate-900 text-white p-8 md:w-80 flex flex-col justify-between min-h-[480px]">
+                        <div>
+                            {/* Icon */}
+                            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center mb-6">
+                                <Zap className="w-6 h-6 text-white" />
+                            </div>
+
+                            {/* Title */}
+                            <h2 className="text-2xl font-bold mb-4 leading-tight">
+                                Desbloqueie o Poder do LakeTokeniza
+                            </h2>
+
+                            {/* Description */}
+                            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                                Adquira créditos para acessar simuladores avançados,
+                                relatórios de viabilidade e tokenização de ativos reais.
+                            </p>
+
+                            {/* Security Badge */}
+                            <div className="flex items-center gap-2 text-sm text-slate-300">
+                                <Check className="w-4 h-4 text-green-400" />
+                                <span>Transação segura via Blockchain</span>
                             </div>
                         </div>
 
-                        <h2 className="text-2xl font-bold mb-3">
-                            Desbloqueie o Poder do LakeTokeniza
-                        </h2>
-
-                        <p className="text-slate-400 text-sm mb-6">
-                            Adquira créditos para acessar simuladores avançados,
-                            relatórios de viabilidade e tokenização de ativos reais.
-                        </p>
-
-                        <div className="flex items-center gap-2 text-sm text-slate-400">
-                            <Check className="w-4 h-4 text-green-400" />
-                            <span>Transação segura via Blockchain</span>
-                        </div>
-
-                        <p className="text-xs text-slate-500 mt-6">
+                        {/* Footer text */}
+                        <p className="text-xs text-slate-500 mt-8 leading-relaxed">
                             Os valores de contribuição dos pacotes oferecidos são para manter a
                             manutenção da plataforma e a segurança dos serviços oferecidos.
                         </p>
                     </div>
 
-                    {/* Right Panel - Plans */}
-                    <div className="flex-1 p-8">
+                    {/* Right Panel - Plans (Light) */}
+                    <div className="flex-1 p-8 bg-white">
                         <h3 className="text-xl font-semibold text-slate-900 mb-2">
                             Escolha seu pacote
                         </h3>
@@ -75,6 +93,7 @@ export function CreditsModal() {
                             Selecione a quantidade de créditos que deseja adicionar.
                         </p>
 
+                        {/* Grid 2x2 */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {CREDIT_PLANS.map((plan) => (
                                 <PlanCard
@@ -86,6 +105,7 @@ export function CreditsModal() {
                             ))}
                         </div>
 
+                        {/* Footer */}
                         <p className="text-xs text-center text-slate-400 mt-6">
                             Ao confirmar, uma transação será enviada para sua carteira Web3.
                         </p>
@@ -103,28 +123,32 @@ interface PlanCardProps {
 }
 
 function PlanCard({ plan, onSelect, isLoading }: PlanCardProps) {
+    // Get dynamic ETH price for display
+    const { ethDisplay } = getEthPriceAndHex(plan.priceUSD);
+
     return (
         <div
             className={cn(
                 "relative border rounded-xl p-5 transition-all duration-200",
                 plan.popular
-                    ? "border-blue-500 bg-blue-50/50 shadow-lg shadow-blue-100"
+                    ? "border-blue-500 bg-blue-50/30 shadow-lg ring-1 ring-blue-200"
                     : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
             )}
         >
-            {/* Popular Badge */}
+            {/* Popular Badge - Positioned at top border */}
             {plan.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                    <span className="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         Mais Popular
                     </span>
                 </div>
             )}
 
-            <div className="flex justify-between items-start mb-3">
+            {/* Header: Name + ETH Badge */}
+            <div className="flex justify-between items-start mb-1">
                 <div>
-                    <h4 className="font-semibold text-slate-900">{plan.name}</h4>
-                    <p className="text-xs text-slate-500">
+                    <h4 className="font-semibold text-slate-900 text-base">{plan.name}</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
                         {plan.id === "trial" && "Teste rápido da plataforma."}
                         {plan.id === "starter" && "Ideal para começar a explorar."}
                         {plan.id === "pro" && "Melhor valor para investidores."}
@@ -132,22 +156,24 @@ function PlanCard({ plan, onSelect, isLoading }: PlanCardProps) {
                     </p>
                 </div>
 
-                <div className="text-right">
-                    <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                        {plan.priceEthDisplay} ETH
+                {/* ETH Badge - Black background */}
+                <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-medium text-white bg-slate-950 px-2 py-1 rounded">
+                        {ethDisplay} <span className="text-slate-400">ETH</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 mt-1">
+                        {plan.priceUsdt}
                     </span>
                 </div>
             </div>
 
-            <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-3xl font-bold text-slate-900">{plan.credits}</span>
+            {/* Credits - Large number */}
+            <div className="flex items-baseline gap-1.5 my-4">
+                <span className="text-4xl font-bold text-slate-900">{plan.credits}</span>
                 <span className="text-sm text-slate-500">créditos</span>
             </div>
 
-            <div className="text-xs text-slate-400 mb-4">
-                {plan.priceUsdt} USDT
-            </div>
-
+            {/* Buy Button */}
             <button
                 onClick={() => onSelect(plan)}
                 disabled={isLoading}

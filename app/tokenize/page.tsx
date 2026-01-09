@@ -12,7 +12,7 @@ const ASSET_OPTIONS = ["Imóvel (Real Estate)", "Energia Renovável", "Agronegó
 export default function TokenizePage() {
   const router = useRouter();
   const { walletAddress, connectWallet, isConnected } = useWallet();
-  const { credits, spendCredit, buyCredits, isLoading: isCreditLoading } = useCredits();
+  const { credits, spendCredit, openModal, isLoading: isCreditLoading } = useCredits();
 
   const [hasAccess, setHasAccess] = useState(false);
   const [step, setStep] = useState(1);
@@ -35,7 +35,7 @@ export default function TokenizePage() {
 
   // --- AÇÕES ---
   const handleUnlock = async () => {
-    if (credits <= 0) { if (confirm("Comprar créditos?")) await buyCredits(); return; }
+    if (credits <= 0) { openModal(); return; }
     if (await spendCredit()) setHasAccess(true);
   };
 

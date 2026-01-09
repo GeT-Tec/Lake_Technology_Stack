@@ -101,8 +101,8 @@ export function WalletControl() {
                 onClick={handleOpenCreditsModal}
                 className="
                     px-3 py-2 
-                    bg-gradient-to-r from-amber-500 to-amber-600
-                    hover:from-amber-600 hover:to-amber-700
+                    bg-gradient-to-r from-blue-500 to-blue-600
+                    hover:from-blue-600 hover:to-blue-700
                     text-white font-medium text-sm
                     rounded-lg 
                     shadow-sm hover:shadow-md
@@ -158,13 +158,13 @@ export function WalletControl() {
                         onClick={handleOpenCreditsModal}
                         className="
               w-full px-4 py-2.5
-              text-left text-sm text-amber-600 font-medium
-              hover:bg-amber-50
+              text-left text-sm text-slate-700
+              hover:bg-slate-50
               transition-colors
               flex items-center gap-3
             "
                     >
-                        <Coins className="w-4 h-4 text-amber-600" />
+                        <Coins className="w-4 h-4 text-slate-600" />
                         <span>Comprar Créditos</span>
                     </button>
 
