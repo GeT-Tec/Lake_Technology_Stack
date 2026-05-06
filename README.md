@@ -1,192 +1,165 @@
-# Tokeniza.web3 - Plataforma de Tokenização de Ativos Reais
+# nextjs-anchor
 
-[![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)](https://github.com/yourusername/tokeniza.web3)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+Next.js starter with Tailwind CSS, `@solana/kit`, and an Anchor vault program example.
 
+## Getting Started
 
-## 📝 Visão Geral
-
-O **Tokeniza.web3** é uma plataforma educativa e funcional para a tokenização de ativos do mundo real utilizando tecnologias blockchain. A plataforma permite a criação, gestão e negociação de tokens representativos de ativos reais (imóveis, obras de arte, commodities, etc.) de forma transparente, segura e em conformidade com regulamentações relevantes.
-
-### 💡 Recursos Principais
-
-- **Tokenização 🪙**: Processo guiado para transformar ativos físicos em tokens digitais
-- **Marketplace 🛒**: Ambiente para negociação de ativos tokenizados
-- **Simulação 🎮**: Ferramenta educacional para entender o processo de tokenização
-- **Integração Web3 🔗**: Suporte para múltiplas carteiras blockchain (Ethereum, Solana)
-- **Documentação Educativa 📚**: Conteúdo explicativo sobre tokenização e blockchain
-
-## 🧰 Stack Tecnológico
-
-### Frontend
-- **Framework**: Next.js 13+ com React 18
-- **Linguagem**: TypeScript
-- **Estilização**: TailwindCSS
-- **Estado**: Zustand
-- **Web3**: ethers.js, wagmi
-
-### Backend
-- **Framework**: Axum (Rust)
-- **Banco de Dados**: PostgreSQL (via Prisma)
-- **API**: RESTful
-
-### Blockchain
-- **Contracts**: Solidity 0.8+
-- **Ferramentas**: Foundry, Hardhat
-- **Bibliotecas**: OpenZeppelin
-
-## 🚀 Como Iniciar
-
-### Pré-requisitos
-
-- Node.js 18+
-- Rust 1.70+
-- PostgreSQL
-- Foundry (forge, anvil)
-- Metamask ou outra carteira compatível
-
-### Instalação
-
-1. **Clone o repositório**
-
-```powershell
-git clone https://github.com/yourusername/tokeniza.web3.git
-cd tokeniza.web3
+```shell
+npx -y create-solana-dapp@latest -t solana-foundation/templates/kit/nextjs-anchor
 ```
 
-2. **Configuração do Frontend**
-
-```powershell
-cd tokenizacao-app/app
+```shell
 npm install
-cp .env.example .env.local
-# Configure as variáveis de ambiente necessárias
-```
-
-3. **Configuração do Backend**
-
-```powershell
-cd ../backend
-cp .env.example .env
-# Configure as variáveis de ambiente necessárias
-cargo build
-```
-
-4. **Configuração da Blockchain**
-
-```powershell
-cd ../onchain
-forge install
-cp .env.example .env
-# Configure as variáveis de ambiente necessárias
-```
-
-### Executando o Projeto
-
-1. **Iniciar o Ambiente de Blockchain Local**
-
-```powershell
-cd tokenizacao-app/onchain
-./script/start_anvil.sh
-```
-
-2. **Deployar os Contratos**
-
-```powershell
-cd tokenizacao-app/onchain
-./script/deploy_local.sh
-```
-
-3. **Iniciar o Backend**
-
-```powershell
-cd tokenizacao-app/backend
-cargo run
-```
-
-4. **Iniciar o Frontend**
-
-```powershell
-cd tokenizacao-app/app
+npm run setup   # Builds the Anchor program and generates the TypeScript client
 npm run dev
 ```
 
-5. **Acesse a aplicação**
+Open [http://localhost:3000](http://localhost:3000), connect your wallet, and interact with the vault.
 
-Abra seu navegador e acesse `http://localhost:3000`
+## What's Included
 
-## 📚 Documentação
+- **Wallet connection** via wallet-standard with auto-discovery and dropdown UI
+- **Cluster switching** — devnet, testnet, mainnet, and localnet from the header
+- **Wallet balance** display with airdrop button (devnet/testnet/localnet)
+- **SOL Vault program** — deposit and withdraw SOL from a personal PDA vault
+- **Toast notifications** with explorer links for every transaction
+- **Error handling** — human-readable messages for common Solana and program errors
+- **Codama-generated client** — type-safe program interactions using `@solana/kit`
+- **Tailwind CSS v4** with light/dark mode toggle
 
-- [Guia de Testes de Contratos](./guia-teste-contratos.md)
-- [Guia de Produção](./docs/Guia_Producao_Tokenizacao.md)
-- [Documentação de Pesquisa](./tokenizacao_pesquisa.md)
-- [Detecção de Ambiente](./tokenizacao-app/deteccao-ambiente.md)
-- [Integração Foundry](./tokenizacao-app/foundry-integration.md)
+## Stack
 
-## 🧪 Testes
+| Layer          | Technology                       |
+| -------------- | -------------------------------- |
+| Frontend       | Next.js 16, React 19, TypeScript |
+| Styling        | Tailwind CSS v4                  |
+| Solana Client  | `@solana/kit`, wallet-standard   |
+| Program Client | Codama-generated, `@solana/kit`  |
+| Program        | Anchor (Rust)                    |
 
-### Frontend
-```powershell
-cd tokenizacao-app/app
-npm test
-```
-
-### Backend
-```powershell
-cd tokenizacao-app/backend
-cargo test
-```
-
-### Smart Contracts
-```powershell
-cd tokenizacao-app/onchain
-forge test
-```
-
-## 🔐 Segurança
-
-Este projeto implementa as melhores práticas de segurança para contratos inteligentes:
-
-- Utilização de padrões OpenZeppelin
-- Padrões anti-reentrância
-- Controle de acesso baseado em papéis
-- Testes automatizados abrangentes
-- Verificação de overflow/underflow
-
-## 📊 Arquitetura
+## Project Structure
 
 ```
-tokenizacao-app/
-├── app/             # Frontend Next.js
-├── backend/         # Backend Rust/Axum
-└── onchain/         # Smart Contracts Solidity/Foundry
+├── app/
+│   ├── components/
+│   │   ├── cluster-context.tsx  # Cluster state (React context + localStorage)
+│   │   ├── cluster-select.tsx   # Cluster switcher dropdown
+│   │   ├── grid-background.tsx  # Solana-branded decorative grid
+│   │   ├── providers.tsx        # Wallet + theme providers
+│   │   ├── theme-toggle.tsx     # Light/dark mode toggle
+│   │   ├── vault-card.tsx       # Vault deposit/withdraw UI
+│   │   └── wallet-button.tsx    # Wallet connect/disconnect dropdown
+│   ├── generated/vault/        # Codama-generated program client
+│   ├── lib/
+│   │   ├── wallet/             # Wallet-standard connection layer
+│   │   │   ├── types.ts        # Wallet types
+│   │   │   ├── standard.ts     # Wallet discovery + session creation
+│   │   │   ├── signer.ts       # WalletSession → TransactionSigner
+│   │   │   └── context.tsx     # WalletProvider + useWallet() hook
+│   │   ├── hooks/
+│   │   │   ├── use-balance.ts  # SWR-based balance fetching
+│   │   │   └── use-send-transaction.ts  # Transaction send with loading state
+│   │   ├── cluster.ts          # Cluster endpoints + RPC factory
+│   │   ├── lamports.ts         # SOL/lamports conversion
+│   │   ├── send-transaction.ts # Transaction build + sign + send pipeline
+│   │   ├── errors.ts           # Transaction error parsing
+│   │   └── explorer.ts         # Explorer URL builder + address helpers
+│   └── page.tsx                # Main page
+├── anchor/                     # Anchor workspace
+│   └── programs/vault/         # Vault program (Rust)
+└── codama.json                 # Codama client generation config
 ```
 
-## 🎯 Roadmap
+## Local Development
 
-- [x] MVP com tokenização básica
-- [x] Marketplace de tokens
-- [ ] Integração com oráculos para avaliação de ativos
-- [ ] Sistema de governança descentralizada
-- [ ] Suporte para fracionamento de tokens
-- [ ] Integração com DeFi para liquidez
+To test against a local validator instead of devnet:
 
-## 👥 Contribuição
+1. **Start a local validator**
 
-Contribuições são bem-vindas! Por favor, leia as [diretrizes de contribuição](CONTRIBUTING.md) para mais detalhes.
+   ```bash
+   solana-test-validator
+   ```
 
-## 📜 Licença
+2. **Deploy the program locally**
 
-Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+   ```bash
+   solana config set --url localhost
+   cd anchor
+   anchor build
+   anchor deploy
+   cd ..
+   npm run codama:js   # Regenerate client with local program ID
+   ```
 
-## 📬 Contato
+3. **Switch to localnet** in the app using the cluster selector in the header.
 
-- **Website**: [tokeniza.web3.example.com](https://tokeniza.web3.example.com)
-- **Email**: contato@tokeniza.web3.example.com
-- **Twitter**: [@tokenizaweb3](https://twitter.com/tokenizaweb3)
+## Deploy Your Own Vault
 
----
+The included vault program is already deployed to devnet. To deploy your own:
 
-<p align="center">
-  Desenvolvido com ❤️ pela equipe Tokeniza
-</p>
+### Prerequisites
+
+- [Rust](https://rustup.rs/)
+- [Solana CLI](https://solana.com/docs/intro/installation)
+- [Anchor](https://www.anchor-lang.com/docs/installation)
+
+### Steps
+
+1. **Configure Solana CLI for devnet**
+
+   ```bash
+   solana config set --url devnet
+   ```
+
+2. **Create a wallet (if needed) and fund it**
+
+   ```bash
+   solana-keygen new
+   solana airdrop 2
+   ```
+
+3. **Build and deploy the program**
+
+   ```bash
+   cd anchor
+   anchor build
+   anchor keys sync    # Updates program ID in source
+   anchor build        # Rebuild with new ID
+   anchor deploy
+   cd ..
+   ```
+
+4. **Regenerate the client and restart**
+   ```bash
+   npm run setup   # Rebuilds program and regenerates client
+   npm run dev
+   ```
+
+## Testing
+
+Tests use [LiteSVM](https://github.com/LiteSVM/litesvm), a fast lightweight Solana VM for testing.
+
+```bash
+npm run anchor-build   # Build the program first
+npm run anchor-test    # Run tests
+```
+
+The tests are in `anchor/programs/vault/src/tests.rs` and automatically use the program ID from `declare_id!`.
+
+## Regenerating the Client
+
+If you modify the program, regenerate the TypeScript client:
+
+```bash
+npm run setup   # Or: npm run anchor-build && npm run codama:js
+```
+
+This uses [Codama](https://github.com/codama-idl/codama) to generate a type-safe client from the Anchor IDL.
+
+## Learn More
+
+- [Solana Docs](https://solana.com/docs) — core concepts and guides
+- [Anchor Docs](https://www.anchor-lang.com/docs/introduction) — program development framework
+- [Deploying Programs](https://solana.com/docs/programs/deploying) — deployment guide
+- [@solana/kit](https://github.com/anza-xyz/kit) — Solana JavaScript SDK
+- [Codama](https://github.com/codama-idl/codama) — client generation from IDL

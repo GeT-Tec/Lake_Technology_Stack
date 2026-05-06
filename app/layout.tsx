@@ -1,17 +1,27 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
-import { WalletProvider } from "@/context/wallet-context";
-import { CreditsProvider } from "@/context/credits-context";
-import { CreditsModal } from "@/components/CreditsModal";
-import AdminBadge from '@/components/AdminBadge';
+import { Providers } from "./components/providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "Lake Tokeniza | Investimentos RWA",
-  description: "Plataforma institucional de tokenização de ativos reais.",
+  title: "Solana dApp Starter",
+  description: "A minimal Next.js starter powered by @solana/kit",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -20,18 +30,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
-      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col`}>
-        <WalletProvider>
-          <CreditsProvider>
-            <Navbar />
-            <main className="flex-grow w-full">
-              {children}
-            </main>
-            <AdminBadge />
-            <CreditsModal />
-          </CreditsProvider>
-        </WalletProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${geistMono.variable} antialiased`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
