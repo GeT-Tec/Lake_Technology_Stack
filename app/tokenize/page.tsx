@@ -67,19 +67,37 @@ export default function TokenizePage() {
   };
 
   const handleListAsset = async () => {
-    if (confirm("Enviar para o Marketplace?")) {
-      const newAsset = {
-        id: Date.now().toString(),
-        name: formData.name,
-        type: formData.type === "Outros" ? formData.customType : formData.type,
-        value: totalRaise,
-        status: "Em Análise",
-        owner: walletAddress
-      };
-      const currentAssets = JSON.parse(localStorage.getItem("my_assets") || "[]");
-      localStorage.setItem("my_assets", JSON.stringify([...currentAssets, newAsset]));
-      alert("Enviado com Sucesso!");
+    if (!walletAddress) {
+      alert("Conecte sua carteira para enviar o ativo.");
+      return;
+    }
+
+    if (!confirm("Enviar para o Marketplace? Esta ação salvará a simulação no banco de dados vinculada à sua carteira.")) return;
+
+    try {
+      const assetType = formData.type === "Outros" ? formData.customType : formData.type;
+
+      const res = await fetch("/api/assets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ownerWallet: walletAddress,        // Base58 exato — sem toLowerCase()
+          name: formData.name,
+          type: assetType,
+          valuation: formData.valuation,
+          tokenPrice: formData.tokenPrice,
+          totalTokens: formData.tokenCount,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Erro ao salvar ativo.");
+
+      alert("✅ Ativo enviado com sucesso! Acesse o Marketplace para acompanhar.");
       router.push("/marketplace");
+    } catch (e: any) {
+      alert(`❌ Falha ao enviar: ${e.message}`);
     }
   };
 
@@ -108,10 +126,20 @@ export default function TokenizePage() {
         </div>
 
         <div className="p-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="p-8 bg-slate-50 rounded-3xl border"><p className="text-sm text-slate-500 font-bold uppercase tracking-widest mb-2">Captação Total</p><p className="text-4xl font-bold text-slate-900">{formatBRL(totalRaise)}</p></div>
-            <div className="p-8 bg-emerald-50 rounded-3xl border border-emerald-100"><p className="text-sm text-emerald-800 font-bold uppercase tracking-widest mb-2">Lucro Projetado</p><p className="text-4xl font-bold text-emerald-600">+{formatBRL(projectedProfit)}</p><p className="text-sm text-emerald-700 mt-2 font-bold">Markup de {profitMargin.toFixed(1)}%</p></div>
-            <div className="p-8 bg-blue-50 rounded-3xl border border-blue-100"><p className="text-sm text-blue-800 font-bold uppercase tracking-widest mb-2">Status Legal</p><p className="text-3xl font-bold text-blue-900">Pré-Aprovado</p></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="p-6 xl:p-8 bg-slate-50 rounded-3xl border overflow-hidden">
+              <p className="text-xs xl:text-sm text-slate-500 font-bold uppercase tracking-widest mb-2 truncate">Captação Total</p>
+              <p className="text-2xl lg:text-3xl xl:text-4xl font-bold text-slate-900 tracking-tight truncate" title={formatBRL(totalRaise)}>{formatBRL(totalRaise)}</p>
+            </div>
+            <div className="p-6 xl:p-8 bg-emerald-50 rounded-3xl border border-emerald-100 overflow-hidden">
+              <p className="text-xs xl:text-sm text-emerald-800 font-bold uppercase tracking-widest mb-2 truncate">Lucro Projetado</p>
+              <p className="text-2xl lg:text-3xl xl:text-4xl font-bold text-emerald-600 tracking-tight truncate" title={`+${formatBRL(projectedProfit)}`}>+{formatBRL(projectedProfit)}</p>
+              <p className="text-xs xl:text-sm text-emerald-700 mt-2 font-bold truncate">Markup de {profitMargin.toFixed(1)}%</p>
+            </div>
+            <div className="p-6 xl:p-8 bg-blue-50 rounded-3xl border border-blue-100 overflow-hidden">
+              <p className="text-xs xl:text-sm text-blue-800 font-bold uppercase tracking-widest mb-2 truncate">Status Legal</p>
+              <p className="text-2xl lg:text-3xl xl:text-4xl font-bold text-blue-900 tracking-tight truncate">Pré-Aprovado</p>
+            </div>
           </div>
 
           <div className="mb-10 p-6 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl flex gap-5 items-start shadow-sm">

@@ -1,10 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { SystemProgram, Transaction, PublicKey } from "@solana/web3.js";
-
-// Treasury wallet for receiving payments (Needs to be a valid base58 Solana address)
-const TREASURY_WALLET = process.env.NEXT_PUBLIC_TREASURY_WALLET || "11111111111111111111111111111111"; // Fallback to system program for testing
+import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 // Credit Plans Configuration
 export interface CreditPlan {
@@ -156,25 +153,34 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         try {
             console.log(`🛒 Iniciando compra: ${plan.name} (${plan.credits} créditos)`);
             
+            if (!process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS) {
+                throw new Error("Wallet de destino não configurada");
+            }
+
+            const MOCK_SOL_PRICE_USD = 150;
+            const solAmount = plan.priceUSD / MOCK_SOL_PRICE_USD;
+            const lamportsAmount = Math.round(solAmount * LAMPORTS_PER_SOL);
+
             // TODO: Implementar lógica de 'Gasless Transaction' (Fee Payer) para contas novas com 0 SOL no futuro.
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+
             const transaction = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: publicKey,
-                    toPubkey: new PublicKey(TREASURY_WALLET),
-                    lamports: 1000000, // 0.001 SOL (Montante puramente simbólico)
+                    toPubkey: new PublicKey(process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS),
+                    lamports: lamportsAmount,
                 })
             );
 
-            const latestBlockhash = await connection.getLatestBlockhash();
-            transaction.recentBlockhash = latestBlockhash.blockhash;
+            transaction.recentBlockhash = blockhash;
             transaction.feePayer = publicKey;
 
             // Execute blockchain transaction to Treasury Wallet
             const signature = await sendTransaction(transaction, connection);
             await connection.confirmTransaction({
                 signature,
-                blockhash: latestBlockhash.blockhash,
-                lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+                blockhash,
+                lastValidBlockHeight
             }, 'confirmed');
 
             const txHash = signature;

@@ -1,14 +1,17 @@
 "use client";
+import { useState } from "react";
 
 import { useCredits, CREDIT_PLANS, CreditPlan } from "@/context/credits-context";
 import { useWallet } from "@/context/wallet-context";
-import { getEthPriceAndHex } from "@/lib/token-prices";
 import { X, Zap, Loader2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const MOCK_SOL_PRICE_USD = 150; // Cotação aproximada
+
 export function CreditsModal() {
-    const { isModalOpen, closeModal, buyCredits, isLoading } = useCredits();
+    const { isModalOpen, closeModal, buyCredits, isLoading: isContextLoading } = useCredits();
     const { isConnected } = useWallet();
+    const [loadingPackageId, setLoadingPackageId] = useState<string | null>(null);
 
     if (!isModalOpen) return null;
 
@@ -18,17 +21,12 @@ export function CreditsModal() {
             return;
         }
 
-        // Calculate dynamic ETH price from USD
-        const { ethDisplay, weiHex } = getEthPriceAndHex(originalPlan.priceUSD);
-
-        // Create synthetic plan with updated ETH values
-        const finalPlan: CreditPlan = {
-            ...originalPlan,
-            priceEth: weiHex,
-            priceEthDisplay: ethDisplay
-        };
-
-        await buyCredits(finalPlan);
+        setLoadingPackageId(originalPlan.id);
+        try {
+            await buyCredits(originalPlan);
+        } finally {
+            setLoadingPackageId(null);
+        }
     };
 
     return (
@@ -100,7 +98,8 @@ export function CreditsModal() {
                                     key={plan.id}
                                     plan={plan}
                                     onSelect={handlePurchase}
-                                    isLoading={isLoading}
+                                    isLoading={loadingPackageId === plan.id}
+                                    isAnyLoading={loadingPackageId !== null || isContextLoading}
                                 />
                             ))}
                         </div>
@@ -120,11 +119,12 @@ interface PlanCardProps {
     plan: CreditPlan;
     onSelect: (plan: CreditPlan) => void;
     isLoading: boolean;
+    isAnyLoading: boolean;
 }
 
-function PlanCard({ plan, onSelect, isLoading }: PlanCardProps) {
-    // Get dynamic ETH price for display
-    const { ethDisplay } = getEthPriceAndHex(plan.priceUSD);
+function PlanCard({ plan, onSelect, isLoading, isAnyLoading }: PlanCardProps) {
+    // Get dynamic SOL price from USD
+    const solAmount = (plan.priceUSD / MOCK_SOL_PRICE_USD).toFixed(4);
 
     return (
         <div
@@ -156,13 +156,13 @@ function PlanCard({ plan, onSelect, isLoading }: PlanCardProps) {
                     </p>
                 </div>
 
-                {/* ETH Badge - Black background */}
+                {/* SOL Badge - Black background */}
                 <div className="flex flex-col items-end">
                     <span className="text-[10px] font-medium text-white bg-slate-950 px-2 py-1 rounded">
-                        {ethDisplay} <span className="text-slate-400">ETH</span>
+                        {solAmount} <span className="text-slate-400">SOL</span>
                     </span>
                     <span className="text-[10px] text-slate-400 mt-1">
-                        {plan.priceUsdt}
+                        {plan.priceUsdt} USD
                     </span>
                 </div>
             </div>
@@ -176,7 +176,7 @@ function PlanCard({ plan, onSelect, isLoading }: PlanCardProps) {
             {/* Buy Button */}
             <button
                 onClick={() => onSelect(plan)}
-                disabled={isLoading}
+                disabled={isAnyLoading}
                 className={cn(
                     "w-full py-2.5 rounded-lg font-medium text-sm transition-all duration-200",
                     plan.popular
