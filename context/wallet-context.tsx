@@ -15,11 +15,23 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-    const { publicKey, connected, disconnect, wallet } = useSolanaWallet();
+    const { publicKey, connected, disconnect, wallet, connect, connecting } = useSolanaWallet();
     const { setVisible } = useWalletModal();
 
     const walletAddress = publicKey ? publicKey.toBase58() : null;
     const walletType = wallet?.adapter.name || null;
+
+    // DPO/LGPD Compliance: Trigger connection handshakes strictly when a wallet has been explicitly selected from the modal
+    useEffect(() => {
+        if (wallet && !connected && !connecting) {
+            const walletName = wallet.adapter.name;
+            console.log("[Handshake Trace] Iniciando conexão com:", walletName);
+            console.log(`🔌 [Wallet Context] Estabelecendo handshake de conexão com a carteira: ${walletName}...`);
+            connect().catch((err) => {
+                console.error("❌ Falha ao estabelecer handshake com a carteira:", err);
+            });
+        }
+    }, [wallet, connected, connecting, connect]);
 
     useEffect(() => {
         // Quando conecta a carteira Solana, validamos no banco

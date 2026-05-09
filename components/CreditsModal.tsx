@@ -1,17 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useCredits, CREDIT_PLANS, CreditPlan } from "@/context/credits-context";
 import { useWallet } from "@/context/wallet-context";
 import { X, Zap, Loader2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MOCK_SOL_PRICE_USD = 150; // Cotação aproximada
-
 export function CreditsModal() {
-    const { isModalOpen, closeModal, buyCredits, isLoading: isContextLoading } = useCredits();
+    const { 
+        isModalOpen, 
+        closeModal, 
+        buyCredits, 
+        isLoading: isContextLoading,
+        solPrice,
+        isPriceLoading,
+        oracleError
+    } = useCredits();
     const { isConnected } = useWallet();
     const [loadingPackageId, setLoadingPackageId] = useState<string | null>(null);
+
+    // Reactively log when the price changes
+    useEffect(() => {
+        if (solPrice) {
+            console.log(`[UI Update] Novo preço SOL: ${solPrice.toFixed(2)}, recalculando pacotes...`);
+        }
+    }, [solPrice]);
 
     if (!isModalOpen) return null;
 
@@ -84,12 +97,65 @@ export function CreditsModal() {
 
                     {/* Right Panel - Plans (Light) */}
                     <div className="flex-1 p-8 bg-white">
-                        <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                            Escolha seu pacote
-                        </h3>
-                        <p className="text-sm text-slate-500 mb-6">
-                            Selecione a quantidade de créditos que deseja adicionar.
-                        </p>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h3 className="text-xl font-semibold text-slate-900 mb-1">
+                                    Escolha seu pacote
+                                </h3>
+                                <p className="text-sm text-slate-500">
+                                    Selecione a quantidade de créditos que deseja adicionar.
+                                </p>
+                            </div>
+
+                            {/* Premium Live Oracle Price Badge */}
+                            <div className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 border rounded-lg text-xs font-medium self-start sm:self-center shadow-sm transition-colors",
+                                oracleError 
+                                    ? "bg-amber-50/50 border-amber-200/60 text-amber-700" 
+                                    : "bg-slate-50 border-slate-100 text-slate-600"
+                            )}>
+                                <span className="relative flex h-2 w-2">
+                                    <span className={cn(
+                                        "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+                                        oracleError ? "bg-amber-400" : "bg-green-400"
+                                    )}></span>
+                                    <span className={cn(
+                                        "relative inline-flex rounded-full h-2 w-2",
+                                        oracleError ? "bg-amber-500" : "bg-green-500"
+                                    )}></span>
+                                </span>
+                                {isPriceLoading ? (
+                                    <span className="flex items-center gap-1.5">
+                                        <Loader2 className="w-3 h-3 animate-spin text-slate-400" />
+                                        Buscando oráculo...
+                                    </span>
+                                ) : oracleError ? (
+                                    <span>
+                                        Modo de Segurança: <strong className="text-amber-900 font-semibold">1 SOL = $150.00</strong>
+                                    </span>
+                                ) : solPrice ? (
+                                    <span className="text-slate-700">
+                                        Cotação Jupiter/Pyth: <strong className="text-slate-900 font-semibold">1 SOL = ${solPrice.toFixed(2)}</strong>
+                                    </span>
+                                ) : (
+                                    <span className="text-amber-600 font-medium">Erro ao carregar oráculo</span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Friendly Oracle Error Alert Notification Banner */}
+                        {oracleError && (
+                            <div className="mb-6 p-4 bg-amber-50 border border-amber-100/80 rounded-xl text-xs text-amber-800 flex items-start gap-2.5 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <span className="relative flex h-2 w-2 mt-1">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                </span>
+                                <div className="flex-1">
+                                    <span className="font-semibold block mb-0.5 text-amber-900">Operação em Modo de Contingência</span>
+                                    <span>{oracleError} O processamento financeiro continuará ativo com a cotação padrão de segurança.</span>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Grid 2x2 */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -100,6 +166,7 @@ export function CreditsModal() {
                                     onSelect={handlePurchase}
                                     isLoading={loadingPackageId === plan.id}
                                     isAnyLoading={loadingPackageId !== null || isContextLoading}
+                                    solPrice={solPrice}
                                 />
                             ))}
                         </div>
@@ -120,11 +187,25 @@ interface PlanCardProps {
     onSelect: (plan: CreditPlan) => void;
     isLoading: boolean;
     isAnyLoading: boolean;
+    solPrice: number | null;
 }
 
-function PlanCard({ plan, onSelect, isLoading, isAnyLoading }: PlanCardProps) {
-    // Get dynamic SOL price from USD
-    const solAmount = (plan.priceUSD / MOCK_SOL_PRICE_USD).toFixed(4);
+function PlanCard({ plan, onSelect, isLoading, isAnyLoading, solPrice }: PlanCardProps) {
+    // Get dynamic SOL price from USD inside a useMemo to make sure it is completely reactive
+    const solAmount = useMemo(() => {
+        const currentSolPrice = solPrice || 150;
+        return (plan.priceUSD / currentSolPrice).toFixed(4);
+    }, [plan.priceUSD, solPrice]);
+
+    // Visually flash/glow the SOL Badge when the oracle cotação changes
+    const [isFlashing, setIsFlashing] = useState(false);
+    useEffect(() => {
+        if (solPrice) {
+            setIsFlashing(true);
+            const timer = setTimeout(() => setIsFlashing(false), 800);
+            return () => clearTimeout(timer);
+        }
+    }, [solPrice]);
 
     return (
         <div
@@ -156,10 +237,15 @@ function PlanCard({ plan, onSelect, isLoading, isAnyLoading }: PlanCardProps) {
                     </p>
                 </div>
 
-                {/* SOL Badge - Black background */}
+                {/* SOL Badge - Black background with premium transition effect when updating */}
                 <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-medium text-white bg-slate-950 px-2 py-1 rounded">
-                        {solAmount} <span className="text-slate-400">SOL</span>
+                    <span 
+                        className={cn(
+                            "text-[10px] font-medium text-white bg-slate-950 px-2 py-1 rounded transition-all duration-300 transform inline-block",
+                            isFlashing && "bg-green-600 scale-110 shadow-[0_0_12px_rgba(22,163,74,0.6)] text-white"
+                        )}
+                    >
+                        {solAmount} <span className={cn("text-slate-400 transition-colors", isFlashing && "text-green-200")}>SOL</span>
                     </span>
                     <span className="text-[10px] text-slate-400 mt-1">
                         {plan.priceUsdt} USD

@@ -7,7 +7,8 @@ import { useCredits } from "@/context/credits-context";
 // Removendo import do serviço temporariamente para isolar o problema
 // import { LakeZeroService } from "@/services/lakezero";
 
-const ASSET_OPTIONS = ["Imóvel (Real Estate)", "Energia Renovável", "Agronegócio (Agro)", "Dívida / Precatórios", "Startups / Equity", "Créditos de Carbono", "Royalties Musicais", "Outros"];
+const SECTOR_OPTIONS = ["Imóvel (Real Estate)", "Energia Renovável", "Agronegócio (Agro)", "Dívida / Precatórios", "Startups / Equity", "Créditos de Carbono", "Royalties Musicais", "Outros"];
+const NATURE_OPTIONS = ["Ativo de Renda/Security", "Token de Utilidade/Acesso", "NFT/Colecionável"];
 
 export default function TokenizePage() {
   const router = useRouter();
@@ -20,7 +21,18 @@ export default function TokenizePage() {
   const [showReport, setShowReport] = useState(false);
 
   // Estado Híbrido (Visual Formatado + Valor Numérico)
-  const [formData, setFormData] = useState({ name: "", type: "", customType: "", description: "", valuation: 0, tokenCount: 0, tokenPrice: 0, documents: null as File | null });
+  const [formData, setFormData] = useState({
+    name: "",
+    sector: "",
+    tokenNature: "",
+    description: "",
+    valuation: 0,
+    tokenCount: 0,
+    tokenPrice: 0,
+    treasuryTokens: 0,
+    royalties: 0.0,
+    documents: null as File | null
+  });
   const [errors, setErrors] = useState<string | null>(null);
 
   const totalRaise = formData.tokenCount * formData.tokenPrice;
@@ -41,8 +53,9 @@ export default function TokenizePage() {
 
   const handleNext = () => {
     setErrors(null);
-    if (step === 1 && (!formData.name || !formData.type || !formData.description)) { setErrors("Campos obrigatórios."); return; }
-    if (step === 2 && (!formData.valuation || !formData.tokenCount || !formData.tokenPrice)) { setErrors("Defina os valores."); return; }
+    if (step === 1 && (!formData.name || !formData.sector || !formData.tokenNature || !formData.description)) { setErrors("Todos os campos do Passo 1 são obrigatórios."); return; }
+    if (step === 2 && (!formData.valuation || !formData.tokenCount || !formData.tokenPrice)) { setErrors("Defina os valores financeiros principais."); return; }
+    if (step === 2 && formData.treasuryTokens > formData.tokenCount) { setErrors("Tokens retidos não podem ser maiores do que a quantidade total."); return; }
     setStep(prev => prev + 1);
   };
 
@@ -75,18 +88,21 @@ export default function TokenizePage() {
     if (!confirm("Enviar para o Marketplace? Esta ação salvará a simulação no banco de dados vinculada à sua carteira.")) return;
 
     try {
-      const assetType = formData.type === "Outros" ? formData.customType : formData.type;
-
       const res = await fetch("/api/assets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ownerWallet: walletAddress,        // Base58 exato — sem toLowerCase()
           name: formData.name,
-          type: assetType,
+          type: formData.sector,             // Compatibilidade retroativa para UI
+          sector: formData.sector,
+          tokenNature: formData.tokenNature,
           valuation: formData.valuation,
           tokenPrice: formData.tokenPrice,
           totalTokens: formData.tokenCount,
+          treasuryTokens: formData.treasuryTokens,
+          marketTokens: Math.max(0, formData.tokenCount - formData.treasuryTokens),
+          royalties: formData.royalties,
         }),
       });
 
@@ -168,27 +184,49 @@ export default function TokenizePage() {
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
             <h2 className="text-3xl font-bold text-slate-800">Dados do Ativo</h2>
-            <div><label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Nome</label><input type="text" className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: Fazenda Santa Fé" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div><label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Categoria</label><select className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}><option value="">Selecione...</option>{ASSET_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</select></div>
-              {formData.type === "Outros" && <div><label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Especifique</label><input type="text" className="w-full p-4 text-lg border rounded-xl bg-blue-50 focus:bg-white outline-none" value={formData.customType} onChange={e => setFormData({ ...formData, customType: e.target.value })} /></div>}
+            <div>
+              <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Nome</label>
+              <input type="text" className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: Fazenda Santa Fé" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
             </div>
-            <div><label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Descrição</label><textarea rows={4} className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none resize-none" placeholder="Detalhes..." value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} /></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Setor</label>
+                <select className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.sector} onChange={e => setFormData({ ...formData, sector: e.target.value })}>
+                  <option value="">Selecione o Setor...</option>
+                  {SECTOR_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Natureza do Token</label>
+                <select className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.tokenNature} onChange={e => setFormData({ ...formData, tokenNature: e.target.value })}>
+                  <option value="">Selecione a Natureza...</option>
+                  {NATURE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Descrição</label>
+              <textarea rows={4} className="w-full p-4 text-lg border rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none resize-none" placeholder="Detalhes..." value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+            </div>
           </div>
         )}
 
         {step === 2 && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
-            <h2 className="text-3xl font-bold text-slate-800">Estrutura Financeira</h2>
-            <div>
-              <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Valuation (Custo Base)</label>
-              <div className="relative">
-                <span className="absolute left-4 top-4 text-slate-400 font-bold text-lg">R$</span>
-                <input type="text" className="w-full p-4 pl-14 text-xl font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" value={formatInputValue(formData.valuation)} onChange={e => setFormData({ ...formData, valuation: parseCurrency(e.target.value) })} />
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+            <h2 className="text-3xl font-bold text-slate-800">Estrutura Financeira e Tesouraria</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Valuation (Custo Base)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-4 text-slate-400 font-bold text-lg">R$</span>
+                  <input type="text" className="w-full p-4 pl-14 text-xl font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" value={formatInputValue(formData.valuation)} onChange={e => setFormData({ ...formData, valuation: parseCurrency(e.target.value) })} />
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div><label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Qtd. Tokens</label><input type="number" className="w-full p-4 text-xl font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.tokenCount || ""} onChange={e => setFormData({ ...formData, tokenCount: Number(e.target.value) })} /></div>
+              
               <div>
                 <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Preço Venda</label>
                 <div className="relative">
@@ -197,6 +235,35 @@ export default function TokenizePage() {
                 </div>
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Qtd. Tokens</label>
+                <input type="number" className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.tokenCount || ""} onChange={e => setFormData({ ...formData, tokenCount: Number(e.target.value) })} />
+              </div>
+              
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Tokens Retidos (Tesouraria)</label>
+                <input type="number" className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.treasuryTokens || ""} onChange={e => setFormData({ ...formData, treasuryTokens: Number(e.target.value) })} />
+              </div>
+
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Tokens para o Mercado</label>
+                <div className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-600 select-none cursor-not-allowed">
+                  {Math.max(0, formData.tokenCount - formData.treasuryTokens).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Royalties de Revenda (%)</label>
+              <div className="relative">
+                <input type="number" step="0.1" min="0" max="15" className="w-full p-4 pr-12 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: 2.5" value={formData.royalties || ""} onChange={e => setFormData({ ...formData, royalties: parseFloat(e.target.value) || 0 })} />
+                <span className="absolute right-4 top-4 text-slate-400 font-bold text-lg">%</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Taxa cobrada em negociações secundárias do ativo na blockchain.</p>
+            </div>
+
             {projectedProfit > 0 && (
               <div className="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r-xl flex justify-between items-center shadow-sm">
                 <div><p className="text-xs font-bold text-emerald-800 uppercase tracking-wide mb-1">Lucro Estimado</p><p className="text-4xl font-bold text-emerald-600">+{formatBRL(projectedProfit)}</p></div>

@@ -25,7 +25,7 @@
   "scripts": {
     "anchor-build": "cd anchor && anchor build",
     "anchor-test": "cd anchor && anchor test --skip-deploy",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "ci": "npm run build && npm run lint && npm run format:check",
     "codama:js": "codama run js",
     "dev": "next dev",
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "@pythnetwork/client": "^2.22.1",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-aspect-ratio": "^1.1.8",

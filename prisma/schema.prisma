@@ -47,6 +47,11 @@ model Asset {
   status          AssetStatus @default(DRAFT)
   contractAddress String?
   chainId         Int?
+  sector          String?
+  tokenNature     String?
+  treasuryTokens  Int         @default(0)
+  marketTokens    Int         @default(0)
+  royalties       Float       @default(0.0)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   owner           User        @relation(fields: [ownerWallet], references: [walletAddress])

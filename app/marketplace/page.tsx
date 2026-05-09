@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle } from "lucide-react";
+import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle, ShieldCheck } from "lucide-react";
 import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
+import Link from "next/link";
 
 const DEMO_ASSETS = [
   { id: "demo-1", name: "Edifício Faria Lima Prime", type: "Real Estate", price: 1200, yield: "12.5% a.a.", available: "45%", image: "bg-blue-900", locked: false, isDemo: true, ownerWallet: null },
@@ -100,19 +101,22 @@ export default function Marketplace() {
       const data = await res.json();
 
       if (res.ok && data.assets) {
-        const dbAssets: AssetItem[] = data.assets.map((a: any) => ({
-          id: a.id,
-          name: a.name,
-          type: a.type,
-          price: Number(a.valuation) / 1000,
-          yield: "Em Análise",
-          available: "100%",
-          image: "bg-slate-700",
-          locked: true,
-          isUserAsset: true,
-          ownerWallet: a.ownerWallet,
-          status: a.status,
-        }));
+        const dbAssets: AssetItem[] = data.assets.map((a: any) => {
+          const isApproved = a.status === "APPROVED" || a.status === "ACTIVE" || a.status === "TOKENIZED";
+          return {
+            id: a.id,
+            name: a.name,
+            type: a.type,
+            price: Number(a.valuation) / 1000,
+            yield: isApproved ? "12.0% a.a." : "Em Análise",
+            available: "100%",
+            image: "bg-slate-700",
+            locked: isApproved ? false : true,
+            isUserAsset: true,
+            ownerWallet: a.ownerWallet,
+            status: a.status,
+          };
+        });
 
         setAssets([...dbAssets, ...DEMO_ASSETS]);
       }
@@ -150,6 +154,32 @@ export default function Marketplace() {
       alert(`❌ ${e.message}`);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  // Forçar aprovação do ativo (Dev Mode)
+  const handleForceApproval = async (assetId: string) => {
+    if (!connectedWallet) return;
+    try {
+      const res = await fetch(`/api/assets/${assetId}?wallet=${encodeURIComponent(connectedWallet)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "APPROVED" }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro ao aprovar ativo.");
+
+      // Atualiza o estado local do ativo para aprovação imediata sem reload
+      setAssets(prev =>
+        prev.map(a =>
+          a.id === assetId
+            ? { ...a, status: "APPROVED", locked: false, yield: "12.0% a.a." }
+            : a
+        )
+      );
+    } catch (e: any) {
+      alert(`❌ ${e.message}`);
     }
   };
 
@@ -241,9 +271,23 @@ export default function Marketplace() {
                       {isMyAsset(asset) ? <Briefcase className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />}
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${isMyAsset(asset) ? "bg-purple-100 text-purple-800" : "bg-green-50 text-green-700"}`}>
-                        {isMyAsset(asset) ? "EM ANÁLISE" : "ATIVO"}
-                      </span>
+                      {isMyAsset(asset) ? (
+                        asset.status === "APPROVED" || asset.status === "ACTIVE" || asset.status === "TOKENIZED" ? (
+                          <span className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            ATIVO
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-purple-100 text-purple-800">
+                            EM ANÁLISE
+                          </span>
+                        )
+                      ) : (
+                        <span className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-green-50 text-green-700 flex items-center gap-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                          ATIVO
+                        </span>
+                      )}
 
                       {/* Botão Destrutivo — apenas para o dono */}
                       {isMyAsset(asset) && !asset.isDemo && (
@@ -261,16 +305,43 @@ export default function Marketplace() {
                   <h3 className="text-lg font-bold mb-1 truncate" title={asset.name}>{asset.name}</h3>
                   <p className="text-xs text-slate-500 uppercase mb-4 truncate">{asset.type}</p>
 
-                  <button
-                    disabled={asset.locked}
-                    className={`w-full py-2 rounded-lg font-bold text-sm transition-colors ${
-                      asset.locked
-                        ? "bg-slate-100 text-slate-400 cursor-default"
-                        : "bg-slate-900 text-white hover:bg-slate-700"
-                    }`}
-                  >
-                    {isMyAsset(asset) ? "Aguardando Aprovação" : "Investir"}
-                  </button>
+                  {isMyAsset(asset) ? (
+                    asset.status === "APPROVED" || asset.status === "ACTIVE" || asset.status === "TOKENIZED" ? (
+                      <Link
+                        href={`/manage/${asset.id}`}
+                        className="block w-full py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-bold text-sm text-center transition-all shadow-[0_0_15px_rgba(37,99,235,0.2)] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+                      >
+                        Gerenciar Ativo
+                      </Link>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/manage/${asset.id}`}
+                          className="flex-grow py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-lg font-bold text-sm text-center transition-all shadow-md flex items-center justify-center"
+                        >
+                          Gerenciar (Modo Dev)
+                        </Link>
+                        <button
+                          onClick={() => handleForceApproval(asset.id)}
+                          className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                          title="Aprovar Ativo na Blockchain"
+                        >
+                          Aprovar
+                        </button>
+                      </div>
+                    )
+                  ) : (
+                    <button
+                      disabled={asset.locked}
+                      className={`w-full py-2 rounded-lg font-bold text-sm transition-colors ${
+                        asset.locked
+                          ? "bg-slate-100 text-slate-400 cursor-default"
+                          : "bg-slate-900 text-white hover:bg-slate-700"
+                      }`}
+                    >
+                      Investir
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

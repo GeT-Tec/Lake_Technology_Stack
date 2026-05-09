@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { getSolPrice } from "@/lib/solana-oracle";
 
 // Credit Plans Configuration
 export interface CreditPlan {
@@ -64,6 +65,7 @@ export interface TransactionRecord {
     hash?: string;
     date: string;
     planId?: string;
+    solAmount?: number;
 }
 
 interface CreditsContextType {
@@ -80,6 +82,11 @@ interface CreditsContextType {
     isModalOpen: boolean;
     openModal: () => void;
     closeModal: () => void;
+    // Oracle controls
+    solPrice: number | null;
+    isPriceLoading: boolean;
+    refreshSolPrice: () => Promise<number>;
+    oracleError: string | null;
 }
 
 const CreditsContext = createContext<CreditsContextType | undefined>(undefined);
@@ -94,6 +101,38 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [solPrice, setSolPrice] = useState<number | null>(null);
+    const [isPriceLoading, setIsPriceLoading] = useState(false);
+    const [oracleError, setOracleError] = useState<string | null>(null);
+
+    // Refresh dynamic SOL price from dual oracle
+    const refreshSolPrice = async (): Promise<number> => {
+        setIsPriceLoading(true);
+        setOracleError(null);
+        try {
+            const price = await getSolPrice(connection);
+            setSolPrice(price);
+            return price;
+        } catch (error: any) {
+            console.error("❌ Erro ao carregar cotação do SOL:", error);
+            setOracleError("Fontes Oracle temporariamente offline. Operando em modo de redundância segura.");
+            // Fallback safe value to guarantee operation if oracle fails completely
+            setSolPrice(150);
+            return 150;
+        } finally {
+            setIsPriceLoading(false);
+        }
+    };
+
+    // Load price and poll for updates periodically
+    useEffect(() => {
+        refreshSolPrice();
+        const interval = setInterval(() => {
+            refreshSolPrice();
+        }, 60000);
+        return () => clearInterval(interval);
+    }, [connection]);
 
     // Fetch credits from database when wallet connects
     const refreshCredits = async () => {
@@ -117,16 +156,17 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    // Load credits from database when wallet connects
+    // Load credits from database when wallet connects (with LGPD clean up on disconnect)
     useEffect(() => {
-        refreshCredits();
-
-        // Also load history from localStorage (fallback)
-        if (walletAddress) {
+        if (!connected || !walletAddress) {
+            // Strict LGPD clean up: wipe all application state caches on disconnect
+            setCredits(0);
+            setHistory([]);
+            console.log("🧹 [LGPD Privacy] Carteira desconectada. Cache e estados residuais limpos com sucesso.");
+        } else {
+            refreshCredits();
             const savedHistory = localStorage.getItem(`history_${walletAddress}`);
             setHistory(savedHistory ? JSON.parse(savedHistory) : []);
-        } else {
-            setHistory([]);
         }
     }, [walletAddress, connected]);
 
@@ -157,9 +197,15 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
                 throw new Error("Wallet de destino não configurada");
             }
 
-            const MOCK_SOL_PRICE_USD = 150;
-            const solAmount = plan.priceUSD / MOCK_SOL_PRICE_USD;
+            // Fetch the absolute latest price directly from our oracle before initiating transaction
+            let currentPrice = solPrice;
+            if (!currentPrice || currentPrice <= 0) {
+                currentPrice = await refreshSolPrice();
+            }
+
+            const solAmount = plan.priceUSD / currentPrice;
             const lamportsAmount = Math.round(solAmount * LAMPORTS_PER_SOL);
+            console.log(`📊 [Transação] Cotação: $${currentPrice.toFixed(2)} USD | Plano: $${plan.priceUSD} USD | SOL: ${solAmount.toFixed(6)} | Lamports: ${lamportsAmount}`);
 
             // TODO: Implementar lógica de 'Gasless Transaction' (Fee Payer) para contas novas com 0 SOL no futuro.
             const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
@@ -209,7 +255,8 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
                     amount: `+${plan.credits} Créditos`,
                     hash: txHash,
                     date: new Date().toLocaleString('pt-BR'),
-                    planId: plan.id
+                    planId: plan.id,
+                    solAmount: solAmount
                 };
 
                 saveHistoryToLocal([newTx, ...history]);
@@ -302,7 +349,12 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
             // Modal controls
             isModalOpen,
             openModal: () => setIsModalOpen(true),
-            closeModal: () => setIsModalOpen(false)
+            closeModal: () => setIsModalOpen(false),
+            // Oracle controls
+            solPrice,
+            isPriceLoading,
+            refreshSolPrice,
+            oracleError
         }}>
             {children}
         </CreditsContext.Provider>

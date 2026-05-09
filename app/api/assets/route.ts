@@ -29,7 +29,19 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { ownerWallet, name, type, valuation, tokenPrice, totalTokens } = body;
+        const { 
+            ownerWallet, 
+            name, 
+            type, 
+            valuation, 
+            tokenPrice, 
+            totalTokens,
+            sector,
+            tokenNature,
+            treasuryTokens,
+            marketTokens,
+            royalties
+        } = body;
 
         if (!ownerWallet || !name || !type || !valuation || !tokenPrice || !totalTokens) {
             return NextResponse.json({ error: "Campos obrigatórios ausentes." }, { status: 400 });
@@ -47,16 +59,21 @@ export async function POST(req: Request) {
                 ownerWallet,
                 name,
                 type,
-                valuation,
-                tokenPrice,
-                totalTokens,
+                valuation: Number(valuation),
+                tokenPrice: Number(tokenPrice),
+                totalTokens: Number(totalTokens),
+                sector: sector || null,
+                tokenNature: tokenNature || null,
+                treasuryTokens: treasuryTokens ? Number(treasuryTokens) : 0,
+                marketTokens: marketTokens ? Number(marketTokens) : 0,
+                royalties: royalties ? parseFloat(royalties) : 0.0,
                 status: "DRAFT",
             },
         });
 
         return NextResponse.json({ asset }, { status: 201 });
-    } catch (error) {
-        console.error("[POST /api/assets] Erro:", error);
-        return NextResponse.json({ error: "Erro ao criar ativo." }, { status: 500 });
+    } catch (error: any) {
+        console.error("[Prisma Create Error]", error);
+        return NextResponse.json({ error: `Erro ao criar ativo: ${error?.message || error}` }, { status: 500 });
     }
 }
