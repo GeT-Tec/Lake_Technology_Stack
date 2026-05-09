@@ -6,7 +6,6 @@ import { SolanaProvider } from "@/components/SolanaProvider";
 import { WalletProvider } from "@/context/wallet-context";
 import { CreditsProvider } from "@/context/credits-context";
 import { CreditsModal } from "@/components/CreditsModal";
-import AdminBadge from '@/components/AdminBadge';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,15 +21,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col`}>
+      <body
+        className={`${inter.className} bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col`}
+      >
         <SolanaProvider>
           <WalletProvider>
             <CreditsProvider>
               <Navbar />
-              <main className="flex-grow w-full">
-                {children}
-              </main>
-              <AdminBadge />
+              <main className="flex-grow w-full">{children}</main>
               <CreditsModal />
             </CreditsProvider>
           </WalletProvider>
