@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useWallet } from "@/context/wallet-context";
 import {
   BookOpen,
   Droplets,
@@ -17,11 +21,56 @@ import {
   Key,
   Fingerprint,
   UserCheck,
-  Ghost
+  Ghost,
+  Loader2,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 import Link from "next/link";
 
 export default function LearnPage() {
+  const { walletAddress } = useWallet();
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [txSignature, setTxSignature] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Preenche automaticamente se a carteira for conectada ou alterada
+  useEffect(() => {
+    if (walletAddress) {
+      setRecipientAddress(walletAddress);
+    }
+  }, [walletAddress]);
+
+  const handleRequestFaucet = async () => {
+    if (!recipientAddress) return;
+    setLoading(true);
+    setTxSignature(null);
+    setErrorMsg(null);
+
+    try {
+      const response = await fetch("/api/faucet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ walletAddress: recipientAddress }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Falha ao solicitar fundos.");
+      }
+
+      setTxSignature(data.signature);
+    } catch (err: any) {
+      console.error("[Faucet Request Error]", err);
+      setErrorMsg(err.message || "Erro desconhecido ao acionar o LakeFaucet.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 scroll-smooth">
 
@@ -345,40 +394,122 @@ export default function LearnPage() {
                 </div>
                 <div>
                   <h2 className="text-3xl font-bold text-slate-900">Faucets: Dinheiro de Teste</h2>
-                  <p className="text-slate-500">Como conseguir "Devnet SOL" para simular na plataforma.</p>
+                  <p className="text-slate-500">Como conseguir "Devnet SOL" de forma imediata e simplificada para simular na plataforma.</p>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                    <SearchCheck className="w-12 h-12 text-slate-100" />
+                {/* CARD 1: LAKEFAUCET (INTERATIVO) */}
+                <div className="bg-white p-8 rounded-2xl border-2 border-indigo-100 shadow-md relative overflow-hidden flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-extrabold text-xl text-slate-900 mb-2 flex items-center gap-2">
+                      <Droplets className="w-5 h-5 text-indigo-500" />
+                      LakeFaucet Nativo (Recomendado)
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-6">
+                      Colete 0.05 SOL Devnet diretamente de nossa tesouraria institucional com apenas um clique. Sem autenticação com GitHub ou mídias sociais (Limite de 2 resgates por carteira).
+                    </p>
+
+                    <div className="space-y-4 mb-6">
+                      <div>
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                          Endereço de Destino (Solana Devnet)
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-3 text-sm font-mono border rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                          placeholder="Ex: HHyZWCu..."
+                          value={recipientAddress}
+                          onChange={(e) => setRecipientAddress(e.target.value)}
+                        />
+                      </div>
+
+                      {txSignature && (
+                        <div className="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl text-emerald-800 text-sm space-y-1 animate-in fade-in duration-200">
+                          <p className="font-bold flex items-center gap-1.5">
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                            Transferência Realizada! (+0.05 SOL)
+                          </p>
+                          <p className="text-xs text-emerald-600 font-mono break-all leading-relaxed">
+                            Signature: {txSignature}
+                          </p>
+                          <Link 
+                            href={`https://solscan.io/tx/${txSignature}?cluster=devnet`} 
+                            target="_blank" 
+                            className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline mt-1"
+                          >
+                            Ver no Solscan <ExternalLink className="w-3 h-3" />
+                          </Link>
+                        </div>
+                      )}
+
+                      {errorMsg && (
+                        <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl text-red-800 text-sm space-y-1 animate-in fade-in duration-200">
+                          <p className="font-bold flex items-center gap-1.5">
+                            <AlertCircle className="w-4 h-4 text-red-600" />
+                            Falha ao Processar
+                          </p>
+                          <p className="text-xs leading-relaxed">{errorMsg}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-2">Opção 1: Faucet Oficial da Solana</h3>
-                  <ul className="text-sm text-slate-600 space-y-2 mb-6">
-                    <li>1. Acesse faucet.solana.com</li>
-                    <li>2. Cole o endereço da sua carteira Phantom.</li>
-                    <li>3. Selecione "Devnet" e clique em Airdrop.</li>
-                    <li>4. Receba 1 SOL na hora.</li>
-                  </ul>
-                  <Link href="https://faucet.solana.com/" target="_blank" className="w-full block text-center py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">
-                    Ir para Faucet Solana
-                  </Link>
+
+                  <button
+                    onClick={handleRequestFaucet}
+                    disabled={loading || !recipientAddress}
+                    className={`w-full py-4 rounded-xl font-bold text-lg text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
+                      loading || !recipientAddress
+                        ? "bg-indigo-300 cursor-not-allowed shadow-none"
+                        : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98]"
+                    }`}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Transferindo SOL...
+                      </>
+                    ) : (
+                      "Coletar 0.05 SOL Nativo (LakeFaucet)"
+                    )}
+                  </button>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                    <Pickaxe className="w-12 h-12 text-slate-100" />
+                {/* CARD 2: QUICKNODE FAUCET (FALLBACK) */}
+                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                    <Pickaxe className="w-16 h-16 text-slate-800" />
                   </div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-2">Opção 2: QuickNode Faucet (Alternativo)</h3>
-                  <ul className="text-sm text-slate-600 space-y-2 mb-6">
-                    <li>1. Acesse faucet.quicknode.com/solana/devnet</li>
-                    <li>2. Conecte sua carteira.</li>
-                    <li>3. Compartilhe no X (opcional) para ganhar bônus.</li>
-                    <li>4. Receba o SOL de teste para operar.</li>
-                  </ul>
-                  <Link href="https://faucet.quicknode.com/solana/devnet" target="_blank" className="w-full block text-center py-3 rounded-lg bg-slate-800 text-white font-bold hover:bg-slate-900 transition-colors">
-                    Ir para QuickNode Faucet
+                  <div>
+                    <h3 className="font-extrabold text-xl text-slate-900 mb-2 flex items-center gap-2">
+                      <ExternalLink className="w-5 h-5 text-slate-500" />
+                      QuickNode Faucet (Plano B)
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-6">
+                      Se o nosso faucet nativo estiver temporariamente sem fundos ou se você atingir a cota máxima, utilize a torneira de testes externa oficial da QuickNode.
+                    </p>
+                    <ul className="text-sm text-slate-600 space-y-3 mb-8">
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+                        <span>Acesse a página externa de airdrop da QuickNode.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+                        <span>Cole o endereço da sua carteira (NÃO exige login com GitHub).</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+                        <span>Confirme e receba o SOL diretamente na sua carteira.</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <Link
+                    href="https://faucet.quicknode.com/solana/devnet"
+                    target="_blank"
+                    className="w-full text-center py-4 rounded-xl bg-slate-800 text-white font-bold hover:bg-slate-900 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow"
+                  >
+                    Ir para Faucet Externo (QuickNode)
+                    <ExternalLink className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
