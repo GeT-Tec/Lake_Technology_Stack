@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle, ShieldCheck, X, Zap, Coins, Lock, ExternalLink, ChevronRight } from "lucide-react";
 import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const DEMO_ASSETS = [
   { id: "demo-1", name: "Edifício Faria Lima Prime", type: "Real Estate", price: 1200, yield: "12.5% a.a.", available: "45%", image: "bg-blue-900", locked: false, isDemo: true, ownerWallet: null },
@@ -75,6 +76,141 @@ function DeleteConfirmModal({
   );
 }
 
+// ─── Modal de Investimento ────────────────────────────────────────────────────
+function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void }) {
+  // Assumindo que o preço no banco já é a representação base ou BRL
+  const tokenPriceBRL = asset.price ?? 0;
+  const [qty, setQty] = useState(1);
+  
+  // Cotações Fixas (Mock para Frontend Visual)
+  const RATE_USDC_BRL = 5.10;
+  const RATE_SOL_BRL = 850.0;
+
+  // Cálculos Unitários
+  const tokenPriceUSDC = (tokenPriceBRL / RATE_USDC_BRL).toFixed(2);
+  const tokenPriceSOL = (tokenPriceBRL / RATE_SOL_BRL).toFixed(4);
+
+  // Cálculos Totais
+  const totalBRLValue = qty * tokenPriceBRL;
+  const totalBRL = totalBRLValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const totalUSDC = (totalBRLValue / RATE_USDC_BRL).toFixed(2);
+  const totalSOL = (totalBRLValue / RATE_SOL_BRL).toFixed(4);
+
+  return (
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-in zoom-in-95 fade-in duration-200">
+
+        {/* Hero image */}
+        {asset.image && asset.image.startsWith("https://") ? (
+          <div className="relative w-full h-48 bg-slate-50 flex items-center justify-center overflow-hidden rounded-t-xl border-b border-slate-100 shrink-0">
+            <Image
+              src={asset.image}
+              alt="Asset RWA"
+              fill
+              className="object-contain p-4"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute bottom-4 left-5 z-10">
+              <p className="text-white/90 text-xs font-bold uppercase tracking-widest drop-shadow-md">Ativo RWA Tokenizado</p>
+              <h2 className="text-white text-2xl font-extrabold leading-tight drop-shadow-lg">{asset.name}</h2>
+            </div>
+            <div className="absolute top-3 left-3 px-2 py-1 rounded-lg bg-slate-900/80 backdrop-blur-sm text-[10px] font-bold text-white flex items-center gap-1 border border-white/10 z-10">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" /> Arweave RWA
+            </div>
+            <button onClick={onClose} className="absolute top-3 right-3 p-1.5 rounded-xl bg-black/40 hover:bg-black/60 text-white transition-colors z-10">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div className={`h-24 w-full ${asset.image} flex items-center px-6 justify-between`}>
+            <div>
+              <p className="text-white/70 text-xs font-bold uppercase tracking-widest">Ativo RWA</p>
+              <h2 className="text-white text-xl font-extrabold">{asset.name}</h2>
+            </div>
+            <button onClick={onClose} className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="p-6 space-y-5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-100 uppercase tracking-wider">{asset.type}</span>
+            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-100">{asset.yield ?? "Rendimento variável"}</span>
+          </div>
+
+          {/* Price grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Preço por Token</p>
+              <p className="text-2xl font-extrabold text-slate-900 leading-none">
+                {tokenPriceBRL.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+              </p>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                ~ {tokenPriceUSDC} USDC | ~ {tokenPriceSOL} SOL
+              </p>
+            </div>
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-center">
+              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Disponível</p>
+              <p className="text-2xl font-extrabold text-slate-900">{asset.available ?? "100%"}</p>
+            </div>
+          </div>
+
+          {/* Qty selector */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-3">Quantidade de Tokens</p>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100 transition-colors text-lg flex items-center justify-center">−</button>
+              <span className="flex-1 text-center text-2xl font-extrabold text-slate-900">{qty}</span>
+              <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100 transition-colors text-lg flex items-center justify-center">+</button>
+            </div>
+            <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between items-end">
+              <span className="text-sm text-slate-500 font-medium">Total estimado</span>
+              <div className="text-right">
+                <span className="block text-2xl font-extrabold text-slate-900 leading-none">{totalBRL}</span>
+                <span className="block text-xs text-slate-500 font-medium mt-1">
+                  ~ {totalUSDC} USDC | ~ {totalSOL} SOL
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Taxa — Motor de Créditos Lake */}
+          <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl p-4 flex items-start gap-3">
+            <div className="p-2 bg-violet-100 rounded-xl shrink-0">
+              <Coins className="w-5 h-5 text-violet-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-violet-800">Taxa de Operação — Motor Lake</p>
+              <p className="text-xs text-violet-600 mt-0.5">Esta operação consome <strong>5 Créditos Lake</strong> da sua conta (Taxa da Plataforma).</p>
+            </div>
+            <div className="shrink-0 text-right">
+              <p className="text-2xl font-extrabold text-violet-700">5</p>
+              <p className="text-[10px] text-violet-500 font-bold uppercase">Créditos</p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={() => alert("🚀 Motor de créditos Lake em construção! Backend de investimento em implementação.")}
+            className="w-full py-4 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl text-base transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 group"
+          >
+            <Zap className="w-5 h-5 group-hover:animate-pulse" />
+            Confirmar Investimento · 5 Créditos
+            <ChevronRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" />
+          </button>
+
+          <p className="text-center text-xs text-slate-400">
+            Ao investir, você concorda com os Termos da LakeTokeniza e com a natureza simulada deste ativo na Devnet.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Página Principal ────────────────────────────────────────────────────────
 export default function Marketplace() {
   const { publicKey } = useSolanaWallet();
@@ -88,6 +224,7 @@ export default function Marketplace() {
   // Estado do modal de exclusão
   const [deleteTarget, setDeleteTarget] = useState<AssetItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [investTarget, setInvestTarget] = useState<AssetItem | null>(null);
 
   // Busca ativos do banco de dados
   const fetchAssets = useCallback(async () => {
@@ -110,7 +247,7 @@ export default function Marketplace() {
             price: Number(a.valuation) / 1000,
             yield: isApproved ? "12.0% a.a." : "Em Análise",
             available: "100%",
-            image: "bg-slate-700",
+            image: a.imageUrl || "bg-slate-700",
             locked: isApproved ? false : true,
             isUserAsset: true,
             ownerWallet: a.ownerWallet,
@@ -262,8 +399,23 @@ export default function Marketplace() {
                 key={asset.id}
                 className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300"
               >
-                {/* Faixa colorida superior */}
-                <div className={`h-2 w-full ${asset.image}`} />
+                {/* Capa do ativo — contêiner de altura fixa, imagem absolutamente posicionada */}
+                {asset.image && asset.image.startsWith("https://") ? (
+                  <div className="relative w-full h-48 bg-slate-50 flex items-center justify-center overflow-hidden rounded-t-xl border-b border-slate-100 shrink-0">
+                    <Image
+                      src={asset.image}
+                      alt="Asset RWA"
+                      fill
+                      className="object-contain p-4"
+                    />
+                    <div className="absolute top-3 left-3 px-2 py-1 rounded bg-slate-900/80 backdrop-blur-sm text-[9px] font-bold text-white uppercase tracking-wider flex items-center gap-1 border border-white/10 z-10">
+                      <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                      Arweave RWA
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`h-2 w-full shrink-0 ${asset.image || "bg-slate-700"}`} />
+                )}
 
                 <div className="p-6">
                   <div className="flex justify-between mb-4">
@@ -333,13 +485,18 @@ export default function Marketplace() {
                   ) : (
                     <button
                       disabled={asset.locked}
-                      className={`w-full py-2 rounded-lg font-bold text-sm transition-colors ${
+                      onClick={() => !asset.locked && setInvestTarget(asset)}
+                      className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
                         asset.locked
                           ? "bg-slate-100 text-slate-400 cursor-default"
-                          : "bg-slate-900 text-white hover:bg-slate-700"
+                          : "bg-gradient-to-r from-slate-900 to-slate-800 hover:from-blue-700 hover:to-indigo-700 text-white shadow-sm hover:shadow-blue-500/20 flex items-center justify-center gap-1.5"
                       }`}
                     >
-                      Investir
+                      {asset.locked ? (
+                        <span className="flex items-center gap-1.5 justify-center"><Lock className="w-3.5 h-3.5" /> Em Análise</span>
+                      ) : (
+                        <span className="flex items-center gap-1.5 justify-center"><Zap className="w-3.5 h-3.5" /> Investir</span>
+                      )}
                     </button>
                   )}
                 </div>
@@ -356,6 +513,13 @@ export default function Marketplace() {
           onConfirm={handleDeleteConfirm}
           onCancel={() => !isDeleting && setDeleteTarget(null)}
           isDeleting={isDeleting}
+        />
+      )}
+
+      {investTarget && (
+        <InvestModal
+          asset={investTarget}
+          onClose={() => setInvestTarget(null)}
         />
       )}
     </div>

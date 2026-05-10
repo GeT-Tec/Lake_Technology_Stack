@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { ArrowLeft, Loader2, Briefcase, DollarSign, ShieldCheck, Share2, Percent, Layers, Sliders, Play } from "lucide-react";
+import { ArrowLeft, Loader2, Briefcase, DollarSign, ShieldCheck, Share2, Percent, Layers, Sliders, Play, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface AssetData {
     id: string;
@@ -14,6 +15,8 @@ interface AssetData {
     status: string;
     ownerWallet: string;
     createdAt: string;
+    imageUrl?: string | null;
+    contractUrl?: string | null;
 }
 
 interface PageProps {
@@ -159,6 +162,37 @@ export default function ManageAssetPage({ params }: PageProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* Banner de Imagem — URL real do Arweave via gateway.irys.xyz */}
+                {asset.imageUrl && asset.imageUrl.startsWith("https://") && (
+                    <div className="w-full mb-10">
+                        <div className="w-full h-72 rounded-3xl overflow-hidden border border-slate-200 shadow-sm relative bg-slate-50 group flex items-center justify-center">
+                            <Image 
+                                src={asset.imageUrl} 
+                                alt={asset.name} 
+                                fill
+                                className="object-contain p-6 group-hover:scale-[1.02] transition-transform duration-500" 
+                            />
+                            <div className="absolute top-4 left-4 px-3 py-1.5 rounded-xl bg-slate-900/80 backdrop-blur-sm text-white text-xs font-bold flex items-center gap-1.5 border border-white/10 shadow z-10">
+                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                                Imagem salva no Arweave via Irys
+                            </div>
+                        </div>
+                        {/* Botão de Auditoria Arweave */}
+                        <div className="mt-3 flex justify-end">
+                            <a
+                                href={asset.imageUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 font-semibold text-sm transition-all shadow-sm group/link"
+                            >
+                                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                                Auditar Documento Original (Arweave)
+                                <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/link:opacity-100 transition-opacity" />
+                            </a>
+                        </div>
+                    </div>
+                )}
 
                 {/* METRICS GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">

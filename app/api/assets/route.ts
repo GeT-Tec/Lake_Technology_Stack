@@ -63,6 +63,8 @@ export async function POST(req: Request) {
       treasuryTokens,
       marketTokens,
       royalties,
+      imageUrl,
+      contractUrl,
     } = body;
 
     if (!isValidSolanaAddress(ownerWallet)) {
@@ -95,6 +97,8 @@ export async function POST(req: Request) {
             treasuryTokens: treasuryTokens ? Number(treasuryTokens) : 0,
             marketTokens: marketTokens ? Number(marketTokens) : 0,
             royalties: royalties ? parseFloat(royalties) : 0.0,
+            imageUrl: imageUrl || null,
+            contractUrl: contractUrl || null,
             status: "DRAFT",
           },
           ...getDatabaseUnavailablePayload(),
@@ -123,6 +127,8 @@ export async function POST(req: Request) {
         treasuryTokens: treasuryTokens ? Number(treasuryTokens) : 0,
         marketTokens: marketTokens ? Number(marketTokens) : 0,
         royalties: royalties ? parseFloat(royalties) : 0.0,
+        imageUrl: imageUrl || null,
+        contractUrl: contractUrl || null,
         status: "DRAFT",
       },
     });
