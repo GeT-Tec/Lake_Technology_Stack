@@ -4,6 +4,7 @@ import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle, ShieldCh
 import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import Link from "next/link";
 import Image from "next/image";
+import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 
 const DEMO_ASSETS = [
   { id: "demo-1", name: "Edifício Faria Lima Prime", type: "Real Estate", price: 1200, yield: "12.5% a.a.", available: "45%", image: "bg-blue-900", locked: false, isDemo: true, ownerWallet: null },
@@ -23,6 +24,10 @@ interface AssetItem {
   isUserAsset?: boolean;
   ownerWallet: string | null;
   status?: string;
+  description?: string;
+  tokensAvailable?: number;
+  totalTokens?: number;
+  valuation?: number;
 }
 
 // ─── Modal de Confirmação de Exclusão ───────────────────────────────────────
@@ -80,6 +85,7 @@ function DeleteConfirmModal({
 function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void }) {
   // Assumindo que o preço no banco já é a representação base ou BRL
   const tokenPriceBRL = asset.price ?? 0;
+  const maxQty = asset.tokensAvailable ?? 0;
   const [qty, setQty] = useState(1);
   
   // Cotações Fixas (Mock para Frontend Visual)
@@ -141,6 +147,20 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
             <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-100">{asset.yield ?? "Rendimento variável"}</span>
           </div>
 
+          {asset.description && (
+            <section className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide mb-2">A Missão e o Lastro</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">{asset.description}</p>
+            </section>
+          )}
+
+          {asset.valuation ? (
+            <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-4">
+               <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Valuation do Empreendimento</span>
+               <CurrencyDisplay variant="subtextOnly" brlValue={asset.valuation} />
+            </div>
+          ) : null}
+
           {/* Price grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
@@ -153,8 +173,10 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
               </p>
             </div>
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-center">
-              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Disponível</p>
-              <p className="text-2xl font-extrabold text-slate-900">{asset.available ?? "100%"}</p>
+              <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Inventário</p>
+              <p className="text-sm text-slate-700 mt-2">
+                Disponível: <span className="font-bold">{asset.tokensAvailable?.toLocaleString() || "100%"}</span> de um total de {asset.totalTokens?.toLocaleString() || "100%"}
+              </p>
             </div>
           </div>
 
@@ -164,7 +186,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
             <div className="flex items-center gap-3">
               <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100 transition-colors text-lg flex items-center justify-center">−</button>
               <span className="flex-1 text-center text-2xl font-extrabold text-slate-900">{qty}</span>
-              <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100 transition-colors text-lg flex items-center justify-center">+</button>
+              <button disabled={qty >= maxQty} onClick={() => setQty(q => Math.min(maxQty, q + 1))} className={`w-10 h-10 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 transition-colors text-lg flex items-center justify-center ${qty >= maxQty ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100'}`}>+</button>
             </div>
             <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between items-end">
               <span className="text-sm text-slate-500 font-medium">Total estimado</span>
@@ -244,7 +266,7 @@ export default function Marketplace() {
             id: a.id,
             name: a.name,
             type: a.type,
-            price: Number(a.valuation) / 1000,
+            price: Number(a.tokenPrice) || Number(a.valuation) / 1000,
             yield: isApproved ? "12.0% a.a." : "Em Análise",
             available: "100%",
             image: a.imageUrl || "bg-slate-700",
@@ -252,6 +274,10 @@ export default function Marketplace() {
             isUserAsset: true,
             ownerWallet: a.ownerWallet,
             status: a.status,
+            description: a.description || "Detalhes comerciais deste projeto em fase de estruturação.",
+            tokensAvailable: a.marketTokens || 0,
+            totalTokens: a.totalTokens || 0,
+            valuation: Number(a.valuation) || 0,
           };
         });
 
@@ -485,7 +511,13 @@ export default function Marketplace() {
                   ) : (
                     <button
                       disabled={asset.locked}
-                      onClick={() => !asset.locked && setInvestTarget(asset)}
+                      onClick={() => {
+                        if (!connectedWallet) {
+                          alert("Acesso Negado: Conecte sua carteira Web3 para visualizar a tese de investimento.");
+                          return;
+                        }
+                        if (!asset.locked) setInvestTarget(asset);
+                      }}
                       className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
                         asset.locked
                           ? "bg-slate-100 text-slate-400 cursor-default"

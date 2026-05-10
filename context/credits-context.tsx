@@ -333,17 +333,18 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   };
 
   /**
-   * Gasta 1 crédito para usar funcionalidade paga
+   * Gasta créditos para usar funcionalidade paga
+   * @param amount Quantidade de créditos a debitar (padrão: 3)
    * @returns true se o crédito foi debitado com sucesso
    */
-  const spendCredit = async (): Promise<boolean> => {
+  const spendCredit = async (amount: number = 3): Promise<boolean> => {
     if (!walletAddress) {
       alert("Conecte sua carteira primeiro.");
       return false;
     }
 
-    if (credits <= 0) {
-      alert("Saldo insuficiente. Compre mais créditos.");
+    if (credits < amount) {
+      alert(`Saldo insuficiente. Você precisa de ${amount} créditos.`);
       setIsModalOpen(true); // Open modal to buy credits
       return false;
     }
@@ -357,7 +358,9 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           walletAddress,
-          amount: 1,
+          amount: amount,
+          action: "spend",
+          description: "Simulação de Tokenização (Web3)",
         }),
       });
 
@@ -369,7 +372,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         const newTx: TransactionRecord = {
           id: Date.now().toString(),
           type: "USO",
-          amount: "-1 Crédito",
+          amount: `-${amount} Créditos`,
           hash: "LZ-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
           date: new Date().toLocaleString("pt-BR"),
         };

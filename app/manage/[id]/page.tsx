@@ -4,6 +4,9 @@ import { useEffect, useState, use } from "react";
 import { ArrowLeft, Loader2, Briefcase, DollarSign, ShieldCheck, Share2, Percent, Layers, Sliders, Play, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useRouter } from "next/navigation";
+import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 
 interface AssetData {
     id: string;
@@ -15,6 +18,7 @@ interface AssetData {
     status: string;
     ownerWallet: string;
     createdAt: string;
+    description?: string | null;
     imageUrl?: string | null;
     contractUrl?: string | null;
 }
@@ -25,6 +29,8 @@ interface PageProps {
 
 export default function ManageAssetPage({ params }: PageProps) {
     const { id } = use(params);
+    const wallet = useWallet();
+    const router = useRouter();
     const [asset, setAsset] = useState<AssetData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -33,6 +39,10 @@ export default function ManageAssetPage({ params }: PageProps) {
     const [dividendPercentage, setDividendPercentage] = useState("8.5");
     const [isSimulating, setIsSimulating] = useState(false);
     const [simulatedPayout, setSimulatedPayout] = useState<number | null>(null);
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editDescription, setEditDescription] = useState("");
+    const [isSavingDesc, setIsSavingDesc] = useState(false);
 
     useEffect(() => {
         const fetchAssetDetails = async () => {
@@ -53,6 +63,14 @@ export default function ManageAssetPage({ params }: PageProps) {
         fetchAssetDetails();
     }, [id]);
 
+    useEffect(() => {
+        if (!isLoading && asset) {
+            if (!wallet.connected || wallet.publicKey?.toBase58() !== asset.ownerWallet) {
+                router.push("/marketplace");
+            }
+        }
+    }, [wallet.connected, wallet.publicKey, asset, isLoading, router]);
+
     const handleSimulateDividends = () => {
         if (!asset) return;
         setIsSimulating(true);
@@ -65,6 +83,26 @@ export default function ManageAssetPage({ params }: PageProps) {
         }, 1200);
     };
 
+    const handleSaveDescription = async () => {
+        if (!asset) return;
+        setIsSavingDesc(true);
+        try {
+            const res = await fetch(`/api/assets/${asset.id}?wallet=${asset.ownerWallet}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ description: editDescription }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            setAsset({ ...asset, description: editDescription });
+            setIsEditing(false);
+        } catch (err: any) {
+            alert(`Erro ao salvar descrição: ${err.message}`);
+        } finally {
+            setIsSavingDesc(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center py-24">
@@ -74,12 +112,12 @@ export default function ManageAssetPage({ params }: PageProps) {
         );
     }
 
-    if (error || !asset) {
+    if (error || !asset || (wallet.publicKey?.toBase58() !== asset?.ownerWallet)) {
         return (
             <div className="min-h-screen bg-slate-50 py-12 px-4">
                 <div className="max-w-md mx-auto bg-white rounded-2xl border border-slate-200 p-8 text-center shadow-sm">
-                    <h2 className="text-xl font-bold text-red-600 mb-3">Ativo não encontrado</h2>
-                    <p className="text-slate-500 mb-6">{error || "Não foi possível carregar os detalhes deste ativo."}</p>
+                    <h2 className="text-xl font-bold text-red-600 mb-3">Acesso Negado</h2>
+                    <p className="text-slate-500 mb-6">{error || "Você não tem permissão para acessar este ativo ou ele não existe."}</p>
                     <Link
                         href="/marketplace"
                         className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-colors text-sm"
@@ -98,12 +136,8 @@ export default function ManageAssetPage({ params }: PageProps) {
         maximumFractionDigits: 0,
     });
 
-    // Correção Matemática Crítica: Preço do Token = Valuation / Tokens Emitidos
+    // valuationUSD / pricePerTokenUSD were removed in favor of CurrencyDisplay
     const calculatedTokenPrice = Number(asset.valuation) / asset.totalTokens;
-    const pricePerTokenUSD = calculatedTokenPrice.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-    });
 
     // Regra de Negócios: Renderização condicional por categoria de ativo
     const normalizedType = asset.type.toUpperCase();
@@ -200,7 +234,7 @@ export default function ManageAssetPage({ params }: PageProps) {
                     <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center justify-between">
                         <div className="space-y-1">
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Valuation Total</div>
-                            <div className="text-2xl font-extrabold text-slate-900">{valuationUSD}</div>
+                            <CurrencyDisplay variant="transparent" brlValue={Number(asset.valuation)} />
                             <div className="text-xs font-medium text-slate-500">Avaliação do lastro físico</div>
                         </div>
                         <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-blue-600">
@@ -228,7 +262,7 @@ export default function ManageAssetPage({ params }: PageProps) {
                     <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center justify-between">
                         <div className="space-y-1">
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Preço do Token</div>
-                            <div className="text-2xl font-extrabold text-slate-900">{pricePerTokenUSD}</div>
+                            <CurrencyDisplay variant="transparent" brlValue={calculatedTokenPrice} />
                             <div className="text-xs font-medium text-slate-500">Custo unitário fracionado</div>
                         </div>
                         <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 text-amber-600">
@@ -269,6 +303,55 @@ export default function ManageAssetPage({ params }: PageProps) {
                                     </span>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Missão e Lastro */}
+                        <div className="mt-8 pt-6 border-t border-slate-100">
+                            <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                                A Missão e o Lastro
+                            </h4>
+                            {isEditing ? (
+                                <div className="space-y-3">
+                                    <textarea
+                                        value={editDescription}
+                                        onChange={(e) => setEditDescription(e.target.value)}
+                                        className="w-full p-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                                        rows={4}
+                                        placeholder="Descreva a missão e o lastro do ativo..."
+                                    />
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleSaveDescription}
+                                            disabled={isSavingDesc}
+                                            className="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                        >
+                                            {isSavingDesc ? "Salvando..." : "Salvar"}
+                                        </button>
+                                        <button
+                                            onClick={() => setIsEditing(false)}
+                                            disabled={isSavingDesc}
+                                            className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-50"
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <p className="text-sm text-slate-600 leading-relaxed">
+                                        {asset.description || "Nenhuma descrição fornecida."}
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            setEditDescription(asset.description || "");
+                                            setIsEditing(true);
+                                        }}
+                                        className="text-sm font-bold text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                                    >
+                                        Editar Descrição
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Status do Smart Contract */}

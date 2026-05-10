@@ -137,6 +137,7 @@ export default function TokenizePage() {
     const assetPayload = {
       ownerWallet: walletAddress,
       name: formData.name,
+      description: formData.description,
       type: formData.sector,
       sector: formData.sector,
       tokenNature: formData.tokenNature,
@@ -174,7 +175,7 @@ export default function TokenizePage() {
         <Lock className="w-16 h-16 text-slate-300 mx-auto mb-4" />
         <h1 className="text-2xl font-bold text-slate-900">Simulador Institucional</h1>
         <p className="text-slate-500 mb-6">Acesso restrito. Tokenize ativos reais.</p>
-        {!isConnected ? <button onClick={connectWallet} className="w-full py-3 bg-slate-900 text-white rounded-lg font-bold">Conectar Carteira</button> : <button onClick={handleUnlock} disabled={isCreditLoading} className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 flex justify-center gap-2">{isCreditLoading ? <Loader2 className="animate-spin" /> : <Zap className="fill-white" />} {credits > 0 ? "Desbloquear (1 Crédito)" : "Comprar Acesso"}</button>}
+        {!isConnected ? <button onClick={connectWallet} className="w-full py-3 bg-slate-900 text-white rounded-lg font-bold">Conectar Carteira</button> : <button onClick={handleUnlock} disabled={isCreditLoading} className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 flex justify-center gap-2">{isCreditLoading ? <Loader2 className="animate-spin" /> : <Zap className="fill-white" />} {credits > 0 ? "Desbloquear (3 Créditos)" : "Comprar Acesso"}</button>}
       </div>
     </div>
   );

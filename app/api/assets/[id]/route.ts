@@ -73,7 +73,7 @@ export async function PATCH(
     const { searchParams } = new URL(req.url);
     const requestWallet = searchParams.get("wallet");
     const body = await req.json();
-    const { status } = body;
+    const { status, description } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -109,9 +109,13 @@ export async function PATCH(
       );
     }
 
+    const updateData: any = {};
+    if (status !== undefined) updateData.status = status;
+    if (description !== undefined) updateData.description = description;
+
     const updatedAsset = await prisma.asset.update({
       where: { id },
-      data: { status },
+      data: updateData,
     });
 
     return NextResponse.json({ success: true, asset: updatedAsset });
