@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Upload, FileText, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, TrendingUp, Loader2, Zap, Lock, Briefcase, PieChart, ShieldCheck, Lightbulb, ExternalLink } from "lucide-react";
 import { useWallet } from "@/context/wallet-context";
 import { useCredits } from "@/context/credits-context";
+import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 // Removendo import do serviço temporariamente para isolar o problema
 // import { LakeZeroService } from "@/services/lakezero";
 
@@ -193,18 +194,18 @@ export default function TokenizePage() {
 
         <div className="p-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="p-6 xl:p-8 bg-slate-50 rounded-3xl border overflow-hidden">
-              <p className="text-xs xl:text-sm text-slate-500 font-bold uppercase tracking-widest mb-2 truncate">Captação Total</p>
-              <p className="text-2xl lg:text-3xl xl:text-4xl font-bold text-slate-900 tracking-tight truncate" title={formatBRL(totalRaise)}>{formatBRL(totalRaise)}</p>
+            <div className="p-6 xl:p-8 bg-slate-50 rounded-3xl border">
+              <p className="text-xs xl:text-sm text-slate-500 font-bold uppercase tracking-widest mb-2">Captação Total</p>
+              <p className="break-words whitespace-normal text-xl md:text-2xl font-bold text-slate-900 tracking-tight" title={formatBRL(totalRaise)}>{formatBRL(totalRaise)}</p>
             </div>
-            <div className="p-6 xl:p-8 bg-emerald-50 rounded-3xl border border-emerald-100 overflow-hidden">
-              <p className="text-xs xl:text-sm text-emerald-800 font-bold uppercase tracking-widest mb-2 truncate">Lucro Projetado</p>
-              <p className="text-2xl lg:text-3xl xl:text-4xl font-bold text-emerald-600 tracking-tight truncate" title={`+${formatBRL(projectedProfit)}`}>+{formatBRL(projectedProfit)}</p>
-              <p className="text-xs xl:text-sm text-emerald-700 mt-2 font-bold truncate">Markup de {profitMargin.toFixed(1)}%</p>
+            <div className="p-6 xl:p-8 bg-emerald-50 rounded-3xl border border-emerald-100">
+              <p className="text-xs xl:text-sm text-emerald-800 font-bold uppercase tracking-widest mb-2">Lucro Projetado</p>
+              <p className="break-words whitespace-normal text-xl md:text-2xl font-bold text-emerald-600 tracking-tight" title={`+${formatBRL(projectedProfit)}`}>+{formatBRL(projectedProfit)}</p>
+              <p className="text-xs xl:text-sm text-emerald-700 mt-2 font-bold">Markup de {profitMargin.toFixed(1)}%</p>
             </div>
-            <div className="p-6 xl:p-8 bg-blue-50 rounded-3xl border border-blue-100 overflow-hidden">
-              <p className="text-xs xl:text-sm text-blue-800 font-bold uppercase tracking-widest mb-2 truncate">Status Legal</p>
-              <p className="text-2xl lg:text-3xl xl:text-4xl font-bold text-blue-900 tracking-tight truncate">Pré-Aprovado</p>
+            <div className="p-6 xl:p-8 bg-blue-50 rounded-3xl border border-blue-100">
+              <p className="text-xs xl:text-sm text-blue-800 font-bold uppercase tracking-widest mb-2">Status Legal</p>
+              <p className="break-words whitespace-normal text-xl md:text-2xl font-bold text-blue-900 tracking-tight">Pré-Aprovado</p>
             </div>
           </div>
 
@@ -275,6 +276,9 @@ export default function TokenizePage() {
                   <span className="absolute left-4 top-4 text-slate-400 font-bold text-lg">R$</span>
                   <input type="text" className="w-full p-4 pl-14 text-xl font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" value={formatInputValue(formData.valuation)} onChange={e => setFormData({ ...formData, valuation: parseCurrency(e.target.value) })} />
                 </div>
+                <div className="mt-1 pl-2">
+                  <CurrencyDisplay variant="subtextOnly" brlValue={formData.valuation} />
+                </div>
               </div>
               
               <div>
@@ -283,24 +287,36 @@ export default function TokenizePage() {
                   <span className="absolute left-4 top-4 text-blue-400 font-bold text-lg">R$</span>
                   <input type="text" className="w-full p-4 pl-14 text-xl font-bold border-2 border-blue-100 rounded-xl bg-white text-blue-600 focus:ring-2 focus:ring-blue-500 outline-none" value={formatInputValue(formData.tokenPrice)} onChange={e => setFormData({ ...formData, tokenPrice: parseCurrency(e.target.value) })} />
                 </div>
+                <div className="mt-1 pl-2">
+                  <CurrencyDisplay variant="subtextOnly" brlValue={formData.tokenPrice} />
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
+              <div className="min-w-0 overflow-hidden">
                 <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Qtd. Tokens</label>
-                <input type="number" className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.tokenCount || ""} onChange={e => setFormData({ ...formData, tokenCount: Number(e.target.value) })} />
+                <input type="number" className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none min-w-0" value={formData.tokenCount || ""} onChange={e => setFormData({ ...formData, tokenCount: Number(e.target.value) })} />
+                <div className="mt-2 pl-2">
+                  <CurrencyDisplay variant="transparent" brlValue={(formData.tokenCount || 0) * (formData.tokenPrice || 0)} />
+                </div>
               </div>
               
-              <div>
+              <div className="min-w-0 overflow-hidden">
                 <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Tokens Retidos (Tesouraria)</label>
-                <input type="number" className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none" value={formData.treasuryTokens || ""} onChange={e => setFormData({ ...formData, treasuryTokens: Number(e.target.value) })} />
+                <input type="number" className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-50 focus:bg-white outline-none min-w-0" value={formData.treasuryTokens || ""} onChange={e => setFormData({ ...formData, treasuryTokens: Number(e.target.value) })} />
+                <div className="mt-2 pl-2">
+                  <CurrencyDisplay variant="transparent" brlValue={(formData.treasuryTokens || 0) * (formData.tokenPrice || 0)} />
+                </div>
               </div>
 
-              <div>
+              <div className="min-w-0 overflow-hidden">
                 <label className="text-sm font-bold text-slate-500 uppercase mb-1 block">Tokens para o Mercado</label>
-                <div className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-600 select-none cursor-not-allowed">
+                <div className="w-full p-4 text-lg font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-600 select-none cursor-not-allowed break-words min-w-0">
                   {Math.max(0, formData.tokenCount - formData.treasuryTokens).toLocaleString()}
+                </div>
+                <div className="mt-2 pl-2">
+                  <CurrencyDisplay variant="transparent" brlValue={Math.max(0, formData.tokenCount - formData.treasuryTokens) * (formData.tokenPrice || 0)} />
                 </div>
               </div>
             </div>
@@ -314,12 +330,19 @@ export default function TokenizePage() {
               <p className="text-xs text-slate-400 mt-1">Taxa cobrada em negociações secundárias do ativo na blockchain.</p>
             </div>
 
-            {projectedProfit > 0 && (
-              <div className="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r-xl flex justify-between items-center shadow-sm">
-                <div><p className="text-xs font-bold text-emerald-800 uppercase tracking-wide mb-1">Lucro Estimado</p><p className="text-4xl font-bold text-emerald-600">+{formatBRL(projectedProfit)}</p></div>
-                <div className="text-right"><span className="bg-white px-4 py-2 rounded-lg text-sm font-bold text-emerald-700 shadow-sm border border-emerald-100">+{profitMargin.toFixed(1)}% Markup</span></div>
+            <div className={`border-l-4 p-6 rounded-r-xl flex justify-between items-center shadow-sm ${projectedProfit >= 0 ? 'bg-emerald-50 border-emerald-500' : 'bg-red-50 border-red-500'}`}>
+              <div>
+                <p className={`text-xs font-bold uppercase tracking-wide mb-1 ${projectedProfit >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>Lucro Estimado</p>
+                <div className={projectedProfit < 0 ? '[&>div>p:first-child]:text-red-600' : ''}>
+                  <CurrencyDisplay variant="success" brlValue={projectedProfit} />
+                </div>
               </div>
-            )}
+              <div className="text-right">
+                <span className={`bg-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm border ${projectedProfit >= 0 ? 'text-emerald-700 border-emerald-100' : 'text-red-700 border-red-100'}`}>
+                  {profitMargin > 0 ? "+" : ""}{profitMargin.toFixed(1)}% Markup
+                </span>
+              </div>
+            </div>
           </div>
         )}
 
