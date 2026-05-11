@@ -87,12 +87,15 @@ model AuditLog {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model credit_ledger {
-  id               String          @id
+  id               String          @id @default(uuid())
   user_id          String
   operation_type   OperationType
   amount           Int
   balance_before   Int
   balance_after    Int
+  crypto_amount    Decimal?        @db.Decimal(30, 18)
+  crypto_symbol    String?         @db.VarChar(20)
+  tx_hash          String?         @db.VarChar(255)
   related_order_id String?
   description      String?
   metadata         Json?
@@ -174,6 +177,8 @@ enum OperationType {
   USAGE
   REFUND
   ADJUSTMENT
+  MINT_FEE
+  INVESTMENT_FEE
 }
 
 enum PaymentStatus {

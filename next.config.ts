@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+  },
   // @solana/kit-plugin-payer's browser bundle has a spurious `import 'fs'`
   // from the payerFromFile export. Stub it out for the client bundle.
   turbopack: {

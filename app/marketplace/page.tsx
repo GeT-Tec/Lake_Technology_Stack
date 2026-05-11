@@ -1,7 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle, ShieldCheck, X, Zap, Coins, Lock, ExternalLink, ChevronRight } from "lucide-react";
-import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
+import { useCredits } from "@/context/credits-context";
+import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import Link from "next/link";
 import Image from "next/image";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
@@ -83,6 +85,11 @@ function DeleteConfirmModal({
 
 // ─── Modal de Investimento ────────────────────────────────────────────────────
 function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void }) {
+  const { connection } = useConnection();
+  const { sendTransaction, publicKey } = useSolanaWallet();
+  const { solPrice, refreshSolPrice, addTransactionRecord } = useCredits();
+  const [isProcessing, setIsProcessing] = useState(false);
+
   // Assumindo que o preço no banco já é a representação base ou BRL
   const tokenPriceBRL = asset.price ?? 0;
   const maxQty = asset.tokensAvailable ?? 0;
@@ -206,7 +213,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-violet-800">Taxa de Operação — Motor Lake</p>
-              <p className="text-xs text-violet-600 mt-0.5">Esta operação consome <strong>5 Créditos Lake</strong> da sua conta (Taxa da Plataforma).</p>
+              <p className="text-xs text-violet-600 mt-0.5">Esta operação consome <strong>5 Créditos Lake</strong> e uma taxa de rede de <strong>$0.15 USD</strong> (convertidos em SOL) da sua carteira conectada.</p>
             </div>
             <div className="shrink-0 text-right">
               <p className="text-2xl font-extrabold text-violet-700">5</p>
@@ -216,12 +223,96 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
 
           {/* CTA */}
           <button
-            onClick={() => alert("🚀 Motor de créditos Lake em construção! Backend de investimento em implementação.")}
-            className="w-full py-4 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl text-base transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 group"
+            onClick={async () => {
+              if (!publicKey) {
+                alert("Conecte sua carteira para investir.");
+                return;
+              }
+              
+              setIsProcessing(true);
+              try {
+                console.log("[Invest] Preparando pagamento de investimento...");
+
+                // 1. Obter Preço Dinâmico do SOL (US$ 0.15)
+                let currentPrice = solPrice;
+                if (!currentPrice || currentPrice <= 0) {
+                  currentPrice = await refreshSolPrice();
+                }
+                
+                if (!currentPrice || currentPrice <= 0) {
+                  throw new Error("Falha ao obter cotação do SOL. Tente novamente.");
+                }
+
+                const exactSolAmount = 0.15 / currentPrice;
+                const safeSolAmount = exactSolAmount * 1.01; // 1% buffer
+                const INVEST_FEE = Math.floor(safeSolAmount * LAMPORTS_PER_SOL);
+
+                const treasuryPubKey = new PublicKey(process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS || "HHyZWCuyA9Mbx5SyFhHEry7b98bPLb74BsADdbhe4o5d");
+
+                const transaction = new Transaction().add(
+                  SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: treasuryPubKey,
+                    lamports: INVEST_FEE,
+                  })
+                );
+
+                const latestBlockhash = await connection.getLatestBlockhash("confirmed");
+                transaction.recentBlockhash = latestBlockhash.blockhash;
+                transaction.feePayer = publicKey;
+
+                const signature = await sendTransaction(transaction, connection);
+                console.log("[Invest] Transação enviada. Assinatura:", signature);
+
+                await connection.confirmTransaction({
+                  signature,
+                  blockhash: latestBlockhash.blockhash,
+                  lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+                }, "confirmed");
+
+                // 2. Chamar Backend para Debitar Créditos e Registrar no Ledger
+                const res = await fetch("/api/invest", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    walletAddress: publicKey.toBase58(),
+                    transactionSignature: signature,
+                    cryptoAmount: safeSolAmount,
+                    assetId: asset.id,
+                  }),
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                  throw new Error(data.error || "Falha ao registrar investimento no servidor.");
+                }
+
+                // Update local history
+                addTransactionRecord({
+                  id: Date.now().toString(),
+                  type: "USO",
+                  amount: "-5 Créditos",
+                  hash: signature,
+                  date: new Date().toLocaleString("pt-BR"),
+                  planId: `Investimento: ${asset.name}`,
+                  solAmount: safeSolAmount,
+                });
+
+                alert("🎉 Investimento simulado com sucesso!");
+                onClose();
+              } catch (err: any) {
+                console.error("[Invest Error]", err);
+                alert(`Falha no investimento: ${err.message}`);
+              } finally {
+                setIsProcessing(false);
+              }
+            }}
+            disabled={isProcessing}
+            className="w-full py-4 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 text-white font-extrabold rounded-2xl text-base transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 group"
           >
-            <Zap className="w-5 h-5 group-hover:animate-pulse" />
-            Confirmar Investimento · 5 Créditos
-            <ChevronRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" />
+            {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5 group-hover:animate-pulse" />}
+            {isProcessing ? "Processando Blockchain..." : "Confirmar Investimento"}
+            {!isProcessing && <ChevronRight className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform" />}
           </button>
 
           <p className="text-center text-xs text-slate-400">

@@ -5,8 +5,8 @@ import { Upload, FileText, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Tren
 import { useWallet } from "@/context/wallet-context";
 import { useCredits } from "@/context/credits-context";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
-// Removendo import do serviço temporariamente para isolar o problema
-// import { LakeZeroService } from "@/services/lakezero";
+import { useConnection, useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
+import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const SECTOR_OPTIONS = ["Imóvel (Real Estate)", "Energia Renovável", "Agronegócio (Agro)", "Dívida / Precatórios", "Startups / Equity", "Créditos de Carbono", "Royalties Musicais", "Outros"];
 const NATURE_OPTIONS = ["Ativo de Renda/Security", "Token de Utilidade/Acesso", "NFT/Colecionável"];
@@ -14,7 +14,9 @@ const NATURE_OPTIONS = ["Ativo de Renda/Security", "Token de Utilidade/Acesso", 
 export default function TokenizePage() {
   const router = useRouter();
   const { walletAddress, connectWallet, isConnected } = useWallet();
-  const { credits, spendCredit, openModal, isLoading: isCreditLoading } = useCredits();
+  const { credits, spendCredit, openModal, isLoading: isCreditLoading, addTransactionRecord, solPrice, refreshSolPrice } = useCredits();
+  const { connection } = useConnection();
+  const { sendTransaction } = useSolanaWallet();
 
   const [hasAccess, setHasAccess] = useState(false);
   const [step, setStep] = useState(1);
@@ -42,14 +44,63 @@ export default function TokenizePage() {
 
   const handleFileUpload = async (file: File | undefined) => {
     if (!file) return;
+    if (!walletAddress) {
+      setErrors("Conecte sua carteira primeiro.");
+      return;
+    }
     setErrors(null);
     setFormData(prev => ({ ...prev, documents: file }));
     setIsUploading(true);
     setArweaveUrl(null);
 
     try {
+      console.log("[Tokenize UI] Preparando pagamento da taxa de upload...");
+
+      // 1. Obter Preço Dinâmico do SOL (US$ 0.50)
+      let currentPrice = solPrice;
+      if (!currentPrice || currentPrice <= 0) {
+        currentPrice = await refreshSolPrice();
+      }
+      
+      if (!currentPrice || currentPrice <= 0) {
+        throw new Error("Falha ao obter cotação do SOL. Tente novamente.");
+      }
+
+      const exactSolAmount = 0.50 / currentPrice;
+      const safeSolAmount = exactSolAmount * 1.01; // 1% buffer
+      const MINT_FEE = Math.floor(safeSolAmount * LAMPORTS_PER_SOL);
+
+      const treasuryPubKey = new PublicKey(process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS || "HHyZWCuyA9Mbx5SyFhHEry7b98bPLb74BsADdbhe4o5d");
+      const userPubKey = new PublicKey(walletAddress);
+
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: userPubKey,
+          toPubkey: treasuryPubKey,
+          lamports: MINT_FEE,
+        })
+      );
+
+      const latestBlockhash = await connection.getLatestBlockhash("confirmed");
+      transaction.recentBlockhash = latestBlockhash.blockhash;
+      transaction.feePayer = userPubKey;
+
+      const signature = await sendTransaction(transaction, connection);
+      console.log("[Tokenize UI] Transação de taxa enviada. Assinatura:", signature);
+
+      // Confirmação aguardada (garante que o Solscan vai encontrar)
+      await connection.confirmTransaction({
+        signature,
+        blockhash: latestBlockhash.blockhash,
+        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+      }, "confirmed");
+
+      // 2. Upload
       const uploadData = new FormData();
       uploadData.append("file", file);
+      uploadData.append("walletAddress", walletAddress);
+      uploadData.append("transactionSignature", signature);
+      uploadData.append("cryptoAmount", safeSolAmount.toString());
 
       console.log("[Tokenize UI] Iniciando upload para o Arweave via Relayer...");
       const res = await fetch("/api/upload", {
@@ -57,17 +108,37 @@ export default function TokenizePage() {
         body: uploadData,
       });
 
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Erro ao realizar upload no Irys.");
+        if (res.status === 413) throw new Error("O arquivo é muito grande. O limite máximo é 10MB.");
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || errorData.message || "Erro no upload.");
+        } else {
+          throw new Error(`Falha no servidor (Status: ${res.status}). Tente novamente.`);
+        }
       }
+
+      const data = await res.json();
 
       const { url } = data;
       setArweaveUrl(url);
+      
+      // Update local history for UI consistency
+      addTransactionRecord({
+        id: Date.now().toString(),
+        type: "USO",
+        amount: "0 Créditos",
+        hash: signature,
+        date: new Date().toLocaleString("pt-BR"),
+        planId: "Taxa de Rede (Solana)",
+        solAmount: safeSolAmount,
+      });
+
       console.log("[Tokenize UI] Upload concluído com sucesso! URL:", url);
     } catch (err: any) {
       console.error("[Tokenize UI Error]", err);
-      setErrors(`Falha ao eternizar documento no Arweave via Irys: ${err.message}`);
+      setErrors(`Falha no pagamento da taxa ou upload: ${err.message}`);
       setFormData(prev => ({ ...prev, documents: null }));
       setArweaveUrl(null);
     } finally {

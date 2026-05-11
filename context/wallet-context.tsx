@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { useRouter } from "next/navigation";
 
 interface WalletContextType {
   walletAddress: string | null;
@@ -27,6 +28,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     useSolanaWallet();
   const { setVisible } = useWalletModal();
   const [validationError, setValidationError] = useState<string | null>(null);
+  const router = useRouter();
 
   const walletAddress = publicKey ? publicKey.toBase58() : null;
   const walletType = wallet?.adapter.name || null;
@@ -84,6 +86,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     validateUser();
   }, [connected, walletAddress, disconnect]);
 
+  // Força re-render do Next.js App Router em transições de estado para a UI reagir instantaneamente
+  useEffect(() => {
+    router.refresh();
+  }, [connected, walletAddress, router]);
+
   const connectWallet = useCallback(() => {
     setValidationError(null);
     setVisible(true); // Abre o modal do Solana Wallet Adapter
@@ -91,8 +98,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnectWallet = useCallback(() => {
     setValidationError(null);
-    disconnect();
-  }, [disconnect]);
+    disconnect().finally(() => {
+      // Limpeza forçada de cache de sessão e wallet local
+      localStorage.removeItem("walletName");
+      sessionStorage.clear();
+      router.refresh();
+    });
+  }, [disconnect, router]);
 
   return (
     <WalletContext.Provider

@@ -199,7 +199,7 @@ export default function HistoryPage() {
 
                                                         {/* SOL Transferido */}
                                                         <td className="px-6 py-4 text-right text-sm font-mono font-bold text-slate-700">
-                                                            {isPurchase && record.solAmount ? (
+                                                            {record.solAmount ? (
                                                                 <span className="text-blue-600">
                                                                     {record.solAmount.toFixed(4)} SOL
                                                                 </span>

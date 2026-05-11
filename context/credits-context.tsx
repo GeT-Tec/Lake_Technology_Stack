@@ -89,6 +89,7 @@ interface CreditsContextType {
   isHistoryOpen: boolean;
   closeHistory: () => void;
   refreshCredits: () => Promise<void>;
+  addTransactionRecord: (tx: TransactionRecord) => void;
   // Modal controls
   isModalOpen: boolean;
   openModal: () => void;
@@ -219,6 +220,10 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         JSON.stringify(newHistory)
       );
     }
+  };
+
+  const addTransactionRecord = (tx: TransactionRecord) => {
+    saveHistoryToLocal([tx, ...history]);
   };
 
   /**
@@ -404,6 +409,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         openHistory: () => setIsHistoryOpen(true),
         closeHistory: () => setIsHistoryOpen(false),
         refreshCredits,
+        addTransactionRecord,
         // Modal controls
         isModalOpen,
         openModal: () => setIsModalOpen(true),

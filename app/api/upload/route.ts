@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { uploadFileToIrys, InsufficientFundsError } from "@/lib/storage/irys";
+import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -7,6 +9,18 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
+    const walletAddress = formData.get("walletAddress") as string | null;
+    const transactionSignature = formData.get("transactionSignature") as string | null;
+    const cryptoAmountStr = formData.get("cryptoAmount") as string | null;
+
+    if (!walletAddress || !transactionSignature) {
+      return NextResponse.json(
+        { error: "A assinatura da transação (MINT_FEE) e a carteira são obrigatórias para o upload." },
+        { status: 400 }
+      );
+    }
+
+    const cryptoAmount = cryptoAmountStr ? parseFloat(cryptoAmountStr) : 0.05;
 
     if (!file || typeof file === "string" || !file.arrayBuffer) {
       return NextResponse.json(
@@ -22,6 +36,19 @@ export async function POST(req: Request) {
       );
     }
 
+    // Verify user exists
+    const user = await prisma.user.findUnique({
+      where: { walletAddress },
+      include: { user_credits: true },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado." },
+        { status: 404 }
+      );
+    }
+
     console.log(
       `[POST /api/upload] Recebido: ${file.name} (${file.size} bytes), tipo: ${file.type}`
     );
@@ -34,6 +61,23 @@ export async function POST(req: Request) {
     const { url } = await uploadFileToIrys(buffer, file.type);
 
     console.log(`[POST /api/upload] Sucesso — URL: ${url}`);
+
+    // Registrar taxa na tesouraria (credit_ledger híbrido)
+    const currentBalance = user.credits ?? user.user_credits?.balance ?? 0;
+    
+    await prisma.credit_ledger.create({
+      data: {
+        user_id: user.id,
+        operation_type: "MINT_FEE",
+        amount: 0,
+        balance_before: currentBalance,
+        balance_after: currentBalance,
+        crypto_amount: new Prisma.Decimal(cryptoAmount),
+        crypto_symbol: "SOL",
+        tx_hash: transactionSignature,
+        description: `Taxa de armazenamento e rede processada.`,
+      },
+    });
 
     return NextResponse.json({ url }, { status: 200 });
   } catch (error: any) {
