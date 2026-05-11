@@ -66,11 +66,18 @@ export default function TokenizePage() {
         throw new Error("Falha ao obter cotação do SOL. Tente novamente.");
       }
 
-      const exactSolAmount = 0.50 / currentPrice;
+      const exactSolAmount = 0.05 / currentPrice;
       const safeSolAmount = exactSolAmount * 1.01; // 1% buffer
       const MINT_FEE = Math.floor(safeSolAmount * LAMPORTS_PER_SOL);
 
-      const treasuryPubKey = new PublicKey(process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS || "HHyZWCuyA9Mbx5SyFhHEry7b98bPLb74BsADdbhe4o5d");
+      const treasuryPubKey = new PublicKey(
+        process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa"
+      );
+      
+      if (walletAddress === treasuryPubKey.toBase58()) {
+        throw new Error("A carteira conectada não pode ser a própria Tesouraria.");
+      }
+
       const userPubKey = new PublicKey(walletAddress);
 
       const transaction = new Transaction().add(

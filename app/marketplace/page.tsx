@@ -213,7 +213,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-violet-800">Taxa de Operação — Motor Lake</p>
-              <p className="text-xs text-violet-600 mt-0.5">Esta operação consome <strong>5 Créditos Lake</strong> e uma taxa de rede de <strong>$0.15 USD</strong> (convertidos em SOL) da sua carteira conectada.</p>
+              <p className="text-xs text-violet-600 mt-0.5">Esta operação consome <strong>5 Créditos Lake</strong> e uma taxa de rede de <strong>$1.00 USD</strong> (convertidos em SOL) da sua carteira conectada.</p>
             </div>
             <div className="shrink-0 text-right">
               <p className="text-2xl font-extrabold text-violet-700">5</p>
@@ -243,11 +243,17 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
                   throw new Error("Falha ao obter cotação do SOL. Tente novamente.");
                 }
 
-                const exactSolAmount = 0.15 / currentPrice;
+                const exactSolAmount = 1.00 / currentPrice;
                 const safeSolAmount = exactSolAmount * 1.01; // 1% buffer
                 const INVEST_FEE = Math.floor(safeSolAmount * LAMPORTS_PER_SOL);
 
-                const treasuryPubKey = new PublicKey(process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS || "HHyZWCuyA9Mbx5SyFhHEry7b98bPLb74BsADdbhe4o5d");
+                const treasuryPubKey = new PublicKey(
+                  process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa"
+                );
+
+                if (publicKey.toBase58() === treasuryPubKey.toBase58()) {
+                  throw new Error("A carteira conectada não pode ser a própria Tesouraria.");
+                }
 
                 const transaction = new Transaction().add(
                   SystemProgram.transfer({
