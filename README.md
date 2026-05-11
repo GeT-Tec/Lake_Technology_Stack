@@ -1,6 +1,6 @@
-# Lake Tokeniza 🌊
+# Lake — Opening digital horizons
 
-Lake Tokeniza is a state-of-the-art Web3 tokenization platform designed for the Brazilian market. It bridges the gap between traditional Real World Assets (RWA) and decentralized finance, allowing users to legally and securely structure, tokenize, and manage assets on the **Solana** blockchain with immutable document auditing via **Arweave (Irys)**.
+Lake is a state-of-the-art Web3 tokenization platform designed for the Brazilian market. It bridges the gap between traditional Real World Assets (RWA) and decentralized finance, allowing users to legally and securely structure, tokenize, and manage assets on the **Solana** blockchain with immutable document auditing via **Arweave (Irys)**.
 
 ## 🌟 Key Features
 
@@ -37,7 +37,7 @@ Lake Tokeniza is a state-of-the-art Web3 tokenization platform designed for the 
 2. **Configure Environment Variables:**
    Create a `.env.local` file in the root directory:
    ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/lake_tokeniza"
+   DATABASE_URL="postgresql://user:password@localhost:5432/lake"
    NEXT_PUBLIC_IRYS_NETWORK="devnet"
    NEXT_PUBLIC_IRYS_TOKEN="solana"
    IRYS_PRIVATE_KEY="[YOUR_TREASURY_WALLET_PRIVATE_KEY]"

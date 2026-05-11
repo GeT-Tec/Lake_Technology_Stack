@@ -72,7 +72,7 @@ export function CreditsModal() {
 
                             {/* Title */}
                             <h2 className="text-2xl font-bold mb-4 leading-tight">
-                                Desbloqueie o Poder do LakeTokeniza
+                                Desbloqueie o Poder da Lake
                             </h2>
 
                             {/* Description */}

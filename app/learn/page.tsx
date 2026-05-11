@@ -198,7 +198,7 @@ export default function LearnPage() {
                   <div>
                     <h3 className="text-xl font-bold text-slate-900">O Token é o Espelho do Contrato</h3>
                     <p className="text-slate-700 mt-2 leading-relaxed">
-                      Para cada ativo listado na LakeTokeniza, existe uma estrutura jurídica robusta no mundo real. Geralmente utilizamos:
+                      Para cada ativo listado na Lake, existe uma estrutura jurídica robusta no mundo real. Geralmente utilizamos:
                     </p>
                     <ul className="list-disc ml-5 mt-3 space-y-2 text-slate-700">
                       <li><strong>CCB (Cédula de Crédito Bancário):</strong> Para dívidas e recebíveis.</li>
@@ -327,7 +327,7 @@ export default function LearnPage() {
                   </div>
                 </div>
                 <p className="text-center text-xs text-slate-400 mt-4">
-                  Na LakeTokeniza, você escolhe como quer operar. Privacidade quando possível, Identificação quando necessário.
+                  Na Lake, você escolhe como quer operar. Privacidade quando possível, Identificação quando necessário.
                 </p>
               </div>
             </section>

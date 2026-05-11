@@ -1,0 +1,530 @@
+{
+  "source": "https://superteam.fun/api/hackathon/frontier",
+  "fetched_at": "2026-05-10T22:05:11Z",
+  "kept": 21,
+  "skipped_regional": [
+    "build-the-best-benefit-win-a-wallet-placement-1 (Spain)",
+    "superteam-turkey-x-halborn-solana-colosseum-frontier-hackathon (Turkey)",
+    "superteam-japan-frontier-hackathon-side-track (Japan)",
+    "solana-colosseum-frontier-hackathon-or-superteamgeo-track (Georgia)",
+    "payments-track-or-superteam-india-x-dodo-payments (India)",
+    "visa-frontier-hackathon-track (Germany)",
+    "frontier-hackathon-ukrainian-track (Ukraine)",
+    "superteamng-x-raenest-colosseum-frontier-hackathon-side-track (Nigeria)",
+    "build-real-world-solana-products-for-frontier-hackathon (Spain)",
+    "build-the-best-benefit-win-a-wallet-placement-2 (Germany)",
+    "frontier-canada (Canada)",
+    "superteam-balkan-x-see-ict-frontier-side-track (Balkan)",
+    "solana-network-state-spring-26-superteam-my-x-appworks-x-jelawang-capital (Malaysia)",
+    "hackathon-superteambrasil (Brazil)",
+    "indonesia-national-campus-hackathon (Indonesia)",
+    "frontier-hackathon-singapore-track (Singapore)",
+    "solana-nepal-hackathon-or-superteam-nepal-frontier-track (Nepal)",
+    "colosseum-frontier-hackathon-or-superteam-ie-track (Ireland)",
+    "seoulana-x-rocketpunch-frontier-side-track (South Korea)",
+    "superteam-poland (Poland)",
+    "neoslegal-x-superteam-uae-solana-builders-in-the-uae (United Arab Emirates)",
+    "superteam-australia-frontier-hackathon-side-track (Australia)",
+    "superteam-nl-x-aiso-or-frontier-hackathon-side-track (Netherlands)",
+    "build-on-solana-with-kast-pakistan (Pakistan)",
+    "side-track-superteam-kazakhstan (Kazakhstan)",
+    "superteam-kz-x-s1lkpay-frontier-side-track (Kazakhstan)",
+    "superteam-kz-and-metaforra-frontier-side-track (Kazakhstan)",
+    "build-with-lifi-superteam-balkans (Balkan)",
+    "build-with-lifi-superteam-germany (Germany)",
+    "build-on-top-of-jito-infrastructure (Germany)",
+    "superteam-australia-or-first-time-builders-side-track (Australia)",
+    "superteam-nl-x-aiso-or-frontier-hackathon-first-time-builders (Netherlands)",
+    "build-an-autonomous-onchain-agent-using-the-zerion-cli (Germany)"
+  ],
+  "failed": [],
+  "tracks": [
+    {
+      "slug": "50k-adevarlabs-bounty",
+      "title": "$50,000 in Security Audit Credits for Frontier Hackathon",
+      "region": "Global",
+      "reward": 50000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Adevar Labs Inc.",
+      "skills": [
+        "Blockchain"
+      ],
+      "url": "https://superteam.fun/earn/listing/50k-adevarlabs-bounty",
+      "description": "About Adevar Labs\nAdevar Labs is a web3 security firm specializing in protocol audits with a focus on the Solana ecosystem. We work with teams that prioritize security as a core part of their development process, helping them assess the resilience of their systems. Our clients know that security is not a one-time event but an ongoing commitment. A good audit doesn’t just identify vulnerabilities, but challenges the way teams think about security. We exist to bring truth and clarity to an industry where security is often misunderstood or deprioritized.\nMission\nOur mission is to foster a safer blockchain ecosystem by providing top-tier security expertise and tooling. We believe that robust security is the foundation for innovation, and we're committed to helping the next generation of crypto projects ship safely .\nHackathon Track Scope\nAdevar Labs is offering a bounty of $50,000 in security audit credits to participants of the Solana Colosseum “Frontier” Hackathon. This track is designed to reward promising projects with the professional security support they need to succeed. We are particularly focused on projects within the DeFi, RWAs, Consumer Apps, and Stablecoins categories.\nEligibility\n- This bounty is exclusively for teams that have submitted a project to the official Solana Frontier Hackathon.\n\n- Priority will be given to the teams that will participate in a Superteam Demo Day (Demo Day Germany, Balkans, etc.) and/or a regional Superteam Demo Day (e.g., the EU Demo Day).\n\nSubmission Requirements\nTo be considered for the bounty, your team must submit an application that includes:\n- Project Link: A link to your project's official submission on the Colosseum platform.\n\n- Code Repository: A public link to your project's GitHub repository.\n\n- Documentation: Complete and up-to-date technical documentation of the audited codebase.\n\n- Project Description: A brief, clear description of your project, including its purpose, functionality, and the category it falls under.\n\n- Security Statement: A short explanation of your project's security architecture and why a professional security audit is critical for its future.\n\n- Funding & Pitch Deck: A link to your investor pitch deck and/ or a brief summary of your project's funding stage and future fundraising plans. This information helps us understand your project's long-term vision and business viability.\n\nJudging Criteria\nAdevar Labs will evaluate submissions based on the following criteria:\n- Innovation & Potential Impact: The uniqueness of the project and its potential to make a significant impact within its category.\n\n- Technical Complexity: The technical sophistication of the smart contracts and overall architecture.\n\n- Security Awareness: The team's demonstrated understanding of potential security risks and their proactive approach to addressing them.\n\n- Documentation: Quality and clarity of documentation (completeness, accuracy, maintainability).\n\n- Team Experience: We will assess the team's collective experience and expertise, including any previous entrepreneurial ventures, relevant industry experience, and complementary skill sets. We are looking for a team with the right mix of technical and business acumen that can execute on their vision and adapt to challenges.\n\nApplications are reviewed on a rolling basis. \n\nShortlisted teams will be invited for a brief interview before any credits are awarded.\nResources\nTo help you build a more secure project, we encourage you to explore these resources:\n- adevarlabs.com/blogs\n\n- The DeFi Pre-Launch Security Checklist\n\nReward Structure\nAdevar Labs will select one or more winning teams to receive a share of the $50,000 in security audit credits. The credits, equivalent to two weeks of our security researcher's time, will be allocated based on our evaluation of each project's needs. \n\nNote: These credits can be applied toward any service for up to 50% of the total audit cost, making it a great opportunity to significantly offset your security budget\n\nThe final decision on the allocation of credits rests solely with Adevar Labs.\nNote: Winners of this bounty will be announced after the official Solana Colosseum Hackathon winners are revealed.",
+      "rewards_breakdown": {
+        "1": 10000,
+        "2": 10000,
+        "3": 10000,
+        "4": 10000,
+        "5": 10000
+      }
+    },
+    {
+      "slug": "build-a-live-dapp-with-solflare-kamino-dflow-or-quicknode-with-eitherway-app",
+      "title": "Build Live dApp with Solflare, Kamino, DFlow, Quicknode or Birdeye on Eitherway",
+      "region": "Global",
+      "reward": 20000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Eitherway ",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Business Development",
+        "Design",
+        "Digital Marketing",
+        "Frontend",
+        "Growth",
+        "Other",
+        "Product Manager",
+        "UI/UX Design"
+      ],
+      "url": "https://superteam.fun/earn/listing/build-a-live-dapp-with-solflare-kamino-dflow-or-quicknode-with-eitherway-app",
+      "description": "Eitherway Track — Frontier Hackathon\nAbout Eitherway\nEitherway turns ideas into live Solana dApps in minutes — not prototypes, but production-ready applications used by real users.\nGo from idea to live application with native integrations across Solflare, DFlow, Quicknode, Birdeye and Kamino.\nHow it works: Include the partner name in your prompt when building. For example:\n“Create a Solflare wallet interface”\n“Set up Kamino vault tracking”\nEitherway handles the integration automatically.\nThis isn't a sandbox. You're launching real products that handle real users and real onchain activity.\nGetting Started\n- Sign up and start building on Eitherway here\n\n- Write your prompt including the partner name you’d like to integrate (DFlow, Quicknode, Solflare, Birdeye, Kamino)\n\n- Generate and deploy your app\n\n- Refine and optimise for real users\n\n- Submit on Superteam Earn\n\nWhat We're Looking For\ndApps that survive the hackathon.\nWe want products with staying power — applications that continue operating after judging ends, attract organic users, and generate measurable onchain activity.\nYou can build anything—but strong submissions typically fall into:\n- Trading interfaces (spot, derivatives, aggregators, limit orders)\n\n- DeFi applications (lending, yield optimization, portfolio management)\n\n- Dashboards & analytics (wallet tracking, protocol metrics, portfolio analysis)\n\n- Automation tools (strategy execution, notifications, condition-based actions)\n\n- New primitives (prediction markets, onchain reputation, social features)\n\nThe common thread: solve a real problem with production-quality execution.\nProducts that demonstrate real user interaction, live usage, and active users.\nIntegration Requirements\nYou must integrate deeply with at least one partner.\nUsing Eitherway to integrate:\nWhen building in Eitherway, simply include the partner name in your prompt (e.g. “Build a dashboard showing Kamino vault positions” or “Create a trading interface using DFlow”). The platform handles the technical integration automatically.\nYou’ll also select your primary partner on the dropdown menu when submitting your entry with Superteam Earn, but your dApp must clearly use the partner tech in the product.\n“Deeply” means building your product around the partner’s core capabilities—not just plugging in a basic integration.\nThe examples below show what deep integrations look like for each partner - but they’re starting points, not requirements.\nIntegration Tracks\nSolflare\nTrack focus:\nBuild dApps where the wallet experience is central to the product - not just a connect button. Treat the wallet as a core interface layer.\nExamples of deep integration:\n- Custom transaction builders or signing flows\n\n- Portfolio analytics using wallet data\n\n- Multi-sig coordination tools\n\n- Transaction history visualization or analysis\n\n- Wallet-first onboarding experiences\n\nBonus points for:\n- In-app browser compatibility\n\n- Deep linking\n\n- Transaction simulation\n\nWhat strong submissions look like:\n- Wallet is core to the UX, not secondary\n\n- Improves how users interact with transactions\n\n- Feels like a better wallet experience than existing apps\n\nDFlow\nFocus: Trading infrastructure and execution quality across spot crypto and prediction markets\nBuild products that give traders a real edge - better prices, smarter routing, and MEV-resistant execution.\nExamples:\n- Smart swap interfaces that optimise execution using DFlow routing (spot + prediction markets)\n\n- MEV-protected trading experiences\n\n- Custom trading terminals powered by DFlow liquidity across spot and prediction markets\n\n- Advanced execution systems (TWAP, iceberg, conditional orders)\n\n- Lending and yield products for prediction market outcome tokens\n\n- Prediction market trading bots leveraging real-world data to make informed decisions\n\nWhat strong submissions look like:\n- Demonstrates measurable improvement in execution (price, slippage, speed)\n\n- Improves real trader outcomes (PnL, UX, reliability)\n\n- Uses DFlow as a core part of the product - not just integrated on the surface\n\nQuicknode\nFocus: Data infrastructure and performance\nBuild products that rely on fast, real-time data to deliver better user experiences\nExamples:\n- Real-time dashboards with live onchain data\n\n- High-performance trading or DeFi interfaces\n\n- Notification or automation systems powered by webhooks\n\n- Data-heavy apps requiring fast RPC and indexing\n\nWhat strong submissions look like:\n- Fast, responsive UX powered by real-time data\n\n- Clear use of Quicknode for performance-critical features\n\n- Handles scale, latency, or data complexity effectively\n\nBirdeye\nFocus: Data intelligence and real-time market insights\nBuild dApps where real-time and historical on-chain data form the core intelligence layer of the product. Go beyond simple price displays—use Birdeye’s API to power deep market analysis, user insights, discovery, and automated execution.\nExamples:\n- Advanced portfolio analytics with accurate PnL tracking\n\n- Automated trading strategies powered by real-time price feeds\n\n- Whale tracking dashboards and smart money movement monitoring\n\n- Market intelligence tools mapping liquidity, volume, and anomalies\n\n- Custom token screeners and real-time trading alert systems\n\nWhat strong submissions look like:\n- Uses data as a core product engine, not just a display layer\n\n- Surfaces insights users can act on (not just raw data)\n\n- Demonstrates clear improvements in decision-making, speed, or outcomes\n\nKamino\nFocus: Advanced DeFi strategy and position management\nExamples:\n- Automated vault strategies or rebalancing\n\n- Position management interfaces\n\n- Yield optimization dashboards\n\n- Custom strategy builders\n\nWhat strong submissions look like:\n- Clear improvements in how users manage capital or yield\n\n- Makes complex DeFi strategies simple and usable\n\n- Uses Kamino as a core engine of the product\n\nTrack Selection\nChoose your primary partner track at submission.\nYou can integrate with multiple partners, but:\n- Your project will compete within your selected track\n\n- You remain eligible for the Grand Prize across all integrations\n\nSubmission Requirements\nVia Superteam Earn\nYour submission must include:\n- Live dApp URL created from Eitherway — production-ready and publicly accessible\n\n- Demo video (2–3 minutes) showcasing core functionality and partner integration\n\n- GitHub repository (optional but recommended)\n\n- Integration documentation explaining how you use partner infrastructure\n\nEligibility\n- Open to all team sizes\n\n- Must be deployed on Solana mainnet for final submission\n\n- Must be submitted to Superteam Frontier\n\nJudging Criteria\n1. Real-world utility (30%)\n- Does this solve a real problem users actively face?\n\n- Is there clear value for the target user?\n\n- Would you use this yourself?\n\n2. Product quality (30%)\n- Clean, intuitive UX\n\n- Fast, reliable performance\n\n- Production-ready polish (error handling, edge cases, loading states)\n\n3. Integration depth (25%)\n- Meaningful use of partner infrastructure\n\n- Technical sophistication beyond basic implementations\n\n- Demonstrates strong understanding of partner capabilities\n\n4. Adoption potential (15%)\n- Can this realistically attract users?\n\n- Is there a clear path to distribution?\n\n- Does the onchain activity model make sense?\n\nPrizes\nGrand Prize: $5,000 USDC\nAwarded to the most viable, production-ready dApp.\nJudges will evaluate based on:\n- Must include at least one partner integration (Solflare, DFlow, Quicknode, Birdeye or Kamino) in build\n\n- Production readiness and technical execution\n\n- Strongest combination of utility, quality, and integration depth\n\n- Most credible path to real-world adoption\n\n- Evidence of viability (dApp remains live post-submission)\n\nPartner Track Winners: $3,000 USDC each\nBest dApp in each track:\n- Solflare\n\n- DFlow\n\n- Quicknode\n\n- Birdeye\n\n- Kamino\n\nAwarded based on the judging criteria noted above at submission deadline.\nTotal Prize Pool: $20,000 USDC\nAll prize payments will be made by Eitherway\nWinner announcement - May 27, 2026\nSupport & Resources\nBuilder Support\n- Build on Eitherway here: https://eitherway.ai/chat\n\nPartner Resources\n- Solflare docs: https://docs.solflare.com/solflare\n\n- Kamino docs: https://kamino.com/docs/build/developers/overview\n\n- DFlow docs: https://pond.dflow.net/build/introduction\n\n- Birdeye docs: https://docs.birdeye.so/\n\n- Quicknode docs: https://www.quicknode.com/chains/sol\n\nFAQ\nCan I integrate with multiple partners?\nYes. Choose your primary track at submission, but you're eligible for the Grand Prize across all integrations.\nCan I use Eitherway with custom code?\nYes. Eitherway is the deployment platform, but you can extend functionality with custom integrations.\nHow do I choose the specific parnter I want to integrate?\nSimply type the partners name to include in your prompt. When submitting to Superteam Earn you will also be asked to input the partner name in your submission.\nDo I need to be on Solana mainnet?\nYes for final submission. You can build on devnet during development.\nWhat if I started building this before the hackathon?\nThat’s fine. We’ll evaluate the scope of work completed during the hackathon period.\nFinal Note\nBuild something that still exists 30 days after submission.\nGood luck. 🚀",
+      "rewards_breakdown": {
+        "1": 5000,
+        "2": 3000,
+        "3": 3000,
+        "4": 3000,
+        "5": 3000,
+        "6": 3000
+      }
+    },
+    {
+      "slug": "encrypt-ika-frontier-april-2026",
+      "title": "Encrypt & Ika - Bridgeless Capital Markets and Encrypted Capital Markets",
+      "region": "Global",
+      "reward": 15000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Encrypt",
+      "skills": [
+        "Blockchain",
+        "Rust"
+      ],
+      "url": "https://superteam.fun/earn/listing/encrypt-ika-frontier-april-2026",
+      "description": "About Encrypt and Ika\nEncrypt and Ika are bringing some powerful new tools to Solana. We're building infrastructure that makes it easier to create secure and private financial applications on-chain. Think of it as bringing two big advancements to the Frontier hackathon: bridgeless capital markets and encrypted capital markets.\nIka focuses on custody and interoperability, providing MPC infrastructure. We use the 2PC-MPC protocol to enable dWallets. These are programmable, transferable signing mechanisms controlled by both a user and the Ika Network. This means Solana programs can enforce logic across any asset on any chain.\nEncrypt, on the other hand, deals with privacy. We're building FHE infrastructure to enable confidential Solana programs using the REFHE protocol. This lets you perform computations on encrypted data directly, without needing to decrypt it first. This all means you can build applications where sensitive financial information stays private during execution.\nBoth Ika and Encrypt share a common goal: we want to make Solana the go-to place for institutional-grade on-chain markets by removing the current complexities. Ika gets rid of liquidity fragmentation across chains and enables zero-trust custody, while Encrypt removes the public exposure of sensitive financial data. These tools are already available on devnet, and we're aiming for mainnet launch soon.\nMission\nBuild an innovative application or protocol using Encrypt and/or Ika's infrastructure on Solana, focusing on creating bridgeless capital markets and encrypted capital markets.\nHackathon Track Scope\nWe're looking for projects that leverage the unique capabilities of Encrypt (for privacy) and/or Ika (for custody and interoperability) to unlock new financial primitives or improve existing ones on Solana. Here are some ideas and examples to get you started, but feel free to think beyond these:\n- Bridgeless Capital Markets (using Ika):\n- Develop a decentralized version of an institutional custodian (like Fireblocks), enforced by Solana.\n\n- Create a fast bridgeless trading experience for native assets (similar to Near Intents) from any chain directly on Solana.\n\n- Design multi-chain agentic wallets with scalable decentralized guardrails for AI agents.\n\n- Implement multi-chain lending, allowing assets like Bitcoin or RWAs from any chain as collateral for loans on Solana.\n\n- Reimagine multisig and wallet products to use Solana as a control layer for holding assets across chains with web2 UX, features like recovery, passkeys, spending limits, and shared access, all without centralized intermediaries.\n\n- Encrypted Capital Markets (using Encrypt):\n- Build fully confidential DeFi applications for private trading and lending at scale.\n\n- Explore encrypted strategy vaults, private prediction markets, or sealed-bid auctions.\n\n- Hybrid Solutions (using both Ika and Encrypt):\n- Combine both technologies to create incredibly powerful and novel applications.\n\nSubmission Requirements\n- A link to your public GitHub repository containing all your project's code.\n\n- A clear and concise README.md file in your repository explaining:\n- The problem your project solves, target users and use cases.\n\n- How your project utilizes Encrypt and/or Ika.\n\n- Instructions on how to build, test, and use your application.\n\n- Any deployed program IDs or frontend links if applicable.\n\n- A short video (under 5 minutes) demonstrating your project's functionality and explaining your design choices.\n\nJudging Criteria\n- Core Integration of Ika/Encrypt: How fundamentally does the project rely on Ika and/or Encrypt? Are they essential to the product’s core functionality, or used only superficially?\n\n- Innovation: How novel and differentiated is the use of Ika and/or Encrypt compared to existing solutions?\n\n- Technical Execution: Quality, correctness, and robustness of the implementation. How well is the system designed and engineered?\n\n- Product & Commercial Potential: Is this a compelling product? Does it solve a real problem with clear user demand and potential for adoption or monetization?\n\n- Impact: What meaningful problem does the project solve, and how significant is its potential contribution to users, the Solana ecosystem and the Ika / Encrypt networks?\n\n- Usability & Experience: How intuitive, polished, and user-friendly is the application?\n\n- Completeness & Clarity: How fully realized is the project within the hackathon timeframe, and how clearly is the vision communicated (demo, pitch, docs)?\n\nReward Structure\n- 1st Place: 10,000 USDC\n\n- 2nd Place: 3,000 USDC\n\n- 3rd Place: 1,000 USDC\n\n- 4th Place: 500 USDC\n\n- 5th Place: 500 USDC\n\nDocumentation\n- Encrypt Solana Devnet Pre-Alpha Docs\n\n- Ika Solana Devnet Pre-Alpha Docs\n\nIf you have any questions reach out to @iamknownasfesal on X / TG\nA limited number of Claude Max 20x subscriptions will be given away for the duration of Colosseum Frontier to promising teams with promising ideas, comment here to be considered.",
+      "rewards_breakdown": {
+        "1": 10000,
+        "2": 3000,
+        "3": 1000,
+        "4": 500,
+        "5": 500
+      }
+    },
+    {
+      "slug": "100xdevs-frontier-hackathon-track",
+      "title": "100xDevs Frontier Hackathon Track",
+      "region": "Global",
+      "reward": 10000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "100xDevs",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend"
+      ],
+      "url": "https://superteam.fun/earn/listing/100xdevs-frontier-hackathon-track",
+      "description": "About 100xDevs\n100xDevs is a builder-first developer community focused on helping engineers master real-world skills through hands-on projects, open-source contributions, and practical learning. Founded by Harkirat Singh, it emphasizes learning by doing, with a strong focus on full-stack development, AI, and Web3.\nFor the Frontier Hackathon, 100xDevs is introducing a dedicated side track to reward builders who ship impactful, high-quality products on Solana.\nMission\nEncourage developers to build real, usable, and technically strong products on Solana that can scale, attract users, and push the ecosystem forward.\nHackathon Track Scope\nThis is an open track for all participants building on Solana as part of the Frontier Hackathon.\nThere are no restrictions on category or theme. You can build:\n- Consumer apps\n\n- Developer tools\n\n- Infra / protocols\n\n- AI + crypto products\n\n- Experimental ideas\n\nWhat matters most:\n- Strong execution\n\n- Real-world problem solving\n\n- Something people would actually use\n\nEligibility\n- You must be participating in the Colosseum Frontier Hackathon\n\n- Your project must be built on Solana\n\n- The project must be submitted on the Colosseum portal as well as on Superteam Earn\n\n- Your project must be eligible as per the official rules of the global hackathon\n\nJudging Criteria\n- Technical Execution: Functionality, reliability, and engineering quality\n\n- Innovation: Originality and uniqueness of the idea\n\n- Real-World Use Case: Does it solve a meaningful problem?\n\n- User Experience: Simplicity, usability, and design\n\n- Completeness: How polished and production-ready the project is\n\nReward Structure\n- 1st Place: 2,500 USDC\n\n- 2nd Place: 2,000 USDC\n\n- 3rd Place: 1,000 USDC\n\n- 4th Place: 1,000 USDC\n\n- 5th Place: 750 USDC\n\n- 6th Place: 750 USDC\n\n- 7th Place: 500 USDC\n\n- 8th Place: 500 USDC\n\n- 9th Place: 500 USDC\n\n- 10th Place: 500 USDC",
+      "rewards_breakdown": {
+        "1": 2500,
+        "2": 2000,
+        "3": 1000,
+        "4": 1000,
+        "5": 750,
+        "6": 750,
+        "7": 500,
+        "8": 500,
+        "9": 500,
+        "10": 500
+      }
+    },
+    {
+      "slug": "build-the-best-benefit-win-a-wallet-placement",
+      "title": "Build the Best Benefit. Earn $10K in In-Wallet Brand Activation.",
+      "region": "Global",
+      "reward": 10000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "theMiracle",
+      "skills": [
+        "Business Development",
+        "Digital Marketing",
+        "Growth",
+        "Marketing",
+        "Other",
+        "Product Manager"
+      ],
+      "url": "https://superteam.fun/earn/listing/build-the-best-benefit-win-a-wallet-placement",
+      "description": "Build the Best Benefit. Win a Wallet Placement. $10,000 in Placement Value - theMiracle Global Builder’s Track\nby theMiracle\ntheMiracle, in collaboration with their wallet partners, is giving early-stage teams in the Superteam ecosystem direct support on one of the hardest early challenges: reaching a quality user base and understanding what actually drives them to act.\nThis Track\ntheMiracle sits inside Solflare and MetaMask, with access to 35M monthly active wallets across chains. The intelligence layer is guided by behavioral, on- and off-chain signals, and delivers your activation directly inside the wallet UI. The winner gets a live placement, managed end-to-end, with wallet-level conversion data on every user who completed the action. Design the best benefit. Win the placement.\nWhat Is a Benefit?\nA benefit is a structured incentive delivered inside the wallet UI to a defined audience. It has four parts:\nAudience - Who are you trying to reach? Define your ideal user in behavioral terms. Not \"crypto users\"—something specific. DeFi-active wallets on Solana. Wallets that have interacted with gaming protocols. Holders of a specific token. theMiracle maps your criteria on different signals and builds the cluster. \nAction - What do you want them to do? One clear action. Sign up. Make a first deposit. Reach a tier. Claim a feature. The simpler and more specific, the higher the completion rate.\nIncentive - What do they get for doing it? The reward that makes the action worth taking. Must be a minimum of $5,000 in total perceived value distributed across completing users.\nValue - Why does this matter beyond the reward? One sentence. What does completing this action unlock for the user?\nBenefit Examples\nThese are benefits examples for theMiracle's platform. What matters is the framework in action.\nSocial Analytics Platform \nAudience: Active Solana traders and DeFi power users with regular DEX activity and token swap history \nAction: Sign up via the referral link and install the Chrome extension \nIncentive: 3-day Pro trial (~$19 value) with full access to smart tracking, watchlists, discovery alerts, and alpha reports \nValue: Experience the full product during an active market week. Once the extension is in your browser, it becomes part of your daily workflow.\nAI Video Editing Platform \nAudience: General Solflare users, broad initial targeting to identify which profiles convert, refined in subsequent phases. \nAction: Visit the platform via referral link, connect wallet, create an account \nIncentive: 2,000 bonus in-app credits and elevated feature access for a trial period, enough to transcribe 2 to 3 hours of video and generate 5 to 8 clips \nValue: A full workflow experience on your first session before hitting any paywall.\nCollectibles Trading Platform \nAudience: Solana NFT collectors and active traders with marketplace activity and meaningful USDC or SOL balances \nAction: Connect your wallet and purchase the first pack \nIncentive: 25,000 bonus points (25% of the way to a free pack) and $5 in ecosystem tokens airdropped post-purchase!\nValue: A stake in the platform from your first transaction. Points accelerate your path to a free pack, and tokens give you a reason to return.\nIdentity Infrastructure Platform \nAudience: Wallet owners with established on-chain history, identified by wallet age, transaction frequency, and activity patterns. OG wallets received an additional incentive tier. \nAction: Create or update a Human Passport \nIncentive: Ecosystem points for completing the full onboarding flow \nValue: A privacy-preserving proof of humanity that lets you participate in the ecosystem without giving up personal data.\nWeb3 Game\nAudience: NFT holders, wallet power users, and Web3 gamers identified across multiple on-chain segments \nAction: Pre-download the game from the App Store, join the Discord, and subscribe to the newsletter \nIncentive: Exclusive Soulbound Token, a unique non-transferable collectible, plus access to future rewards and additional drops \nValue: Verified Day 1 supporter status and a permanent on-chain record of being there at launch.\nWhat Winners Receive\n- The winning team receives a theMiracle Activation Package valued at $10,000.\n\n- Live placement inside major wallets as determined as the best fit by theMiracle, delivered to a targeted cluster of qualified wallets built from on-chain and behavioral signals.\n\n- Full campaign analytics covering impressions, clicks, and completions, with wallet profile breakdowns on every user who converted.\n\n- Follow-on eligibility. Teams with strong first campaign results qualify for preferential rates on subsequent activations.\n\nThe analytics are a product asset in their own right. You will know which profiles converted and at what rate. That behavioral intelligence directly supports your next steps.\nHow It Works After You Win\n- theMiracle helps you optimize and finalize audience recommendations. \n\n- theMiracle features your benefit tile inside the wallet UI. Users interact. \n\n- The benefit period ends.\n\n- theMiracle provides analytics, including impressions, clicks, and completions.\n\nEligibility\nOpen to teams that have submitted a project to the Frontier Hackathon and/or anyone building as part of the Superteam Ecosystem. Product must be live or in a testable state. The winning team must commit a minimum of, but not limited to, $5,000 in perceived value of user-facing incentives as part of their benefit, in credits, tier access, tokens, or equivalent in-product value distributed to users who complete the defined action.\nSubmission Requirements\nProject Link - your official hackathon submission\nWebsite or Pitch Deck - so we can understand your product, team, and vision\nBenefit Proposal - structured using the four-part framework: Audience, Action, Incentive, Value\nGrowth Context - where you are on user acquisition today and what a successful campaign looks like for you\nJudging Criteria\nBenefit Design - is the audience, action, and incentive clearly defined and well-matched?\nConversion Potential - does the benefit reflect a clear understanding of what drives completion inside a wallet UI, with an action and incentive that are matched to the audience's behavior?\nIncentive Quality - is the reward genuinely valuable and appropriately structured?\nProduct Credibility - product, team, ability to deliver post-award.\nCommunity Fit - does this benefit serve your community in a meaningful way beyond the immediate reward?\n\nSide note: We will run specific tracks for Spain and Germany. If you are building in those countries, make sure to submit to the relevant track—no duplicate applications.\n\nTools:\nBenefit simulator: https://app.themiracle.io/simulator\nInspiration: https://os.themiracle.io/benefit-library.html\n\nQuestions? Reach out on Telegram: atlaz_karim Winner announcement: May 26, 2026\nGood luck, builders!\ntheMiracle Team",
+      "rewards_breakdown": {
+        "1": 10000
+      }
+    },
+    {
+      "slug": "dollar10000-in-rpc-infrastructure-credits-for-colosseum-frontier-hackathon",
+      "title": "$10,000 in RPC Infrastructure Credits for Colosseum Frontier Hackathon",
+      "region": "Global",
+      "reward": 10000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "RPC Fast",
+      "skills": [
+        "Blockchain"
+      ],
+      "url": "https://superteam.fun/earn/listing/dollar10000-in-rpc-infrastructure-credits-for-colosseum-frontier-hackathon",
+      "description": "Colosseum Frontier Sidetrack by RPC Fast\nDuring the hackathon, we’re supporting Frontier builders with free access to high-performance Solana RPC infrastructure via RPC Fast.\nPost-hackathon, winning teams can receive infrastructure credits in the form of monthly RPC plan subscriptions (up to 3 months), supporting up to 17 teams – keep building without hitting infra limits.\nAbout RPC Fast\nRPC Fast is focused on making Solana infrastructure simple, fast, and reliable. We’ve been deeply involved in the Solana infra ecosystem for years, helping teams run low-latency RPC & data streaming dedicated infrastructure for DeFi, trading systems, and high-load applications. That experience is now packaged into our RPC SaaS.\nLearn more about the product: Docs.\nIn short: we handle the infrastructure, so you can focus on building, not debugging RPC issues at 3 AM.\nVision\nIntegrate RPC Fast’s Solana RPC into your project and take advantage of reliable, low-latency infrastructure to power your dApp.\nDuring the Hackathon\nDuring the hackathon, your project can get free access to a dedicated Hackathon plan, including:\n- 120M compute units/month\n\n- 500 req/s RPC rate limit\n\n- Unlimited bandwidth\n\n- Shredstream / Yellowstone gRPC\n\n- Frankfurt geo endpoint (we recommend deploying your app in the same region for lowest latency)\n\nTo get access to the Hackathon plan, contact RPC Fast via our Community chat.\nHackathon Reward Structure\nTo help teams continue building after the hackathon, rewards are distributed as infrastructure credits across RPC Fast plans:\n1st Place (up to 5 teams)\n– 2 months of Aperture (equiv. to ~$5,000 total value) or Stream\nor\n– 3 months of Focus\n2nd Place (up to 4 teams)\n– 1 month of Aperture (equiv. to ~$2,000 total value) or Stream\nor\n– 3 months of Focus\n3rd Place (up to 4 teams)\n– 1 month of Stream (equiv. to ~$1,000 total value)\nor\n– 2 months of Focus\nBonus Awards* (up to 4 teams)\nWe’ll support the teams that actively used RPC Fast infra during the hackathon:\n– 1 month of Aperture (equiv. to ~$2,000 total value) or Stream\nor\n– 2 months of Focus\n*Using RPC Fast infra is mandatory to be eligible for the Bonus Award track.\nNote: The reward structure may be adjusted to better align with the event and participating teams.\nSubmission Requirements\n- Submission to Colosseum is mandatory (must follow official global hackathon rules)\n\n- Public GitHub repository with your project code. If your repo is closed source, please grant access to Colosseum <judge's email address> for evaluation\n\n- A clear README.md including:\n- Project overview\n\n- Setup & run instructions\n\n- A short demo video or pitch deck\n\n- Follow @rpcfast on X. We appreciate your support!\n\n- Join our Community chat on Telegram. Feel free to ask questions\n\nJudging Criteria\n- Technical quality: engineering depth and execution\n\n- Innovation: originality and creativity\n\n- Impact: relevance and problem significance\n\n- Demonstration: clarity of presentation\n\nImportant: Projects are not required to use RPC Fast infrastructure during the Frontier hackathon to be eligible for rewards (with the exception of the Bonus Awards track).\nBonus Award consideration: Projects that effectively leverage RPC Fast infrastructure and create real ecosystem value.\nTerms & Conditions\n- Submissions need to be made natively on Earn for them to be announced as winners.\n\n- Allocation of post-hackathon rewards is determined solely by RPC Fast and is independent of the official Colosseum hackathon results.\n\n- Rewards are available to teams regardless of whether RPC Fast infrastructure was used during the hackathon (with the exception of the Bonus Awards track).\n\n- Teams may opt for a lower-tier subscription plan if it better fits their app architecture (the duration of the reward remains unchanged).\n\n- Stated USDC values are based on the Aperture plan, even if a lower-tier plan is selected by the team.",
+      "rewards_breakdown": {
+        "1": 5000,
+        "2": 2000,
+        "3": 1000,
+        "99": 500
+      }
+    },
+    {
+      "slug": "palm-usd-x-superteam-uae-solana-builders-1",
+      "title": "Palm USD x Superteam UAE - Global Track",
+      "region": "Global",
+      "reward": 10000,
+      "token": "PUSD",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Palm USD ",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend"
+      ],
+      "url": "https://superteam.fun/earn/listing/palm-usd-x-superteam-uae-solana-builders-1",
+      "description": "About\n\nPalm USD (PUSD) is the non-freezable, USD-pegged stablecoin - live on Solana as an SPL token. No freeze function. No blacklist. No pause. Compliance is enforced at the permissioned mint/redeem layer only. We're\ninviting builders to create the utility layer. We have a strong preference for working prototypes over slide decks.\nMission\nDevelop innovative applications and solutions that integrate and utilize PUSD as a core component on the Solana blockchain.\nHackathon Track Scope\nThis track focuses on building real utility with PUSD on Solana. We're looking for projects that demonstrate practical applications and strong technical direction.\n- Projects in areas such as:\n- Payments and commerce\n\n- DeFi and yield generation\n\n- Treasury management and institutional tooling\n\n- Developer infrastructure\n\n- Social impact initiatives\n\nSubmission Requirements\n- A link to your project's submission on Colosseum (Frontier Hackathon).\n\n- A link to your GitHub repository. If your repository is closed source, please grant access to hello@palmusd.com for evaluation purposes.\n\n- A demo video (using Loom or a similar service) showcasing your project.\n\n- A 5 min pitch deck (max 12 slides)\n\nEligibility Criteria\n- Submissions should include a working prototype or a clear technical direction. We prefer shipped code over theoretical concepts.\n\n- Projects must be built on Solana or integrate its core infrastructure in a meaningful way.\n\n- Prototypes, MVPs, or testnet deployments are highly encouraged. Early-stage ideas are acceptable if supported by clear architecture, a defined use case, and an execution roadmap.\n\nJudging Criteria\nProjects will be evaluated based on the following:\n- Technical Execution (35%): Quality of the build, code, and overall architecture. How effectively is PUSD integrated into the Solana ecosystem?\n\n- Product & Use Case (30%): Does the project address a genuine problem? Is there a clearly defined user base or market?\n\n- Innovation & Differentiation (15%): Does the project introduce novel ideas or stand out in the stablecoin or payments landscape?\n\n- Traction & Validation (10%): Evidence of user engagement, partnerships, pilot programs, or demonstrable market demand.\n\n- Team & Execution Ability (10%): The team's skills and their capacity to ship and scale the project effectively.\n\nReward Structure\n- 1st Place: 5,000 PUSD\n\n- 2nd Place: 3,000 PUSD\n\n- 3rd Place: 2,000 PUSD",
+      "rewards_breakdown": {
+        "1": 5000,
+        "2": 3000,
+        "3": 2000
+      }
+    },
+    {
+      "slug": "tether-frontier-hackathon-track",
+      "title": "Tether Frontier Hackathon Track",
+      "region": "Global",
+      "reward": 10000,
+      "token": "USDT",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Tether",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend",
+        "Mobile"
+      ],
+      "url": "https://superteam.fun/earn/listing/tether-frontier-hackathon-track",
+      "description": "Tether is putting up an additional 10,000 USDt for Colosseum Frontier builders who integrate QVAC into their project.\nThis is a side track running alongside the main hackathon — meaning if your project qualifies, you compete for both the main Frontier prizes and this $10k on top.\nWhat is QVAC?\nQVAC is Tether's decentralized, local-first AI platform — a complete SDK for running AI models directly on any device, without routing data through a centralized cloud. Think of it as the infrastructure layer for sovereign intelligence: your AI runs privately, locally, and without permission, on Linux, macOS, Windows, Android, and iOS, all from the same API.\nWhere most AI tools require cloud infrastructure, API keys, and subscriptions, QVAC eliminates central points of failure entirely. It uses a hardware-agnostic engine built on Vulkan API, meaning it runs on any GPU. Models load locally, inference is instant, and your users' data never leaves their device.\nThe SDK ships with a full suite of AI capabilities out of the box:\n- LLM inference — text generation and chat, including multimodal (text + image) via @qvac/llm-llamacpp\n\n- Text embeddings & RAG — semantic search, clustering, and retrieval-augmented generation via @qvac/embed-llamacpp\n\n- Translation — offline neural machine translation across languages via @qvac/translation-nmtcpp\n\n- Speech-to-text — automatic speech recognition via @qvac/transcription-whispercpp and @qvac/transcription-parakeet (with speaker diarization)\n\n- Text-to-speech — speech synthesis via @qvac/tts-onnx\n\n- OCR — optical character recognition from images via @qvac/ocr-onnx\n\nTether has also introduced WDK (wdk.tether.io), an open-source toolkit designed to streamline and enhance the development and deployment of non-custodial wallets, helping builders work more efficiently and securely\nGet started in minutes:\nnpm install @qvac/sdkFull docs at docs.qvac.tether.io\nRequirements\nTo be eligible for the Tether side track prize, your submission must:\n- Be a valid submission to the Colosseum Frontier hackathon (submitted before the May 11 deadline)\n\n- Meaningfully integrate QVAC SDK into the core functionality of your project — not as a wrapper or demo, but as a functional component of what you're building\n\n- Include a public GitHub repo with a working demo or video walkthrough\n\n- Submit through this Superteam Earn listing by the same May 11 deadline\n\nWhat counts as a meaningful integration? Your project should use at least one QVAC capability — whether that's local LLM inference, embeddings, speech-to-text, translation, or OCR — in a way that directly serves your product's users. The integration must work offline or on-device, which is the point of QVAC.\nHow Winners Are Chosen\nSubmissions will be evaluated by Tether and Superteam Georgia across four criteria:\n- Technical depth of QVAC integration (40%) — Does the project make real use of QVAC's local AI capabilities? Is the integration meaningful, or surface-level?\n\n- Product value (30%) — Does the project solve a real problem? Would someone actually use this?\n\n- Innovation (20%) — Is this a novel use of local/decentralized AI? Does it explore territory that cloud-based AI couldn't serve as well?\n\n- Demo quality (10%) — Is the submission clearly presented, reproducible, and well-documented?\n\nWinners will be announced by May 13, 2026.\nResources\n- QVAC homepage: https://qvac.tether.io\n\n- Documentation: https://docs.qvac.tether.io\n\n- GitHub: https://github.com/tetherto/qvac\n\n- Discord: https://discord.com/invite/tetherdev\n\n- Quickstart: https://docs.qvac.tether.io/sdk/getting-started/quickstart/\n\nQuestions? Reach out on Telegram: @mariamgoya",
+      "rewards_breakdown": {
+        "1": 5000,
+        "2": 3000,
+        "3": 2000
+      }
+    },
+    {
+      "slug": "umbra-side-track",
+      "title": "Build with Umbra Side Track for $10,000",
+      "region": "Global",
+      "reward": 10000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Umbra",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend"
+      ],
+      "url": "https://superteam.fun/earn/listing/umbra-side-track",
+      "description": "About Umbra\nUmbra is the privacy infrastructure layer for Solana. We make it possible for anyone, anywhere, to move money onchain without broadcasting their financial life to the world. Confidential transfers, private balances, viewing keys for compliance, shield any asset on solana, private swaps, etc.\nWe built the Umbra SDK, a developer toolkit that lets anyone integrate transactional privacy into their Solana applications. The SDK handles the heavy lifting so developers can focus on building products.\nYour Mission\nBuild a product or prototype using the Umbra SDK that brings real financial privacy to Solana. We're looking for applications that use Umbra's privacy primitives (confidential transfers, encrypted balances, viewing keys, private swaps and more) to solve actual problems people have today. Umbra has a private wallet so we want you to think out of the box.\nHackathon Track Scope\nWe want to see builders take Umbra's privacy infrastructure and turn it into real, usable financial products. Here are some ideas and examples to get you started, but feel free to think beyond these:\nPrivate Payments:\n- Private Solana Pay. A privacy-first version of Solana Pay where merchants get paid and customers stay private. Transaction amounts and sender addresses stay confidential onchain.\n\n- X402 Private Payments. Private machine-to-machine payment flows using the X402 protocol with Umbra's confidential transfer layer underneath.\n\n- Payment Links. Shareable payment links where the recipient receives funds without revealing their wallet address to the sender or anyone watching onchain.\n\n- Private Gift Cards. User A sends a gift card to User B via a link. User B claims it into their wallet without revealing their final address.\n\nPrivate Financial Infrastructure:\n- Private Payroll. Salary payments where amounts and recipient addresses are confidential. Employers pay onchain without broadcasting what they pay each employee to the world.\n\n- Private Neobank. A banking interface where the user's main balance is private by default. Your account balance isn't visible to anyone but you. Allow for shielded ownership of various assets. Start with available pools and stablecoins.\n\n- Private Billing Software. Invoices, memos, line items, all with confidential amounts and parties. Real business billing on private rails.\n\nCompliance and Tax Tooling:\n- Compliance Platform. A tool where someone inputs a transaction signature and the viewing key for that transaction, and gets the full decrypted details. Report generation, audit trails, selective disclosure for regulators or accountants.\n\n- Private Taxation Platform. Tax reporting built on viewing key decryption. Users generate tax reports from their private transactions without making their full history public. Decrypts what's needed, nothing more.\n\nBring Your Own Idea:\n- The above is a starting point. If you have a product idea that uses Umbra SDK to solve a financial privacy problem we haven't listed, go for it. We care about real utility and good execution.\n\nSubmission Requirements\n- A link to your public GitHub repository containing your project's code.\n\n- A clear and concise README.md in your repository explaining:\n\n- The problem your project solves, target users, and use cases.\n\n- How your project uses the Umbra SDK.\n\n- Instructions on how to build, test, and use your application.\n\n- Any deployed program IDs or frontend links if applicable.\n\n- A short video (under 5 minutes) demonstrating your project's functionality and explaining your design choices.\n\nJudging Criteria\n- Core Integration of Umbra SDK: How fundamentally does the project rely on the Umbra SDK? Is it essential to the product's core functionality, or used only superficially?\n\n- Innovation: How novel and differentiated is the use of Umbra SDK compared to existing solutions?\n\n- Technical Execution: Quality, correctness, and robustness of the implementation. How well is the system designed and engineered?\n\n- Product and Commercial Potential: Is this a compelling product? Does it solve a real problem with clear user demand and potential for adoption or monetization?\n\n- Impact: What meaningful problem does the project solve, and how significant is its potential contribution to users and the Solana ecosystem?\n\n- Usability and Experience: How intuitive, polished, and user-friendly is the application?\n\n- Completeness and Clarity: How fully realized is the project within the hackathon timeframe, and how clearly is the vision communicated (demo, pitch, docs)?\n\nReward Structure\n- 1st Place: $5,000 USDC\n\n- 2nd Place: $3,000 USDC\n\n- 3rd Place: $2,000 USDC\n\nDocumentation\n- Umbra SDK Documentation\n\n- Umbra Developer Docs\n\n- Umbra Website\n\nIf you have any questions or need help with your integration, reach out to the Umbra team on X or TG. We're here to help you build.",
+      "rewards_breakdown": {
+        "1": 5000,
+        "2": 3000,
+        "3": 2000
+      }
+    },
+    {
+      "slug": "dune-analytics-x-superteam-earn-or-frontier-data-sidetrack",
+      "title": "Dune Analytics | Frontier Data Sidetrack - Win $6k Plan",
+      "region": "Global",
+      "reward": 6000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Dune",
+      "skills": [
+        "Backend"
+      ],
+      "url": "https://superteam.fun/earn/listing/dune-analytics-x-superteam-earn-or-frontier-data-sidetrack",
+      "description": "Incorporate Dune’s data intelligence into your project submissions.\n\nAbout Dune SIM\nSim is a real-time blockchain data API by Dune. It gives developers instant access to wallet balances, token metadata, transaction history, and onchain activity across 60+ EVM chains and Solana — all through a single API key, with no indexer setup required. With webhook subscriptions, you can also push data directly to your app in real time.\nTo get started with Dune SIM, sign up here.\n\nSubmission Requirements\n- Project must have a feature that uses one or more of SIM’s endpoints, SVM or EVM\n\n- Submission must include a clear demo of how SIM is being used in the project\n\n- Project can be submitted to multiple tracks including the global hackathon\n\nCriteria\n- Fulfillment of requirements (50%)\n\n- Quality/Effectiveness of SIM use (20%)\n\n- Creativity & user experience (20%)\n\n- Innovation (10%)\n\nReward\nThe best submission will be awarded a SIM Enterprise plan with a value of $6,000 USD.",
+      "rewards_breakdown": {
+        "1": 6000
+      }
+    },
+    {
+      "slug": "cloak-track",
+      "title": "Build real world payment solutions with privacy — Cloak Track",
+      "region": "Global",
+      "reward": 5010,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Cloak",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend"
+      ],
+      "url": "https://superteam.fun/earn/listing/cloak-track",
+      "description": "About Cloak\nEvery transaction on Solana is public by default. Amounts, senders, recipients, and timestamps are permanently readable on any block explorer. For individuals this is inconvenient; for organizations it is an operational risk. Payroll amounts get indexed and searched. Treasury movements telegraph strategy before execution completes. Counterparty flows are parsed by competitors in real time. What looks like a technical detail of the chain is, in practice, a structural limit on what kinds of businesses can run on Solana.\nCloak is the private execution layer that closes that gap. Businesses use Cloak to move USDC, USDT, and SOL between parties without exposing amounts or addresses on-chain. Payroll runs, vendor payments, treasury rebalances, and cross-border settlement go through the same interface — the economic guarantees of stablecoins, without the public trail. Selective disclosure via viewing keys means a finance team, auditor, or regulator can still see exactly what they need, while the public ledger shows nothing.\nUnder the hood: a UTXO shielded pool on Solana, Groth16 proofs generated client-side in seconds, and a relay that submits transactions without ever touching custody. The SDK is TypeScript, and the integration surface is straightforward — deposit, transfer, swap, and compliance-friendly history — without you needing to run provers, sync Merkle trees, or ship circuit builds. Cloak is live on mainnet today.\nMission\nThe track exists to close a concrete gap on Solana: products where privacy isn’t a feature you add, but a precondition for the product to function. If your users would walk away the moment their amounts and counterparties went public, privacy is load-bearing — that’s the kind of product we want to fund. Use the Cloak SDK to build one of them.\nWhat You Can Build\nFive directions where Cloak’s capabilities line up with a real user and a real pain.\nPrivate payroll and contractor payments\nAn organization paying ten people in USDC shouldn’t have every salary permanently readable on any block explorer. Cloak’s batch disbursement fans a single shielded transaction out to many recipients — amounts hidden, addresses hidden, auditable only by whoever holds the viewing key. A natural product is a payroll interface that connects to a treasury wallet, lets an admin configure recipients and amounts, and runs the full disbursement as one shielded batch. Invoicing tools where a contractor shares a stealth claim link fit here too.\nPrivate B2B payments and treasury flows\nA protocol treasury moving funds between operational accounts, paying vendors, or running a buyback doesn’t want public on-chain signals telegraphing strategy before execution completes. The public ledger becomes a live intelligence feed for competitors and anyone else watching. Products here include treasury management interfaces with shielded execution, B2B settlement tools where both counterparties want amounts off-chain, and grant disbursement for DAOs with internal reporting for governance.\nCross-border stablecoin payments\nUSDC and USDT moving globally between counterparties, with amounts and identities staying private, is a real product requirement — for freelancers, for businesses transacting across jurisdictions, for anyone whose financial activity shouldn’t be permanently indexed. A fit is a payment interface designed specifically for cross-border flows, with QR-based or link-based claiming so the recipient doesn’t need prior Cloak familiarity.\nCompliance and audit tooling\nThe viewing key system is underexplored. An organization using Cloak can issue scoped keys — a full audit key for internal finance, a narrower one for an external auditor that shows amounts but not full history, a regulatory key generated on demand with time-limited validity. Products here include compliance dashboards that manage active viewing keys and generate structured reports, tools where a third-party auditor inputs a key and gets a formatted history without touching the ZK mechanics, or tax reporting that decrypts only the transactions in a specific period.\nSDK integrations in existing wallets and DeFi\nIf you’re building a wallet, DeFi protocol, or any Solana product handling user funds, a private send option is a feature your users would reach for. An integration that embeds Cloak’s shielded transfer into an existing product — so users pick between standard and private without leaving your UI — qualifies. Developer tooling that makes Cloak easier to integrate for the next builder, such as wrapper libraries, testing utilities, CLI tools, and well-documented integration templates, also counts.\n\nIntegration Requirements\nYour project should use one or more of these Cloak SDK capabilities as the mechanism that delivers user value:\n\n• Private transfers of USDC, USDT, and SOL between shielded accounts\n• Batch disbursement that fans out to many recipients in a single shielded transaction\n• Stealth addresses that let a sender reach a recipient without exposing a destination\n• Viewing keys for selective audit trails — full or scoped visibility for specific parties\n• Private swaps via Orca for routing between tokens without revealing the path\n\nGoing deep on one capability beats using all of them shallowly. A payroll interface that executes batch disbursement through the SDK and exposes a viewing key to the admin is a complete, valid integration — it uses two capabilities, both meaningfully. A product that wires deposit and withdrawal into an existing app and calls itself “private” without using the core transfer flow doesn’t clear the bar.\nSubmission Requirements\n\nWorking demo or live deployment: the product needs to run. A live URL is preferred. A local setup with clear instructions is acceptable. Judges will test it.\n\nPublic GitHub repository: include all project code.\n\nREADME.md must cover:\n• The problem being solved and who it’s for\n• How the Cloak SDK is used and why it’s central to the product\n• Setup and run instructions\n• Any deployed program IDs or frontend links\n\nDemo video, under 5 minutes: show the product working end to end. Walk through the actual private payment flow. Explain the decisions you made, not just what the product does.\n\nProjects must also be submitted to the Colosseum Frontier Hackathon portal at arena.colosseum.org to be eligible.\nJudging Criteria\nIntegration depth (40%)\nIs Cloak doing the actual work here, or is it incidental? Judges will look at whether private payments are genuinely central to what the product does, and whether the integration reflects a real understanding of the SDK’s capabilities.\nProduct (30%)\nCode quality, reliability, UX, and clarity. Does the product run cleanly in realistic conditions? How easy is it for a user to understand what’s happening and complete a private payment flow? Error states, loading behavior, and recovery from failures matter as much as the happy path.\nReal-world use (30%)\nIs there a clear person or organization that would use this, and does the product meaningfully address their pain? The most compelling submissions will be ones where the target user is obvious and the privacy guarantee is load-bearing to why they’d adopt it.\n\nResources\n\nCloak website: https://cloak.ag\nDocumentation: https://docs.cloak.ag/sdk/introduction\nSDK quickstart: https://docs.cloak.ag/sdk/quickstart\nAPI reference: https://docs.cloak.ag/sdk/api-reference\nGitHub: https://github.com/cloak-ag/\nInstall SDK: npm i @cloak.dev/sdk\n\nClaude Code skills:\nnpx @cloak.dev/claude-skills\n\nThis installs four slash commands into your Claude Code environment:\n• /cloak-shield — move tokens into the shielded pool\n• /cloak-send — private transfer\n• /cloak-pay — pay out of a shielded balance\n• /cloak-swap — private swap via Orca\n\nEach command encodes the full SDK call pattern for that flow, so you can prototype a working private payment path in a fresh repo without reading the API reference first. The skill also loads structured context about the SDK surface so Claude can answer integration questions inline.\n\nResearch the landscape:\nnpx skills add ColosseumOrg/colosseum-copilot\nFor support:\nReach the Cloak team on X at @cloak_ag\nDiscord: https://discord.gg/hdkrhrgfER",
+      "rewards_breakdown": {
+        "1": 2000,
+        "2": 1500,
+        "3": 750,
+        "4": 500,
+        "5": 260
+      }
+    },
+    {
+      "slug": "build-a-autonomous-onchain-agent-using-zerion-cli",
+      "title": "Build a Autonomous Onchain Agent using Zerion CLI",
+      "region": "Global",
+      "reward": 5000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Zerion",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Python"
+      ],
+      "url": "https://superteam.fun/earn/listing/build-a-autonomous-onchain-agent-using-zerion-cli",
+      "description": "About Zerion\nZerion is the best self-custodial wallet for everything you own onchain. Track and manage tokens, NFTs, and DeFi positions across 60+ EVM chains and Solana — all in one place.\nFrom portfolio overview to per-asset details: price charts, transaction history, P&L, and more. The same familiar interface works across the web app, mobile app, and browser extension. Advanced security features like phishing detection, transaction simulator, and more — keeping you safe onchain.\nZerion API powers the infrastructure behind the wallet — and is available to builders. It's the same multi-chain portfolio and wallet data layer used by 200+ teams including Uniswap, Privy, Backpack, and Kraken. If you're building anything that needs onchain data across EVM chains and Solana, the API is your foundation. We're excited to host a track on the Frontier hackathon to see what you can build with our new Zerion CLI.\nMission\nFork Zerion CLI, build your own autonomous onchain agent, and ship something that executes real transactions — no simulations, no chatbots.\nHackathon Track Scope\nZerion CLI is fully open source — fork it, extend it, make it yours. This track is about building on top of that foundation: an autonomous agent that uses your forked Zerion CLI as the wallet and execution layer, with real onchain transactions and scoped policies that keep the agent safe.\n\nIt gives developers a complete trading stack from the terminal: wallet creation, cross-chain swaps and bridges, portfolio tracking, PnL, and transaction simulation. EVM and Solana from day one.\n\nNo matter how much you customize the CLI, every swap still routes and carries a default commission, server-side in the Zerion API. You keep creative control. Zerion stays the execution engine.\nThe interface is up to you — Telegram bot, Discord bot, web app, CLI script, cron job, whatever fits your use case best.\n- Fork the Zerion CLI repo and build your agent on top of it.\n\n- Your agent must execute at least one real onchain transaction, such as swaps, bridges, or portfolio rebalancing.\n\n- Define at least one scoped policy — lock to a chain, set spend limits, define expiry windows, block certain actions.\n\n- Extend and customize the CLI however you want: write new policies, add new commands, build new interfaces.\n\n- Consider innovative use cases like:\n- A Telegram or Discord bot that dollar-cost averages (DCA) into an asset based on a schedule and policy-defined spend limits.\n\n- An agent that monitors a wallet and rebalances its portfolio when an asset's value changes.\n\n- A group interface for collaborative trading decisions, executing only after team consensus.\n\n- An agent that reacts to external signals (like price alerts or onchain events) to automate actions.\n\n- A multi-agent system where one agent proposes trades and another approves them within predefined policy limits.\n\nSubmission Requirements\n- Fork the Zerion CLI repo as your starting point.\n\n- Build your execution and wallet layer on top of the forked CLI.\n\n- Choose any interface — Telegram, Discord, web app, CLI, or other.\n\n- At least one scoped policy must be defined and implemented (e.g., chain lock, spend limit, expiry).\n\n- The agent must execute a real onchain transaction (not a simulation). All swaps must route through the Zerion API.\n\n- A demo video or a live demo of your working agent is required.\n\n- All code must be open source and available in a public GitHub repository.\n\nJudging Criteria\n- Onchain Functionality: Does the agent genuinely execute real onchain transactions, or is it a simulation?\n\n- Policy Design: How well are the agent's actions scoped and secured by the implemented policies? Are there any \"god-mode\" agents?\n\n- Real-World Applicability: Does the bot address a genuine need or offer a practical use case that someone would actually use?\n\n- Code Quality: Is the codebase well-structured, readable, and easy to fork or extend?\n\n- Demo Quality: Is the demo clear and comprehensive, allowing judges to understand and test the functionality effectively?\n\nResources\n- Zerion CLI GitHub: github.com/zeriontech/zerion-ai\n\n- Zerion API docs: developers.zerion.io\n\n- Zerion API dashboard: dashboard.zerion.io — sign up and generate an API key (required to route swaps through Zerion CLI)\n\n- https://github.com/zeriontech/zerion-ai/pull/5\n\nReward Structure\n- 1st Place: 2500 USDC\n\n- 2nd Place: 1500 USDC\n\n- 3rd Place: 1000 USDC",
+      "rewards_breakdown": {
+        "1": 2500,
+        "2": 1500,
+        "3": 1000
+      }
+    },
+    {
+      "slug": "privacy-track-colosseum-hackathon-powered-by-magicblock-st-my-and-sns",
+      "title": "🔐⚡ Privacy Track — Colosseum Hackathon (Powered by MagicBlock, ST MY & SNS)",
+      "region": "Global",
+      "reward": 5000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "MagicBlock",
+      "skills": [
+        "Blockchain",
+        "Rust"
+      ],
+      "url": "https://superteam.fun/earn/listing/privacy-track-colosseum-hackathon-powered-by-magicblock-st-my-and-sns",
+      "description": "Privacy is the primitive for the next generation of on-chain applications — especially in a world of autonomous agents.\n\nThis track challenges you to build privacy-first systems on Solana, powered by MagicBlock's (Private) Ephemeral Rollups & Payment API:\n- Ephemeral Rollup (ER)\n\n- Private Ephemeral Rollup (PER)\n\n- Private Payments API\n\n👉 Think beyond wallets and balances — build systems where data, intent, and interactions remain private by default, while still being composable and verifiable.\n\n⸻\n\n🧠 What we're looking for: Frontier Projects\n- Private payments & shielded transactions\n\n- Private DeFi (Auctions, Lending, Trading primitives)\n\n- Agentic commerce, Agent-to-agent, x402 APIs, MPP etc\n\n- and more ... find more ideas in our database for RFPs.\n\n⸻\n\n⚡ Why Solana and Magicblock\n- Low latency, zero fees at scale\n\n- Privacy, composability and security\n\n- Regulatory compliance and control\n\n- Built-in onchain automation and randomness\n\n- Ready-to-Use Private Payment API\n\n⸻\n\n🏆 Prize Breakdown (Total: $5,000)\n- 🥇 1st Place — $2,500\n\n- 🥈 2nd Place — $1,500\n\n- 🥉 3rd Place — $1,000\n\n⸻\n\n🛠️ Judging Criteria\nTechnology (40%)\n- Effective use of ER, PER, or Private Payments API\n\n- Working demo\n\n- Quality of architecture and smart contract design\n\nImpact (30%)\n- Solves a real-world problem\n\n- Clear market need\n\n- Potential for adoption and monetization\n\nCreativity & UX (30%)\n- Novel primitives, mechanisms, or UX\n\n- Smooth user experience\n\n- Clarity of how the system works\n\n⸻\n\n✅ Submission Requirements\n- Working demo: Live deployment with successful MagicBlock integration\n\n- Code repository (GitHub): Publicly accessible\n\n- Short demo video (3 min): Problem → Solution → Demo\n\n⸻\n\n👉 Bring privacy to Solana — with MagicBlock.",
+      "rewards_breakdown": {
+        "1": 2500,
+        "2": 1500,
+        "3": 1000
+      }
+    },
+    {
+      "slug": "sns-identity-track-colosseum-hackathon-powered-by-sns-stmy-magicblock",
+      "title": "🪪 SNS Identity Track Colosseum Hackathon (Powered by SNS, STMY, MagicBlock))",
+      "region": "Global",
+      "reward": 5000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "SNS",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Content",
+        "Frontend",
+        "Rust",
+        "Video"
+      ],
+      "url": "https://superteam.fun/earn/listing/sns-identity-track-colosseum-hackathon-powered-by-sns-stmy-magicblock",
+      "description": "About SNS\nSNS is spearheading an Identity Track at the Solana Network State Spring ‘26 event. We help builders create cutting-edge identity protocols on Solana's high-speed network. This initiative is part of the larger Frontier hackathon, a five-week program hosted in collaboration with Superteam MY, Network School.\nMission\nBuild an identity-focused project on Solana, leveraging social and agent identity concepts.\nHackathon Track Scope\nBuild a decentralized application (dApp) that explores identity, social identity, or agent identity on Solana.\nThis track focuses on how identity can serve as a core primitive for trust, interaction in onchain ecosystem. \nWe will structure this track into two focuses themes:\nAgent Identity: Build the onchain identity layer and source of trust using .sol for autonomous agent on Solana\nSocial Identity: Reimagine .sol as the universal identity and login layer for Solana applications. Focus on improving user onboarding, portability of identity, and composability across apps.\n- Projects could include:\n- On-chain reputation systems.\n\n- Social graph protocols that leverage Solana wallets for identity.\n\n- AI agents with distinct on-chain identities.\n\n- Tools that visualize or manage aspects of decentralized identity.\n\n- Solutions for sybil resistance in DAOs or airdrop campaigns using identity.\n\nSubmission Requirements\n- Register for the hackathon on the Colosseum platform and select \"Global\".\n\n- Submit your project to the Frontier hackathon on the Colosseum platform and select \"Global\"\n\n- Submit your project on both the Colosseum portal and Superteam Earn.\n\n- The project must meet the official rules of the global hackathon.\n\n- The overall submission quality (pitch deck, videos, and documentation) should clearly communicate the problem, product, architecture, and its significance.\n\n- A clear explanation of how your project addresses identity, social identity, or agent identity on Solana.\n\n- Submission must include a link to a public GitHub repository with your project's code. If the team’s Github repo is closed source, please grant access to contact@sns.id for our evaluation.\n\n- Must be in English.\n\nJudging Criteria\nOur team and local judging will be aligned with Colosseum’s founder-first philosophy. We will evaluate projects based on:\n- Innovation: How new and creative is the approach to identity on Solana?\n\n- Technical Merit: Quality of the code, smart contract design, and overall technical implementation.\n\n- Practicality/Use Case: How useful is the project, and what real-world problem does it solve?\n\n- Completeness: How well-developed is the project within the hackathon timeframe?\n\n- User Experience: How intuitive and easy to use is the dApp?\n\n- Founder Potential: Does the team look like it can keep shipping after the hackathon? Is there evidence of speed, clarity, and conviction?\n\n- Demo and Submission Quality: How clearly does the team communicate the problem, product, architecture, and why it matters?\n\nReward Structure\n- 2 Track Winners, $1,800/each = Total $3,600\n\n- 2 Track Runner-up, $700/each = Total $1,400",
+      "rewards_breakdown": {
+        "1": 1800,
+        "2": 1800,
+        "99": 700
+      }
+    },
+    {
+      "slug": "build-with-goldrush-track-powered-by-covalent",
+      "title": "Build with GoldRush Track (Powered by Covalent)",
+      "region": "Global",
+      "reward": 3000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Covalent",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend"
+      ],
+      "url": "https://superteam.fun/earn/listing/build-with-goldrush-track-powered-by-covalent",
+      "description": "About Covalent\nCovalent is the data infrastructure layer that transforms raw blockchain state into verified, structured data across 100+ networks, including Solana, powering apps, institutions and AI agents.\nWe build GoldRush, the most comprehensive blockchain data API suite that lets you skip indexing and go straight to building, using a single API key. It indexes full on-chain data, from genesis to latest block, across multiple data types: balances, transactions, logs, pricing, and smart contract events, giving you complete coverage without running your own nodes.\nUnlike raw RPC providers, GoldRush delivers refined, structured data - decoded events, token metadata, USD pricing, and classified transactions like DEX swaps, stablecoin transfers, and bridge events - ready to use out of the box.\nGoldRush Documentation - https://goldrush.dev/docs\nTo get started with GoldRush, sign up here for trial plan.\nYour Mission\nUse GoldRush's APIs to power a product that solves a real problem, whether that's giving users better visibility into their assets, helping traders make faster decisions, enabling AI agents to reason about on-chain activity, or surfacing insights that raw blockchain data alone can't provide.\nHackathon Track Scope\nWe're open to any project that puts GoldRush data to work. Some directions to spark ideas:\n- AI Agents\n- Deploy persistent monitors that watch for drainer approvals, sudden LP pulls, or phishing airdrops and alert your agent in real time.\n\n- Build an x402-powered data marketplace where agents pay micro-USDC on Solana per query, no API keys, no accounts, just HTTP and chain state.\n\n- DeFi & Trading tools\n- Wire trading bots to live DEX activity on PumpFun, Raydium, Meteora or Orca\n\n- Build whale tracking feeds that monitor wallets and fire signals to copy-trading agents the moment positions shift\n\n- Wallet & Portfolio apps\n- Score wallet risk from SPL token balances, approval hygiene, and full transaction history\n\n- Analytics & Dashboards\n- Generate counterparty trust scores from on-chain history before any OTC deal closes.\n\n- Compliance & Risk tools built on classified transaction types and wallet history\n\nThese are starting points, not constraints - the best submissions will find creative applications we haven't thought of.\nSubmission Requirements\n- Project must uses one or more of GoldRush’s API endpoints\n\n- A link to public GitHub repository containing your project's code\n\n- Submission must include a short demo video of how your project is using GoldRush, posted on X tagging @goldrushdev\n\n- Project can be submitted to multiple tracks including the main Frontier hackathon\n\nReward Structure\n- 1st Place: $1500 USDC + $3500 worth GoldRush credits\n\n- 2nd Place: $1000 USDC + $2000 worth GoldRush credits\n\n- 3rd Place: $500 USDC + $1500 worth GoldRush credits\n\nMentorship support to winning teams from Covalent team to keep building after the hackathon as well.\nDuring the Hackathon\n- If you have any questions or need support with your integration, feel free to reach out to the Covalent team on Discord in the Colosseum Hackathon channel - we’re here to help!\n\n- You can sign up for GoldRush trial plan from here. To extend your access for the full duration of the hackathon, just drop a message in Discord with the email you used to sign up - we’ll take care of the rest.",
+      "rewards_breakdown": {
+        "1": 1500,
+        "2": 1000,
+        "3": 500
+      }
+    },
+    {
+      "slug": "build-with-torque-mcp-1",
+      "title": "Build with Torque MCP",
+      "region": "Global",
+      "reward": 3000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Torque",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Frontend"
+      ],
+      "url": "https://superteam.fun/earn/listing/build-with-torque-mcp-1",
+      "description": "Build with Torque 🔧\nAbout Torque\nTorque is the programmable retention layer for onchain products. We provide the primitives (leaderboards, rebates, raffles and gifts) to build sustainable loyalty, helping teams solve acquisition, retention and velocity.\n- Track Record: Powering teams like Raydium, Axiom, and WLFI.\n\n- Scale: $5B+ volume driven, 1,400+ campaigns launched, $10M+ in rewards distributed.\n\n- Edge: Built-in Sybil resistance and AI-driven ROI analytics.\n\nTo get started with Torque join the hackathon TG group and follow the MCP quickstart guide.\n\nYour Mission\nMost hackathon projects die because they lack a growth and distribution strategy. Use the Torque MCP to build a project with a built-in growth loop. Prove your project can acquire and retain real users.\nScope\nRather than teams building projects specifically for Torque, we want to see Torque integrated to power your project’s growth.\n\n- Integration: Use the Torque MCP to trigger growth primitives.\n\n- Live Activity: Pass custom_events or onchain actions to Torque. We judge based on live project activity not just code.\n\n- Builder Experience: Provide a brief “Friction Log”. Tell us what broke, what was confusing, and how we could further improve.\n\nSubmission Requirements\n- Projects must pass custom_events, trigger incentives, or distributors through the Torque MCP or API.\n\n- A link to public GitHub repo containing your project’s code\n\n- A short demo video of how your project uses Torque, posted on X tagging @torqueprotocol.\n\n- Project is encouraged to be submitted to multiple tracks including the main Frontier hackathon\n\n- Projects will be judged based on the measurable use of incentives, either by rewards given or number of participants\n\nReward Structure\n- 🥇 1st Place: $1,500 USDC\n\n- 🥈 2nd Place: $1,000 USDC\n\n- 🥉 3rd Place: $500 USDC\n\nMentorship support to winning teams from Torque to keep building after the hackathon as well\nResources\n- Docs: quickstart guide\n\n- Website: torque.so",
+      "rewards_breakdown": {
+        "1": 1500,
+        "2": 1000,
+        "3": 500
+      }
+    },
+    {
+      "slug": "not-your-regular-bounty",
+      "title": "Not Your Regular Bounty",
+      "region": "Global",
+      "reward": 3000,
+      "token": "jupUSD",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Jupiter",
+      "skills": [
+        "Backend",
+        "Content",
+        "Frontend",
+        "Javascript",
+        "Mobile",
+        "Node.js",
+        "Typescript",
+        "Writing"
+      ],
+      "url": "https://superteam.fun/earn/listing/not-your-regular-bounty",
+      "description": "We just shipped the Jupiter Developer Platform. One platform, one API key, everything you need to build on Jupiter, docs, API keys, analytics, all in one place so you're not jumping between domains to find what you need.\nThis bounty is not \"best app built with Jupiter wins.\" We've seen enough of those.\nWe want you to build something that makes us go \"oh.\" Combine APIs in ways we didn't design for, if we have to sit with your submission for a minute before we realize it's genius, that's what we're looking for.\nOr, if you're already building something on Solana, integrate Jupiter's APIs into your product and tell us exactly what sucked about the process. Swaps, lending, limit orders, DCA, perps, prediction markets, we cover a lot of ground. Whatever you're building, we probably fit in somewhere.\nEither way: you build, you use our new tools, and you tell us honestly how it went.\nWhat you're building with\ndevelopers.jup.ag - one key gets you everything:\nAPIs:\n- Swap V2 - /order + /execute for managed landing and best price across all routers, or /build for raw instructions and full control. Gasless swaps built in. This is the new unified swap API, we want you on it. The previous version of this processed billions in volume, this will too.\n\n- Tokens - search, metadata, verification status, organic scores, trading metrics for any Solana token.\n\n- Price - USD pricing of all tokens on Solana.\n\n- Lend - yield on deposits, borrowing, flashloans.\n\n- Trigger - limit orders - single, OCO (TP/SL), OTOCO. (NEW)\n\n- Recurring - time-based DCA.\n\n- Prediction Markets - binary markets on real-world events.\n\n- Perps - leveraged perpetuals on Solana.\n\nJupiter AI Stack - we want you using these during your build process:\n- Agent Skills - context files that give your coding agent structured guidance for integrating Jupiter APIs. Feed these to Claude Code, Cursor, Codex, whatever you use.\n\n- Jupiter CLI - JSON-native, non-interactive. Works from terminal, Telegram, or through AI agents. If your agent needs to execute, this is how.\n\n- Docs MCP - query Jupiter docs via MCP. For when your agent can't access the filesystem.\n\n- llms.txt - LLM-optimized docs index.\n\nWhat you submit\nTwo things. Both required.\n1. Your project\nA working thing that uses one or more Jupiter APIs through the Developer Platform. Weird is encouraged, ambition more so. \"I combined three APIs in a way that shouldn't work but does\" is great.\nSome ideas to get you started:\n- Use the Price API to detect volatility and auto-set limit orders through Trigger\n\n- Build an AI agent that reads prediction market odds and places trades through the CLI\n\n- Chain Lend flashloans with Swap V2 for an arbitrage bot\n\n- Build a DCA strategy that adjusts based on token metadata signals from the Tokens API\n\nThese are just starting points. We want to see what you come up with. Just max experiment and hit the limits so that you can gather as many points for feedback as possible.\nIf you're integrating into an existing product, show us the before and after.\n2. Your Developer Experience Report\nThis matters as much as your project.\nHow was onboarding? How long from landing on developers.jup.ag to your first successful API call? What confused you? What took longer than it should have?\nWhat's broken or missing in the docs? Be specific. Link to the page. \"The docs were fine\" tells us nothing.\nWhere did the APIs bite you? Edge cases, confusing error messages, unexpected behavior, latency, we want the details.\nDid you use the AI stack? Skills, CLI, Docs MCP, what actually helped, what didn't, what's missing? What would you want to see be improved?\nHow would you rebuild developers.jup.ag? Not surface-level UI bugs, we'll find those ourselves. If you were the engineer behind the Developer Platform, how would you build the experience so that devs are interfacing with the APIs the moment they land? What would you change about the platform so people ship faster? Give us the things we won't catch from the inside. You're our customer, tell us what we're not seeing.\nWhat do you wish existed? Endpoints, SDK support, features, tooling, anything.\nDon't submit AI slop. We will actually read every report lol. We'd hate to see your prompting and tokens go to waste because you won't win.\nPrizes\n1,000 $jupUSD - 1st place. Best combination of project creativity and DX report quality.\n750 $jupUSD - 2nd place.\n500 $jupUSD - 3rd place.\n250 $jupUSD × 3 - Best DX Reports. These go to builders outside the top 3. Your project doesn't need to be the flashiest. If you found real bugs, documented real friction, and gave us feedback we can act on Monday morning, these are for you.\nHow we judge\nDX report quality (35%) - specific, actionable, honest. No fluff. This is the most important part of your submission.\nAI stack feedback (25%) - did you use Skills, CLI, or Docs MCP? What worked, what didn't, what's missing? We're investing heavily here and need real signal.\nTechnical execution (25%) - does it work? How deep is the integration?\nCreativity & ambition (15%) - did you take our APIs somewhere unexpected?\nHow to submit\n- Get your API key at developers.jup.ag\n\n- Build your project\n\n- Submit on Superteam Earn with:\n- Link to your project (repo, deployed app, or demo video)\n\n- Your DX Report (DX-REPORT.md in your repo, Google Doc, Notion - whatever, just make it readable and publicly accessible so our reviewing team can read it)\n\n- The email tied to your Developer Platform account (so we can cross-reference your usage data)\n\nGood luck.",
+      "rewards_breakdown": {
+        "1": 1000,
+        "2": 750,
+        "3": 500,
+        "99": 250
+      }
+    },
+    {
+      "slug": "build-with-kirapay",
+      "title": "Build with KIRAPAY",
+      "region": "Global",
+      "reward": 1505,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "KIRAPAY",
+      "skills": [
+        "Backend",
+        "Blockchain",
+        "Content",
+        "Design",
+        "Frontend",
+        "Move",
+        "Rust",
+        "UI/UX Design",
+        "Video",
+        "Writing"
+      ],
+      "url": "https://superteam.fun/earn/listing/build-with-kirapay",
+      "description": "About KIRAPAY\nhttps://www.kira-pay.com/\nKIRAPAY is a non-custodial, intent-based cross-chain payment gateway that makes transactions simple, fast, and borderless. We empower businesses to connect users, reduce friction, and unlock new opportunities. With the KIRA SDK & API, businesses can seamlessly send and receive payments across chains and systems — from crypto-native apps to e-commerce and SaaS — making global transactions effortless and universal. We're excited to see what you build with us at the Frontier hackathon!\nMission\nThe mission for this track is to tap into the power of KIRAPAY to create innovative solutions that drive real-world crypto adoption on Solana, or leverage KIRAPAY's cross-chain checkout capabilities for seamless payment experiences.\nHackathon Track Scope\n1. Build for Adoption\n- Create a Solana application that users would genuinely want to use and pay for.\n\n- Focus on user experience and real-world utility.\n\n- The application should demonstrate how KIRAPAY can enable a smoother payment or revenue generation model within your Solana app.\n\n2. Cross-Chain Checkout\n- Implement KIRAPAY's cross-chain checkout solution within your application.\n\n- The goal is to show how you can accept payments in any token from any chain, with settlement then occurring on Solana.\n\n- Highlight the seamless onboarding experience for users, regardless of their native chain or token.\n\nSubmission Requirements\nAll submissions must be in English.\n- Working Prototype / Live Demo: A functional application that demonstrates your solution in real time.\n\n- Public Repository: GitHub (or equivalent) repo with complete source code, a clear README, and setup instructions.\n\n- API Integration: Demonstrate live transactions using KIRAPAY’s API.\n\n- Video Demo (≤ 5 minutes): Showcase your project’s functionality, how it leverages KIRAPAY, and the problem it solves.\n\n- Project Write‑Up: A concise document (Google Doc, Notion, etc.) explaining your concept, technical architecture, and integration with KIRAPAY.\n\nJudging Criteria\n- Depth of KIRAPAY Usage (40%) How central is KIRAPAY to your solution? Is it a core enabler or just an add‑on?\n\n- Problem Solving & Use Case (25%) Does the project address a real pain point or unlock a meaningful opportunity?\n\n- Technical Integration & Scalability (20%) How well‑designed is the architecture? Can it realistically handle high transaction volumes?\n\n- Presentation & Communication (15%) How clearly and effectively does the team explain what they built and why it matters?\n\nReward Structure\nTotal Prize Pool: $10,000\n- Best Project in Build for Adoption Track: $9,000 = $500 + $8,500 in-kind\n- 500 USDC\n\n- $2,000 service rebates\n\n- $6,500 sponsorship fee waivers, including project exposure at KIRAPAY events\n\n- Cross-Chain Checkout prize pool: $1,000\nShared among up to 15 teams (capped at $67 per team)\n\nUseful Links\nDocumentation: https://docs.kira-pay.com/\nDashboard: https://dashboard.kira-pay.com\nX: http://x.com/kirapayofficial",
+      "rewards_breakdown": {
+        "1": 500,
+        "99": 67
+      }
+    },
+    {
+      "slug": "sagapad-or-build-agentic-skills-that-helps-colosseum-projects-and-founders-win-on-x",
+      "title": "SagaPad | Build Agentic Skills helping Colosseum projects win on X",
+      "region": "Global",
+      "reward": 1000,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "SagaPad",
+      "skills": [
+        "Content",
+        "Research",
+        "Social Media",
+        "Writing"
+      ],
+      "url": "https://superteam.fun/earn/listing/sagapad-or-build-agentic-skills-that-helps-colosseum-projects-and-founders-win-on-x",
+      "description": "About SagaPad Skill Marketplace\nSagaPad is the Futarchy-powered Capital Formation Engine for the new internet economy — where humans and agents build, launch, and grow together.\nSince launch, SagaPad has grown to 65K+ users and helped Solana projects raise $425K+ with $640K+ committed, making it the leading ICO launchpad native to the Seeker ecosystem.\nSagaPad is building the next layer: the Skill Marketplace for AI agents — the first Chrome Web Store for agent skills on Solana with 3 layers: aggregation, classification, and security audit\n→ Explore SagaPad: sagapad.com/skills\n\nSagaPad’s Agentic Skills SideTrack\nBuilding a great product is only half the battle. The teams that win — in hackathons and in crypto — are the ones who know how to tell their story, build their audience, and show up consistently where it matters.\nThis track is for builders who want to create skills that help early-stage Solana projects and founders do exactly that. We're looking for skills that solve real social and strategic challenges:\nHow do you get people to care about your project when no one knows you yet? How do you build a founder voice that stands out in a noisy ecosystem?\nThe best skills in this track won't just win prizes — they'll become tools that every new Solana project reaches for on day one.\nEach participant can submit one skill per topic. Skills must be published on SagaPad Skill Marketplace and introduced on X with a post explaining what the skill does, what input it takes, and what output it gives.\n🏆 Topic 1 — Hackathon Project Social Playbook Skill\nYou just submitted your hackathon project. Now what? Most teams ship great products but fail to tell their story — and in crypto, narrative is half the battle. Without a clear social strategy, even the best projects get buried.\nBuild a skill that helps newly submitted hackathon projects craft their story and build maximum social capital on X from day zero. The skill should study how breakout projects from past Colosseum hackathons built their X presence — what narrative angles worked, what content formats got traction, which spaces and AMAs drove real visibility — and turn those patterns into a personalized, actionable plan for any new project.\nInput (what the skill receives)\n- Project name\n\n- What the project does (1–2 sentences)\n\n- Who it's for\n\n- Tech stack\n\n- Team background (optional)\n\nOutput (what the skill produces)\n- The core story angle — what makes this project worth following\n\n- Content plan for the first 4 weeks — what to post, when, in what format\n\n- X Spaces, AMAs, and Solana community events to participate in\n\n- Engagement strategy — how to reply, quote-tweet, and insert into existing conversations\n\n- Example first 5 posts written out\n\n🏆 Topic 2 — Founder Personal Brand Playbook Skill\nA project account and a founder account are completely different. Your project talks about the product. Your personal account is about you — your thinking, your POV, your journey. Most founders either copy their project's tone or post nothing at all. Both are missed opportunities.\nBuild a skill that helps Solana founders build a distinctive personal brand on X with their own voice, writing style, and point of view. The skill should study the X profiles and posting patterns of the biggest Solana founders — extracting what makes each unique: their writing style, content mix, engagement habits, how they build conviction publicly — and translate those patterns into a personalized strategy for any founder.\nInput (what the skill receives)\n- Founder name\n\n- What they're building\n\n- Their background (technical / non-technical / operator / researcher etc.)\n\n- What they care about most (DeFi, AI, consumer crypto, etc.)\n\n- Their natural communication style (casual / analytical / contrarian / storyteller etc.)\n\nOutput (what the skill produces)\n- Unique POV — the one perspective this founder should own on X\n\n- Content pillars — 3–4 recurring topics to post about consistently\n\n- Writing style guide — tone, sentence structure, use of jargon, how personal to get\n\n- Weekly posting rhythm — how many posts, what types (threads vs short takes vs replies)\n\n- Engagement playbook — who to follow, how to reply to big accounts, how to join trending conversations\n\n- Example first 10 posts written in their voice\n\nSubmission Requirements (both topics)\n- Your skill must be hosted in a public GitHub repository under your own GitHub account. The repository name must match exactly the skill name written in your skill.md file.\n\n- Your skill must be published on the SagaPad Skill Marketplace under the category \"Colosseum Hackathon\" — this ensures all track submissions are grouped together for judging. Once published, your skill will be live at sagapad.com/skills/{your-skill-name}. To publish your skill, go to: sagapad.com/skills/publish-skill\n\n- Post on X introducing your skill — cover what the skill does, what input it takes, and what output it gives.\n\n- Submit the following on Superteam Earn:\n- Your SagaPad skill link: sagapad.com/skills/{your-skill-name}\n\n- Your GitHub repo link\n\n- Your X post link which includes SagaPad skill link in it\n\n📊 Judging Criteria (both topics)\n- Weekly install count: We will snapshot the 'weekly equips' of each skill based on data from Vercel Labs's CLI\n\n- Social Reach: Likes, shares, reposts, views, and bookmarks all count toward your score. However, reposts, views, and bookmarks are valued the most as they signal genuine interest and content spread.\n\n- Skill quality: We will check whether the skill actually works as described — not just that the code exists.\n\nOriginality — genuinely new, not a copy of existing tools: Required to pass\n\nPrizes & Rewards (per topic)\n- 1st Place: $250 USDC\n\n- 2nd Place: $150 USDC\n\n- 3rd Place: $100 USDC\n\nNote: Given that the track covers 2 distinct topics, the total number of winners may exceed three.\n🎁 All submissions will be featured in the Colosseum Hackathon skill category on SagaPad Skill Marketplace — the featured category on the site. Every participant who publishes a valid skill gets permanent visibility in front of the entire SagaPad user base, regardless of prize placement.\n\nFeel free to DM @0xjakesaga on X or @jakesaga on X for any questions.",
+      "rewards_breakdown": {
+        "1": 500,
+        "2": 300,
+        "3": 200
+      }
+    },
+    {
+      "slug": "lpagentio-or-api-integrate-sidetrack",
+      "title": "LPAgent.io | API integrate Sidetrack",
+      "region": "Global",
+      "reward": 900,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Nimbus Data Labs",
+      "skills": [
+        "Backend",
+        "Typescript"
+      ],
+      "url": "https://superteam.fun/earn/listing/lpagentio-or-api-integrate-sidetrack",
+      "description": "About LP Agent\n\nLP Agent is Meteora portfolio tracker and api data to serve users who interested in Liquidity Provide on Solana.\nWe have processed more than $1T in volume and generated $1.6M in net profit. We believe AI Agents will be the next huge wave, so we are opening our data and looking for interesting use cases that leverage LP data - such as LP bots, trading bots, interactive games, or portfolio trackers.\n\nSubmission Requirements\n- Project must have a feature that uses one or more of LP Agent endpoints\n\n- Project must use our Zap in or Zap out api inside their app\n\n- Submission must include a clear demo of how LP Agent is being used in the project\n\n- Project can be submitted to multiple tracks including the global hackathon\n\nCriteria\n- Fulfilment of requirements (40%)\n\n- Quality/Effectiveness of LP Agent use (20%)\n\n- Creativity & user experience (30%)\n\n- Innovation (10%)\n\nReward\n- Premium endpoint during the hackathon time\n\n- All the winners can have free credit to use Premium package for 6 months worth 120$/package. \nValid 6 months from the day of winner announcements.\n\nHow to claim Premium endpoint during hackathon time\n- Register at https://portal.lpagent.io/\n\n- DM Telegram: @thanhle27 with your email\n\nLink\n- Website https://lpagent.io/\n\n- X/Twitter https://x.com/lpagent_io\n\n- Document https://docs.lpagent.io/introduction\n\n- Contact for support: TG @thanhle27\n\nNote: Please add GitHub user thanhlmm if you have private repo",
+      "rewards_breakdown": {
+        "1": 500,
+        "2": 300,
+        "3": 50,
+        "4": 50
+      }
+    },
+    {
+      "slug": "dumdotfun",
+      "title": "Launch a Token & Bet on its fate - Build on dum.fun",
+      "region": "Global",
+      "reward": 500,
+      "token": "USDC",
+      "deadline": "2026-05-12T11:59:59.999Z",
+      "sponsor": "Dum.fun",
+      "skills": [
+        "Blockchain",
+        "Business Development",
+        "Content",
+        "Data Analytics",
+        "Digital Marketing",
+        "Growth",
+        "Marketing",
+        "Mobile",
+        "Operations",
+        "Other",
+        "Product Feedback",
+        "Product Manager",
+        "Research",
+        "Social Media",
+        "Video",
+        "Writing"
+      ],
+      "url": "https://superteam.fun/earn/listing/dumdotfun",
+      "description": "Description\nThe Challenge (DEVNET ONLY)\nLaunch a meme token on dum.fun. Then let the community decide - will it survive, graduate to Raydium, or rug to zero?\ndum.fun is a Solana token launchpad where every token ships with built-in prediction markets. Mint a token on a bonding curve, trade it, and bet SOL on whether other tokens will make it. Markets resolve automatically from on-chain data - no oracles, no trust required.\n🏆 Fresh off winning the Superteam Ireland Pitchathon, Grant and Solana Privacy Hackathon. Heading into Colosseum Frontier 2026.\n- 🌐 App: https://dum.fun (Solana Devnet)\n\n- 💧 Need Devnet SOL? https://faucet.solana.com\n\n- 💬 Telegram: t.me/dumfun\n\n- 🐦 X: @dumfun\n\nHow It Works\n- Launch a token - name it, draw a logo, write a hook. Live on a bonding curve in seconds.\n\n- Bet on tokens - every token has prediction markets:\n- 🏴‍☠️ Will the dev rug?\n\n- 🎓 Will it graduate to Raydium?\n\n- 🫧 Will it survive 7 days?\n\n- Trade - buy what you believe, dump what you don't. Bonding curve sets the price. Hit 85 SOL → auto-migrates to Raydium.\n\n- Earn points & climb the leaderboard - every action earns XP toward seasonal SOL rewards.\n\nYour Mission (all could be done within 10 minutes)\n- Connect Phantom (Devnet) at https://dum.fun\n\n- Launch at least 1 token - make it creative, make people want to ape in\n\n- Place at least 3 bets across prediction markets (minimum 0.1 SOL each)\n\n- Trade on at least 2 different bonding curves (minimum 0.5 SOL volume on your own token)\n\n- Post on X - share your launch + bets, tag @dumfun\n\n- Join Telegram and drop your token in the chat\n\nSubmission Requirements\n- ✅ Link to your launched token on dum.fun\n\n- ✅ Wallet address used (for verification)\n\n- ✅ Screenshot showing your bets on prediction markets\n\n- ✅ Link to your X post or thread\n\n- ✅ Detailed feedback (required, min 200 words): What worked? What broke? What's missing? What would make you come back? (This carries real weight in judging.)\n\nPrizes - 500 USDC Total\n- 📣 Best X Content - 200 USDC\nMost engaging post or thread. Bonus points for video, memes, or original art.\n\n- 🥇 Best Token Launch - 100 USDC\nMost creative concept + highest organic trading activity on your bonding curve.\n\n- 🔮 Best Bettor - 100 USDC\nStrongest thesis across your 3+ bets. Judged on reasoning quality in your X post, not outcome (most markets won't resolve by deadline).\n\n- 🐛 Best Feedback / Bug Report - 100 USDC\nThe detailed write-up that teaches us the most. Reproducible bugs > opinions.\n\nJudging Weights\n- Creativity & originality - 30%\n\n- Completion of all mission steps - 25%\n\n- Quality of feedback / bug report - 25%\n\n- Community engagement (X + TG) - 20%\n\nAnti-Spam Rules\n- One submission per wallet.\n\n- Throwaway tokens with <0.5 SOL volume don't qualify.\n\n- Bets under 0.1 SOL don't count toward the 3-bet minimum.\n\n- Copy-paste X posts disqualify all four prize categories.\n\nWhy Build With Us\nThis isn't just a bounty - winners get a direct line to the dum.fun core team, featured placement on the launchpad, and an early seat at the table.\nDeadline: May 12, 2026 - go launch something dumb.",
+      "rewards_breakdown": {
+        "1": 200,
+        "2": 100,
+        "3": 100,
+        "4": 100
+      }
+    }
+  ]
+}

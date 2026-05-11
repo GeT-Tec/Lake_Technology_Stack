@@ -225,7 +225,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
           </button>
 
           <p className="text-center text-xs text-slate-400">
-            Ao investir, você concorda com os Termos da LakeTokeniza e com a natureza simulada deste ativo na Devnet.
+            Ao investir, você concorda com os Termos da Lake e com a natureza simulada deste ativo na Devnet.
           </p>
         </div>
       </div>

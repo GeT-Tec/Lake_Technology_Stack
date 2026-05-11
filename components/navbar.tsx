@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { WalletControl } from "@/components/wallet-control";
-import AdminBadge from "@/components/admin/AdminBadge"; // Verifique se o caminho está correto na sua pasta
-import { Menu, X } from "lucide-react"; // Ícones essenciais
+import AdminBadge from "@/components/admin/AdminBadge";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 // Rotas de Navegação
@@ -21,19 +22,19 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/85 backdrop-blur-md">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
 
-        {/* 1. LOGO (Esquerda) */}
-        <Link href="/" className="flex items-center gap-2 z-50">
-          <div className="flex flex-col">
-            <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
-              LAKE<span className="text-blue-600">TOKENIZA</span>
-            </span>
-            <span className="text-[0.6rem] font-semibold tracking-widest text-slate-500 uppercase">
-              RWA Protocol
-            </span>
-          </div>
+        {/* 1. LOGO Lake (Esquerda) */}
+        <Link href="/" className="flex items-center gap-3 z-50 group">
+          <Image
+            src="/brand/lake-logo-light.png"
+            alt="Lake — Opening digital horizons"
+            width={132}
+            height={42}
+            priority
+            className="h-10 w-auto transition-transform group-hover:scale-[1.02]"
+          />
         </Link>
 
         {/* 2. MENU DESKTOP (Centro - Escondido no Mobile) */}
@@ -43,9 +44,9 @@ export function Navbar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-blue-600",
+                "text-sm font-bold transition-colors hover:text-lake-cyan",
                 pathname === item.href
-                  ? "text-blue-600 font-semibold"
+                  ? "text-lake-cyan-dark"
                   : "text-slate-600"
               )}
             >
@@ -88,9 +89,9 @@ export function Navbar() {
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)} // Fecha ao clicar
                 className={cn(
-                  "px-4 py-3 rounded-lg text-base font-medium transition-colors border border-transparent",
+                  "px-4 py-3 rounded-xl text-base font-bold transition-colors border border-transparent",
                   pathname === item.href
-                    ? "bg-blue-50 text-blue-700 border-blue-100"
+                    ? "bg-lake-cyan-soft text-lake-cyan-dark border-lake-cyan-light/40"
                     : "text-slate-700 hover:bg-slate-50 hover:border-slate-100"
                 )}
               >
