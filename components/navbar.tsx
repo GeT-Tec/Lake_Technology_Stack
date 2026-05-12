@@ -12,6 +12,7 @@ import { useState } from "react";
 // Rotas de Navegação
 const navItems = [
   { name: "Home", href: "/" },
+  { name: "Trilha", href: "/learn#trail-head-title" },
   { name: "Aprenda", href: "/learn" },
   { name: "Marketplace", href: "/marketplace" },
   { name: "Tokenizar", href: "/tokenize" },

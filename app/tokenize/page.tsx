@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Upload, FileText, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, TrendingUp, Loader2, Zap, Lock, Briefcase, PieChart, ShieldCheck, Lightbulb, ExternalLink } from "lucide-react";
 import { useWallet } from "@/context/wallet-context";
 import { useCredits } from "@/context/credits-context";
+import { useMedals } from "@/context/medals-context";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 // Removendo import do serviço temporariamente para isolar o problema
 // import { LakeZeroService } from "@/services/lakezero";
@@ -15,6 +16,7 @@ export default function TokenizePage() {
   const router = useRouter();
   const { walletAddress, connectWallet, isConnected } = useWallet();
   const { credits, spendCredit, openModal, isLoading: isCreditLoading } = useCredits();
+  const { award } = useMedals();
 
   const [hasAccess, setHasAccess] = useState(false);
   const [step, setStep] = useState(1);
@@ -161,6 +163,9 @@ export default function TokenizePage() {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || "Erro ao salvar ativo.");
+
+      // Fase 5: tokenizou um ativo com sucesso.
+      void award("asset_tokenized");
 
       alert("✅ Ativo enviado com sucesso! Acesse o Marketplace para acompanhar.");
       router.push("/marketplace");

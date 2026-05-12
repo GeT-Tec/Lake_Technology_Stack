@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWallet } from "@/context/wallet-context";
+import { useMedals } from "@/context/medals-context";
+import { TrailHead } from "@/components/medals/TrailHead";
+import { MedalsGrid } from "@/components/medals/MedalsGrid";
 import {
   BookOpen,
   Droplets,
@@ -30,17 +33,42 @@ import Link from "next/link";
 
 export default function LearnPage() {
   const { walletAddress } = useWallet();
+  const { award } = useMedals();
   const [recipientAddress, setRecipientAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [txSignature, setTxSignature] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const rwaSectionRef = useRef<HTMLElement | null>(null);
 
   // Preenche automaticamente se a carteira for conectada ou alterada
   useEffect(() => {
     if (walletAddress) {
       setRecipientAddress(walletAddress);
+      // Fase 2: ganhou a medalha ao conectar carteira em qualquer pagina.
+      void award("wallet_connected");
     }
-  }, [walletAddress]);
+  }, [walletAddress, award]);
+
+  // Fase 1: marca a medalha de fundamentos quando o usuario rola ate
+  // o conteudo da secao "intro-rwa".
+  useEffect(() => {
+    const node = rwaSectionRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            void award("rwa_intro_read");
+            obs.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [award]);
 
   const handleRequestFaucet = async () => {
     if (!recipientAddress) return;
@@ -64,6 +92,8 @@ export default function LearnPage() {
       }
 
       setTxSignature(data.signature);
+      // Fase 3: faucet claimado com sucesso.
+      void award("faucet_claimed");
     } catch (err: any) {
       console.error("[Faucet Request Error]", err);
       setErrorMsg(err.message || "Erro desconhecido ao acionar o LakeFaucet.");
@@ -73,6 +103,16 @@ export default function LearnPage() {
   };
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 scroll-smooth">
+
+      {/* --- TRAIL HEAD: caminho do treinamento Lake (PPTX design system) --- */}
+      <TrailHead />
+
+      {/* --- SECAO: minhas medalhas (visivel quando conectado) --- */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-5xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+          <MedalsGrid />
+        </div>
+      </div>
 
       {/* --- HERO: AUTORIDADE IMEDIATA --- */}
       <div className="bg-slate-900 text-white pt-24 pb-20 relative overflow-hidden">
@@ -151,7 +191,7 @@ export default function LearnPage() {
           <main className="lg:w-3/4 space-y-24">
 
             {/* SEÇÃO 1: RWA */}
-            <section id="intro-rwa" className="scroll-mt-24 space-y-6">
+            <section id="intro-rwa" ref={rwaSectionRef} className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-emerald-200 pb-4">
                 <div className="p-3 bg-emerald-100 rounded-xl">
                   <Globe className="w-8 h-8 text-emerald-700" />

@@ -21,8 +21,21 @@ model User {
   kycRecord      KycRecord?
   payment_orders payment_orders[]
   user_credits   user_credits?
+  medals         UserMedal[]
 
   @@map("users")
+}
+
+model UserMedal {
+  id            String   @id @default(uuid())
+  userWallet    String
+  medalId       String
+  earnedAt      DateTime @default(now())
+  user          User     @relation(fields: [userWallet], references: [walletAddress], onDelete: Cascade)
+
+  @@unique([userWallet, medalId])
+  @@index([userWallet])
+  @@map("user_medals")
 }
 
 model AdminWhitelist {

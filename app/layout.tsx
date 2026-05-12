@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Nunito, EB_Garamond } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { SolanaProvider } from "@/components/SolanaProvider";
 import { WalletProvider } from "@/context/wallet-context";
 import { CreditsProvider } from "@/context/credits-context";
+import { MedalsProvider } from "@/context/medals-context";
 import { CreditsModal } from "@/components/CreditsModal";
 
 const nunito = Nunito({
@@ -38,9 +40,12 @@ export default function RootLayout({
         <SolanaProvider>
           <WalletProvider>
             <CreditsProvider>
-              <Navbar />
-              <main className="flex-grow w-full">{children}</main>
-              <CreditsModal />
+              <MedalsProvider>
+                <Navbar />
+                <main className="flex-grow w-full">{children}</main>
+                <CreditsModal />
+                <Toaster position="bottom-right" richColors closeButton />
+              </MedalsProvider>
             </CreditsProvider>
           </WalletProvider>
         </SolanaProvider>

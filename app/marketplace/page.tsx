@@ -5,6 +5,7 @@ import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import Link from "next/link";
 import Image from "next/image";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
+import { useMedals } from "@/context/medals-context";
 
 const DEMO_ASSETS = [
   { id: "demo-1", name: "Edifício Faria Lima Prime", type: "Real Estate", price: 1200, yield: "12.5% a.a.", available: "45%", image: "bg-blue-900", locked: false, isDemo: true, ownerWallet: null },
@@ -237,6 +238,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
 export default function Marketplace() {
   const { publicKey } = useSolanaWallet();
   const connectedWallet = publicKey?.toBase58() ?? null;
+  const { award } = useMedals();
 
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [assets, setAssets] = useState<AssetItem[]>(DEMO_ASSETS);
@@ -247,6 +249,13 @@ export default function Marketplace() {
   const [deleteTarget, setDeleteTarget] = useState<AssetItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [investTarget, setInvestTarget] = useState<AssetItem | null>(null);
+
+  // Fase 4: ao abrir o detalhe de qualquer ativo no marketplace.
+  useEffect(() => {
+    if (investTarget) {
+      void award("asset_browsed");
+    }
+  }, [investTarget, award]);
 
   // Busca ativos do banco de dados
   const fetchAssets = useCallback(async () => {
