@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { Prisma } from "@prisma/client";
+import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { walletAddress, transactionSignature, cryptoAmount, assetId } = body;
+    const { walletAddress, transactionSignature, cryptoAmount, assetId, quantity } = body;
 
-    if (!walletAddress || !transactionSignature || cryptoAmount === undefined || !assetId) {
+    if (!walletAddress || !transactionSignature || cryptoAmount === undefined || !assetId || !quantity) {
       return NextResponse.json(
         { error: "Dados incompletos para processar o investimento." },
         { status: 400 }
@@ -26,6 +27,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
     }
 
+    // Buscar ativo para garantir que existe e que há inventário
+    const asset = await prisma.asset.findUnique({
+      where: { id: assetId },
+    });
+
+    if (!asset) {
+      return NextResponse.json({ error: "Ativo não encontrado." }, { status: 404 });
+    }
+
+    if (asset.tokensAvailable < quantity) {
+      return NextResponse.json({ error: "Inventário insuficiente para esta quantidade." }, { status: 400 });
+    }
+
     const currentBalance = user.credits ?? user.user_credits?.balance ?? 0;
     const CREDIT_COST = 5;
 
@@ -37,6 +51,9 @@ export async function POST(req: Request) {
     }
 
     const newBalance = currentBalance - CREDIT_COST;
+    const timestamp = Date.now();
+    const childFractionHashString = `${asset.contractUrl || asset.id}-${walletAddress}-${quantity}-${timestamp}`;
+    const childFractionHash = crypto.createHash("sha256").update(childFractionHashString).digest("hex");
 
     // Executar transação atômica
     await prisma.$transaction(async (tx) => {
@@ -53,7 +70,13 @@ export async function POST(req: Request) {
         });
       }
 
-      // 2. Inserir no ledger
+      // 2. Abater tokens do inventário do Ativo
+      await tx.asset.update({
+        where: { id: assetId },
+        data: { tokensAvailable: { decrement: quantity } },
+      });
+
+      // 3. Inserir no ledger de créditos
       await tx.credit_ledger.create({
         data: {
           user_id: user.id,
@@ -67,10 +90,23 @@ export async function POST(req: Request) {
           description: `Investimento processado no ativo: ${assetId}`,
         },
       });
+
+      // 4. Criar Recibo Criptográfico (Tokens Filho)
+      await tx.investmentReceipt.create({
+        data: {
+          investorWallet: walletAddress,
+          assetId: assetId,
+          quantity: quantity,
+          amountPaidCrypto: new Prisma.Decimal(cryptoAmount),
+          cryptoSymbol: "SOL",
+          txHash: transactionSignature,
+          child_fraction_hash: childFractionHash,
+        },
+      });
     });
 
     return NextResponse.json(
-      { success: true, message: "Investimento registrado e créditos deduzidos com sucesso." },
+      { success: true, message: "Investimento registrado e recibo emitido com sucesso." },
       { status: 200 }
     );
   } catch (error: any) {

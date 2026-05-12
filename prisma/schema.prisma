@@ -14,8 +14,9 @@ model User {
   nickname       String?
   createdAt      DateTime         @default(now())
   credits        Int              @default(5)
-  role           String           @default("USER")
+  role           String              @default("USER")
   assets         Asset[]
+  investments    InvestmentReceipt[]
   actions        AuditLog[]
   credit_ledger  credit_ledger[]
   kycRecord      KycRecord?
@@ -56,7 +57,8 @@ model Asset {
   description     String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
-  owner           User        @relation(fields: [ownerWallet], references: [walletAddress])
+  owner           User                @relation(fields: [ownerWallet], references: [walletAddress])
+  investments     InvestmentReceipt[]
 
   @@map("assets")
 }
@@ -179,6 +181,7 @@ enum OperationType {
   ADJUSTMENT
   MINT_FEE
   INVESTMENT_FEE
+  SECONDARY_MARKET_FEE
 }
 
 enum PaymentStatus {
@@ -186,4 +189,24 @@ enum PaymentStatus {
   PAID
   FAILED
   CANCELLED
+}
+
+model InvestmentReceipt {
+  id                  String   @id @default(uuid())
+  investorWallet      String
+  assetId             String
+  quantity            Int
+  amountPaidCrypto    Decimal  @db.Decimal(30, 18)
+  cryptoSymbol        String   @default("SOL")
+  txHash              String
+  child_fraction_hash String   @unique
+  status              String   @default("HELD")
+  createdAt           DateTime @default(now())
+
+  investor            User     @relation(fields: [investorWallet], references: [walletAddress])
+  asset               Asset    @relation(fields: [assetId], references: [id])
+
+  @@index([investorWallet])
+  @@index([assetId])
+  @@map("investment_receipts")
 }

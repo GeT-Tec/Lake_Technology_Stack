@@ -233,7 +233,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
               try {
                 console.log("[Invest] Preparando pagamento de investimento...");
 
-                // 1. Obter Preço Dinâmico do SOL (US$ 0.15)
+                // 1. Obter Preço Dinâmico do SOL (US$)
                 let currentPrice = solPrice;
                 if (!currentPrice || currentPrice <= 0) {
                   currentPrice = await refreshSolPrice();
@@ -243,9 +243,19 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
                   throw new Error("Falha ao obter cotação do SOL. Tente novamente.");
                 }
 
-                const exactSolAmount = 1.00 / currentPrice;
-                const safeSolAmount = exactSolAmount * 1.01; // 1% buffer
-                const INVEST_FEE = Math.floor(safeSolAmount * LAMPORTS_PER_SOL);
+                // Taxa da Plataforma: $1.00 USD
+                const exactFeeSol = 1.00 / currentPrice;
+                const safeFeeSol = exactFeeSol * 1.01; // 1% buffer
+                const INVEST_FEE = Math.floor(safeFeeSol * LAMPORTS_PER_SOL);
+
+                // Custo Principal dos Tokens (P2P):
+                const RATE_USDC_BRL = 5.10;
+                const tokensUsdValue = ((asset.price || 0) * qty) / RATE_USDC_BRL;
+                const exactTokensSol = tokensUsdValue / currentPrice;
+                const safeTokensSol = exactTokensSol * 1.01; // 1% buffer
+                const TOKENS_COST = Math.floor(safeTokensSol * LAMPORTS_PER_SOL);
+                
+                const totalSolAmount = safeFeeSol + safeTokensSol;
 
                 const treasuryPubKey = new PublicKey(
                   process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa"
@@ -255,11 +265,20 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
                   throw new Error("A carteira conectada não pode ser a própria Tesouraria.");
                 }
 
+                const creatorPubKey = new PublicKey(asset.ownerWallet || treasuryPubKey.toBase58());
+
                 const transaction = new Transaction().add(
+                  // 1. Instrução de Taxa ($1.00 USD) para Tesouraria
                   SystemProgram.transfer({
                     fromPubkey: publicKey,
                     toPubkey: treasuryPubKey,
                     lamports: INVEST_FEE,
+                  }),
+                  // 2. Instrução Principal (Custo do Ativo) para o Criador (P2P)
+                  SystemProgram.transfer({
+                    fromPubkey: publicKey,
+                    toPubkey: creatorPubKey,
+                    lamports: TOKENS_COST,
                   })
                 );
 
@@ -283,7 +302,8 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
                   body: JSON.stringify({
                     walletAddress: publicKey.toBase58(),
                     transactionSignature: signature,
-                    cryptoAmount: safeSolAmount,
+                    cryptoAmount: totalSolAmount,
+                    quantity: qty,
                     assetId: asset.id,
                   }),
                 });
@@ -301,7 +321,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
                   hash: signature,
                   date: new Date().toLocaleString("pt-BR"),
                   planId: `Investimento: ${asset.name}`,
-                  solAmount: safeSolAmount,
+                  solAmount: totalSolAmount,
                 });
 
                 alert("🎉 Investimento simulado com sucesso!");
