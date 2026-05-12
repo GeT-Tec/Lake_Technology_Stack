@@ -2,6 +2,7 @@
 
 import { useMedals, MEDALS } from "@/context/medals-context";
 import { MedalBadge } from "./MedalBadge";
+import { useDict } from "@/lib/i18n/client";
 
 export function MedalsGrid({
   size = "md",
@@ -9,12 +10,13 @@ export function MedalsGrid({
   size?: "sm" | "md" | "lg";
 }) {
   const { isEarned, earned, total } = useMedals();
+  const dict = useDict();
 
   return (
     <div className="space-y-6">
       <div className="flex items-baseline justify-between">
         <h3 className="text-lg font-extrabold text-slate-900">
-          Minhas medalhas
+          {dict.medals.myMedals}
         </h3>
         <span className="text-sm text-slate-500 font-semibold">
           {earned.length} / {total}

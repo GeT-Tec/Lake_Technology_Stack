@@ -1,8 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ShieldCheck, Zap, Globe, ArrowRight } from "lucide-react";
+import { getServerDict } from "@/lib/i18n/server";
 
-export default function Home() {
+export default async function Home() {
+  const { dict } = await getServerDict();
+
   return (
     <main className="flex min-h-screen flex-col items-center bg-lake-paper text-lake-ink">
 
@@ -24,18 +27,17 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lake-cyan opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-lake-cyan"></span>
             </span>
-            Protocolo Lake · v1.0
+            {dict.hero.protocolBadge}
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-[1.02]">
             Opening <span className="lake-gradient-text">digital horizons</span>
             <br />
-            <span className="text-slate-700">para o mercado real.</span>
+            <span className="text-slate-700">{dict.hero.titleSubline}</span>
           </h1>
 
           <p className="font-body text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed italic">
-            A plataforma institucional que une a segurança jurídica do mercado tradicional
-            com a liquidez instantânea da blockchain Solana.
+            {dict.hero.lead}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -43,13 +45,13 @@ export default function Home() {
               href="/marketplace"
               className="px-8 py-4 bg-lake-cyan hover:bg-lake-cyan-dark text-white rounded-2xl font-extrabold text-lg transition-all shadow-[0_8px_24px_rgba(41,171,226,0.35)] hover:shadow-[0_12px_32px_rgba(41,171,226,0.5)] hover:-translate-y-0.5 flex items-center gap-2"
             >
-              Ver Ativos Disponíveis <ArrowRight className="w-5 h-5" />
+              {dict.hero.ctaPrimary} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/tokenize"
               className="px-8 py-4 bg-white hover:bg-lake-cyan-soft text-lake-ink border-2 border-slate-200 hover:border-lake-cyan-light rounded-2xl font-extrabold text-lg transition-all shadow-sm flex items-center gap-2"
             >
-              Quero Tokenizar meu Ativo
+              {dict.hero.ctaSecondary}
             </Link>
           </div>
         </div>
@@ -71,10 +73,10 @@ export default function Home() {
                 <ShieldCheck className="w-6 h-6 text-lake-cyan-dark" />
               </div>
               <h3 className="text-xl font-black mb-3 text-lake-ink group-hover:text-lake-cyan-dark transition-colors">
-                Segurança Jurídica
+                {dict.values.legalTitle}
               </h3>
               <p className="font-body text-slate-600 leading-relaxed">
-                Smart contracts auditados e vinculados à legislação CVM, com registro perpétuo no Arweave.
+                {dict.values.legalDesc}
               </p>
             </Link>
 
@@ -89,10 +91,10 @@ export default function Home() {
                 <Zap className="w-6 h-6 text-lake-coral" />
               </div>
               <h3 className="text-xl font-black mb-3 text-lake-ink group-hover:text-lake-coral transition-colors">
-                Liquidez Lake
+                {dict.values.liquidityTitle}
               </h3>
               <p className="font-body text-slate-600 leading-relaxed">
-                Tecnologia de assinatura proprietária com latência zero e taxa de sustentabilidade institucional.
+                {dict.values.liquidityDesc}
               </p>
             </Link>
 
@@ -107,10 +109,10 @@ export default function Home() {
                 <Globe className="w-6 h-6 text-green-700" />
               </div>
               <h3 className="text-xl font-black mb-3 text-lake-ink group-hover:text-green-700 transition-colors">
-                Acesso Global
+                {dict.values.globalTitle}
               </h3>
               <p className="font-body text-slate-600 leading-relaxed">
-                Invista em grandes empreendimentos brasileiros de qualquer lugar do mundo, com câmbio trilateral BRL/USDC/SOL.
+                {dict.values.globalDesc}
               </p>
             </Link>
 
@@ -122,11 +124,11 @@ export default function Home() {
       <section className="w-full bg-lake-ink text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="font-body italic text-2xl md:text-3xl text-lake-cyan-light leading-relaxed">
-            "Opening digital horizons —
+            &quot;{dict.tagline.lineOne}
             <br />
             <span className="text-white not-italic font-display font-black">
-              onde o real encontra a blockchain.
-            </span>"
+              {dict.tagline.lineTwo}
+            </span>&quot;
           </p>
         </div>
       </section>

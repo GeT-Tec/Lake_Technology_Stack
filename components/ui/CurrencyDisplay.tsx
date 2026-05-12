@@ -1,5 +1,8 @@
+"use client";
+
 import { useExchangeRates } from "@/hooks/useExchangeRates";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import { useLocale } from "@/lib/i18n/client";
 
 interface CurrencyDisplayProps {
   brlValue: number | string;
@@ -8,11 +11,11 @@ interface CurrencyDisplayProps {
 
 export function CurrencyDisplay({ brlValue, variant = 'default' }: CurrencyDisplayProps) {
   const { rates, isLoading, isError } = useExchangeRates();
+  const { locale } = useLocale();
+  const fxLabel = locale === "pt-BR" ? "Câmbio indisponível no momento" : "FX unavailable at the moment";
 
-  // Handle number or string input for BRL
   const numericBrlValue = typeof brlValue === "string" ? parseFloat(brlValue) : brlValue;
 
-  // Format BRL value safely
   const formattedBRL = !isNaN(numericBrlValue)
     ? numericBrlValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
     : "R$ 0,00";
@@ -53,7 +56,7 @@ export function CurrencyDisplay({ brlValue, variant = 'default' }: CurrencyDispl
       <div className={containerClasses}>
         {!isSubtextOnly && <p className={textClasses}>{isSuccess && numericBrlValue > 0 ? `+${formattedBRL}` : formattedBRL}</p>}
         <p className="text-xs text-red-500 font-medium mt-1 flex items-center gap-1">
-          <AlertTriangle className="w-3 h-3 flex-shrink-0" /> Câmbio indisponível no momento
+          <AlertTriangle className="w-3 h-3 flex-shrink-0" /> {fxLabel}
         </p>
       </div>
     );

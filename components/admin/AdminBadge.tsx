@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useWallet } from "@/context/wallet-context";
 import { ShieldCheck, Loader2 } from "lucide-react";
+import { useDict } from "@/lib/i18n/client";
 
 export default function AdminBadge() {
     const { walletAddress } = useWallet();
+    const dict = useDict();
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -55,7 +57,7 @@ export default function AdminBadge() {
                 <>
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
                     <span className="text-xs font-bold tracking-wider text-emerald-400 uppercase">
-                        Admin
+                        {dict.wallet.admin}
                     </span>
                 </>
             )}

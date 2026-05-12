@@ -3,6 +3,7 @@
 import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MedalDefinition } from "@/lib/medals";
+import { useDict } from "@/lib/i18n/client";
 
 interface Props {
   medal: MedalDefinition;
@@ -24,6 +25,15 @@ export function MedalBadge({
   showLabel = true,
 }: Props) {
   const s = SIZE_MAP[size];
+  const dict = useDict();
+  const items = dict.medals.items as Record<string, { label: string; title: string; tagline: string; criteria: string }>;
+  const localized = items[medal.id] ?? medal;
+
+  const ariaText = earned
+    ? dict.medals.ariaEarned.replace("{title}", localized.title)
+    : dict.medals.ariaLocked.replace("{title}", localized.title);
+  const titleText = earned ? localized.title : `${dict.medals.lockedPrefix} ${localized.criteria}`;
+
   return (
     <div className="flex flex-col items-center gap-2 select-none">
       <div
@@ -40,19 +50,15 @@ export function MedalBadge({
               )
             : "bg-slate-100 text-slate-400 border-slate-200 grayscale",
         )}
-        title={earned ? medal.title : `Bloqueada: ${medal.criteria}`}
-        aria-label={
-          earned
-            ? `Medalha ${medal.title} conquistada`
-            : `Medalha ${medal.title} bloqueada`
-        }
+        title={titleText}
+        aria-label={ariaText}
       >
-        {earned ? medal.label : <Lock className="w-1/3 h-1/3" />}
+        {earned ? localized.label : <Lock className="w-1/3 h-1/3" />}
       </div>
       {showLabel && (
         <div className={cn("text-center font-semibold", s.label)}>
           <div className={earned ? "text-slate-800" : "text-slate-400"}>
-            {medal.title}
+            {localized.title}
           </div>
         </div>
       )}

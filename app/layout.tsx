@@ -8,6 +8,8 @@ import { WalletProvider } from "@/context/wallet-context";
 import { CreditsProvider } from "@/context/credits-context";
 import { MedalsProvider } from "@/context/medals-context";
 import { CreditsModal } from "@/components/CreditsModal";
+import { LocaleProvider } from "@/lib/i18n/client";
+import { getServerDict } from "@/lib/i18n/server";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -24,31 +26,38 @@ const ebGaramond = EB_Garamond({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Lake | Opening digital horizons",
-  description: "Plataforma institucional de tokenização de ativos reais em Solana.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { dict } = await getServerDict();
+  return {
+    title: dict.meta.title,
+    description: dict.meta.description,
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { locale } = await getServerDict();
+  const htmlLang = locale === "pt-BR" ? "pt-br" : "en";
   return (
-    <html lang="pt-br" className={`${nunito.variable} ${ebGaramond.variable}`}>
+    <html lang={htmlLang} className={`${nunito.variable} ${ebGaramond.variable}`}>
       <body className="bg-lake-paper text-lake-ink antialiased min-h-screen flex flex-col font-sans">
-        <SolanaProvider>
-          <WalletProvider>
-            <CreditsProvider>
-              <MedalsProvider>
-                <Navbar />
-                <main className="flex-grow w-full">{children}</main>
-                <CreditsModal />
-                <Toaster position="bottom-right" richColors closeButton />
-              </MedalsProvider>
-            </CreditsProvider>
-          </WalletProvider>
-        </SolanaProvider>
+        <LocaleProvider locale={locale}>
+          <SolanaProvider>
+            <WalletProvider>
+              <CreditsProvider>
+                <MedalsProvider>
+                  <Navbar />
+                  <main className="flex-grow w-full">{children}</main>
+                  <CreditsModal />
+                  <Toaster position="bottom-right" richColors closeButton />
+                </MedalsProvider>
+              </CreditsProvider>
+            </WalletProvider>
+          </SolanaProvider>
+        </LocaleProvider>
       </body>
     </html>
   );
