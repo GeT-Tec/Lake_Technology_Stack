@@ -1,5 +1,9 @@
 # Lake — Opening digital horizons
 
+> **Submitted to Colosseum *Frontier* 2026.** A Bolsa de Valores Descentralizada for Brazilian SMEs — RWA tokenization on Solana with immutable Arweave anchoring, trilateral BRL/USDC/SOL pricing, and CVM-aware compliance design.
+>
+> 📦 Hackathon submission package: [HACKATHON.md](HACKATHON.md) · 🔒 Security architecture: [SECURITY.md](SECURITY.md) · 📊 Business flow: [ANALISE_FLUXO.md](ANALISE_FLUXO.md) · 🎤 Pitch deck: [COLOSSEUM_FIT.html](COLOSSEUM_FIT.html)
+
 Lake is a state-of-the-art Web3 tokenization platform designed for the Brazilian market. It bridges the gap between traditional Real World Assets (RWA) and decentralized finance, allowing users to legally and securely structure, tokenize, and manage assets on the **Solana** blockchain with immutable document auditing via **Arweave (Irys)**.
 
 ## 🌟 Key Features
