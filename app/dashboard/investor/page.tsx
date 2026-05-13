@@ -2,20 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { ShieldCheck, Copy, ExternalLink, Loader2, Wallet, TrendingUp, TrendingDown, Store } from "lucide-react";
+import { ShieldCheck, Copy, ExternalLink, Loader2, Wallet, TrendingUp, TrendingDown, Store, X } from "lucide-react";
 import Link from "next/link";
 import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useRouter } from "next/navigation";
 
 export default function InvestorDashboard() {
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
+  const router = useRouter();
   const [receipts, setReceipts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Oracle States
   const [solPriceBRL, setSolPriceBRL] = useState<number | null>(null);
   const [solPriceUSD, setSolPriceUSD] = useState<number | null>(null);
+
+  // Modal States
   const [isListingId, setIsListingId] = useState<string | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
+  const [resaleQty, setResaleQty] = useState<number>(1);
+  const [resalePrice, setResalePrice] = useState<number>(0);
 
   useEffect(() => {
     const fetchOracle = async () => {
@@ -59,20 +66,36 @@ export default function InvestorDashboard() {
     alert("Hash copiado para a área de transferência!");
   };
 
-  const handleListForSale = async (receiptId: string) => {
-    if (!publicKey) return;
+  const openResaleModal = (receipt: any) => {
+    setSelectedReceipt(receipt);
+    setResaleQty(receipt.quantity);
+    setResalePrice(Number(receipt.asset?.tokenPrice || 0));
+  };
+
+  const closeResaleModal = () => {
+    setSelectedReceipt(null);
+    setResaleQty(1);
+    setResalePrice(0);
+  };
+
+  const executeListing = async () => {
+    if (!publicKey || !selectedReceipt) return;
     if (!solPriceUSD) {
       alert("Aguarde a conexão com o oráculo de preços.");
       return;
     }
 
-    const confirmListing = window.confirm(
-      "Listar este token no Mercado Secundário custa 5 Créditos e uma taxa de rede de $0.50 USD.\n\nDeseja prosseguir?"
-    );
+    if (resaleQty <= 0 || resaleQty > selectedReceipt.quantity) {
+      alert("Quantidade inválida.");
+      return;
+    }
 
-    if (!confirmListing) return;
+    if (resalePrice <= 0) {
+      alert("Defina um preço válido.");
+      return;
+    }
 
-    setIsListingId(receiptId);
+    setIsListingId(selectedReceipt.id);
     try {
       // 1. Cobrar Taxa da Rede na Phantom ($0.50 USD)
       const exactFeeSol = 0.50 / solPriceUSD;
@@ -112,7 +135,9 @@ export default function InvestorDashboard() {
           walletAddress: publicKey.toBase58(),
           transactionSignature: signature,
           cryptoAmount: safeFeeSol,
-          receiptId,
+          receiptId: selectedReceipt.id,
+          resaleQty: Number(resaleQty),
+          resalePrice: Number(resalePrice)
         }),
       });
 
@@ -122,7 +147,10 @@ export default function InvestorDashboard() {
       }
 
       alert("Ativo listado no mercado secundário com sucesso!");
+      closeResaleModal();
       fetchReceipts(); // Recarregar a lista
+      router.refresh(); // Sync Header
+
 
     } catch (err: any) {
       console.error("[Resale Error]", err);
@@ -133,7 +161,7 @@ export default function InvestorDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 relative">
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
@@ -170,9 +198,6 @@ export default function InvestorDashboard() {
               const currentBRL = solPriceBRL ? historicSol * solPriceBRL : null;
               const currentUSD = solPriceUSD ? historicSol * solPriceUSD : null;
 
-              // Para calcular lucro/prejuízo, precisaríamos saber o preço histórico do SOL em BRL no ato da compra.
-              // Como não temos armazenado, vamos apenas apresentar o valor atual da fração em SOL com a cotação em tempo real.
-              // No entanto, para simular o "Lucro", podemos comparar o Valor Atual com o Preço Unitário Original do Token.
               const originalTokenPriceBRL = Number(receipt.asset?.tokenPrice || 0);
               const historicTotalBRL = receipt.quantity * originalTokenPriceBRL;
               
@@ -263,26 +288,88 @@ export default function InvestorDashboard() {
                     {/* Botão Secundário */}
                     {receipt.status === "HELD" && (
                       <button 
-                        onClick={() => handleListForSale(receipt.id)}
-                        disabled={isListingId === receipt.id}
+                        onClick={() => openResaleModal(receipt)}
                         className="w-full py-3 bg-slate-900 hover:bg-indigo-600 disabled:opacity-50 text-white font-extrabold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2"
                       >
-                        {isListingId === receipt.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Store className="w-4 h-4" />
-                        )}
-                        {isListingId === receipt.id ? "Processando..." : "Colocar à Venda"}
+                        <Store className="w-4 h-4" />
+                        Colocar à Venda
                       </button>
                     )}
                   </div>
-
                 </div>
               );
             })}
           </div>
         )}
       </main>
+
+      {/* Modal de Revenda */}
+      {selectedReceipt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl relative animate-in zoom-in-95">
+            <button onClick={closeResaleModal} className="absolute top-4 right-4 p-2 text-slate-400 hover:bg-slate-100 rounded-full transition">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Venda no Secundário</h2>
+            <p className="text-slate-500 text-sm mb-6">
+              Você pode vender o seu lote inteiro ou fracioná-lo. Defina a quantidade e o preço unitário.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Quantidade para Venda</label>
+                <div className="flex items-center">
+                  <input 
+                    type="number" 
+                    min={1} 
+                    max={selectedReceipt.quantity} 
+                    value={resaleQty}
+                    onChange={(e) => setResaleQty(Number(e.target.value))}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-slate-900 font-bold outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  />
+                  <span className="ml-3 text-sm text-slate-500 font-medium">/ {selectedReceipt.quantity} max</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Preço Unitário (BRL)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-3 text-slate-400 font-bold">R$</span>
+                  <input 
+                    type="number" 
+                    min={0.01} 
+                    step={0.01}
+                    value={resalePrice}
+                    onChange={(e) => setResalePrice(Number(e.target.value))}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 pl-10 pr-4 text-slate-900 font-bold outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <p className="text-[11px] text-amber-800 font-semibold leading-relaxed">
+                <span className="font-bold">Custos de Listagem:</span> Esta operação consumirá 5 Créditos Lake e uma taxa de rede de $0.50 USD (convertidos em SOL) da sua carteira.
+              </p>
+            </div>
+
+            <button
+              onClick={executeListing}
+              disabled={isListingId === selectedReceipt.id}
+              className="w-full mt-6 py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-extrabold rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2"
+            >
+              {isListingId === selectedReceipt.id ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Processando...
+                </>
+              ) : (
+                <>Confirmar Listagem</>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

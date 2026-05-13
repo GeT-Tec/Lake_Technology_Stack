@@ -21,6 +21,7 @@ interface AssetData {
     description?: string | null;
     imageUrl?: string | null;
     contractUrl?: string | null;
+    isListed?: boolean;
 }
 
 interface PageProps {
@@ -43,6 +44,7 @@ export default function ManageAssetPage({ params }: PageProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editDescription, setEditDescription] = useState("");
     const [isSavingDesc, setIsSavingDesc] = useState(false);
+    const [isTogglingList, setIsTogglingList] = useState(false);
 
     useEffect(() => {
         const fetchAssetDetails = async () => {
@@ -100,6 +102,25 @@ export default function ManageAssetPage({ params }: PageProps) {
             alert(`Erro ao salvar descrição: ${err.message}`);
         } finally {
             setIsSavingDesc(false);
+        }
+    };
+
+    const handleToggleList = async () => {
+        if (!asset) return;
+        setIsTogglingList(true);
+        try {
+            const res = await fetch(`/api/assets/${asset.id}/list?wallet=${asset.ownerWallet}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isListed: !(asset.isListed !== false) }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            setAsset({ ...asset, isListed: !(asset.isListed !== false) });
+        } catch (err: any) {
+            alert(`Erro ao alterar listagem: ${err.message}`);
+        } finally {
+            setIsTogglingList(false);
         }
     };
 
@@ -253,8 +274,21 @@ export default function ManageAssetPage({ params }: PageProps) {
                                 100% Sincronizado
                             </div>
                         </div>
-                        <div className="p-3 bg-purple-50 rounded-xl border border-purple-100 text-purple-600">
-                            <Layers className="w-6 h-6" />
+                        <div className="flex flex-col items-end gap-2">
+                            <div className="p-3 bg-purple-50 rounded-xl border border-purple-100 text-purple-600">
+                                <Layers className="w-6 h-6" />
+                            </div>
+                            <button
+                                onClick={handleToggleList}
+                                disabled={isTogglingList}
+                                className={`text-[10px] font-bold px-3 py-1.5 rounded uppercase tracking-wider transition-colors ${
+                                    asset.isListed !== false
+                                        ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                                        : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                }`}
+                            >
+                                {isTogglingList ? "Alterando..." : (asset.isListed !== false ? "Pausar Vendas" : "Retomar Vendas")}
+                            </button>
                         </div>
                     </div>
 

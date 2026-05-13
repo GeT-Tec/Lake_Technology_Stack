@@ -21,20 +21,9 @@ import {
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 export function SolanaProvider({ children }: { children: React.ReactNode }) {
-  // The network is resolved dynamically from environment variables
-  const solanaNetwork = process.env.NEXT_PUBLIC_SOLANA_NETWORK || "devnet";
-  const network =
-    solanaNetwork === "mainnet-beta"
-      ? WalletAdapterNetwork.Mainnet
-      : solanaNetwork === "testnet"
-        ? WalletAdapterNetwork.Testnet
-        : WalletAdapterNetwork.Devnet;
-
-  // You can also provide a custom RPC endpoint.
-  const endpoint = useMemo(
-    () => process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl(network),
-    [network]
-  );
+  // Forcing DEVNET to resolve Phantom network mismatch
+  const network = WalletAdapterNetwork.Devnet;
+  const endpoint = useMemo(() => clusterApiUrl("devnet"), []);
 
   const wallets = useMemo(() => {
     const adapters: WalletAdapter[] = [

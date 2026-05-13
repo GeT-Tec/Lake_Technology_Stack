@@ -47,6 +47,7 @@ model Asset {
   contractUrl     String?
   status          AssetStatus @default(DRAFT)
   contractAddress String?
+  isListed        Boolean     @default(true)
   chainId         Int?
   sector          String?
   tokenNature     String?
@@ -201,6 +202,7 @@ model InvestmentReceipt {
   txHash              String
   child_fraction_hash String   @unique
   status              String   @default("HELD")
+  resalePrice         Decimal? @db.Decimal(20, 2)
   createdAt           DateTime @default(now())
 
   investor            User     @relation(fields: [investorWallet], references: [walletAddress])

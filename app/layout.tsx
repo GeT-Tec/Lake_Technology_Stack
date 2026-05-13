@@ -6,6 +6,7 @@ import { SolanaProvider } from "@/components/SolanaProvider";
 import { WalletProvider } from "@/context/wallet-context";
 import { CreditsProvider } from "@/context/credits-context";
 import { CreditsModal } from "@/components/CreditsModal";
+import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             <CreditsProvider>
               <Navbar />
               <main className="flex-grow w-full">{children}</main>
+              <Footer />
               <CreditsModal />
             </CreditsProvider>
           </WalletProvider>
