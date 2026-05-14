@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { ShieldCheck, Copy, ExternalLink, Loader2, Wallet, TrendingUp, TrendingDown, Store, X } from "lucide-react";
+import { ShieldCheck, Copy, ExternalLink, Loader2, Wallet, TrendingUp, TrendingDown, Store, X, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,8 @@ export default function InvestorDashboard() {
   const { connection } = useConnection();
   const router = useRouter();
   const [receipts, setReceipts] = useState<any[]>([]);
+  const [createdAssets, setCreatedAssets] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"investimentos" | "emissoes">("investimentos");
   const [isLoading, setIsLoading] = useState(true);
   
   // Oracle States
@@ -53,13 +55,57 @@ export default function InvestorDashboard() {
     }
   };
 
+  const fetchPrimaryAssets = async () => {
+    if (!publicKey) return;
+    try {
+      const res = await fetch("/api/assets");
+      const data = await res.json();
+      if (data.assets) {
+        setCreatedAssets(data.assets.filter((a: any) => a.ownerWallet === publicKey.toBase58()));
+      }
+    } catch (err) {
+      console.error("Erro ao buscar ativos:", err);
+    }
+  };
+
   useEffect(() => {
     if (publicKey) {
       fetchReceipts();
+      fetchPrimaryAssets();
     } else {
       setIsLoading(false);
     }
   }, [publicKey]);
+
+  const handleDeleteAsset = async (asset: any) => {
+    if (!window.confirm(`Tem certeza que deseja excluir '${asset.name}'?`)) return;
+    try {
+      const res = await fetch(`/api/assets/${asset.id}?wallet=${publicKey?.toBase58()}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro ao excluir");
+      fetchPrimaryAssets();
+    } catch (err: any) {
+      alert(`Erro ao excluir: ${err.message}`);
+    }
+  };
+
+  const handleForceApproval = async (id: string) => {
+    if (!window.confirm("Deseja aprovar e publicar este ativo no mercado primário?")) return;
+    try {
+      const res = await fetch(`/api/assets/${id}?wallet=${publicKey?.toBase58()}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "APPROVED" }),
+      });
+      if (!res.ok) throw new Error("Falha ao aprovar");
+      alert("Ativo Aprovado com Sucesso!");
+      fetchPrimaryAssets();
+    } catch (err: any) {
+      alert(`Erro: ${err.message}`);
+    }
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -166,12 +212,33 @@ export default function InvestorDashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
             <Wallet className="w-8 h-8 text-indigo-600" />
-            Dashboard do Investidor
+            Meu Portfólio
           </h1>
           <p className="text-slate-500 mt-2">
             Acompanhe seus ativos e frações RWA com Marcação a Mercado em tempo real.
           </p>
         </div>
+
+        {publicKey && !isLoading && (
+          <div className="flex gap-4 border-b border-slate-200 mb-8">
+            <button
+              onClick={() => setActiveTab("investimentos")}
+              className={`pb-4 px-2 font-bold transition-all border-b-2 ${
+                activeTab === "investimentos" ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Meus Investimentos
+            </button>
+            <button
+              onClick={() => setActiveTab("emissoes")}
+              className={`pb-4 px-2 font-bold transition-all border-b-2 ${
+                activeTab === "emissoes" ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Minhas Emissões
+            </button>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
@@ -182,8 +249,9 @@ export default function InvestorDashboard() {
             <h2 className="text-xl font-bold text-slate-800 mb-2">Conecte sua carteira</h2>
             <p className="text-slate-500">Conecte sua carteira Solana para visualizar seus investimentos.</p>
           </div>
-        ) : receipts.length === 0 ? (
-          <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-200">
+        ) : activeTab === "investimentos" ? (
+          receipts.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-200">
             <ShieldCheck className="w-12 h-12 text-slate-300 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-slate-800 mb-2">Nenhum investimento encontrado</h2>
             <p className="text-slate-500 mb-6">Você ainda não adquiriu frações de ativos na LakeTokeniza.</p>
@@ -300,7 +368,83 @@ export default function InvestorDashboard() {
               );
             })}
           </div>
-        )}
+          )
+        ) : activeTab === "emissoes" ? (
+          createdAssets.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-200">
+              <Store className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-slate-800 mb-2">Nenhuma emissão encontrada</h2>
+              <p className="text-slate-500 mb-6">Você ainda não tokenizou nenhum ativo.</p>
+              <Link href="/tokenize" className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
+                Tokenizar Ativo
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {createdAssets.map((asset) => (
+                <div key={asset.id} className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
+                  {asset.image && asset.image.startsWith("https://") ? (
+                    <div className="relative w-full h-48 bg-slate-50 flex items-center justify-center overflow-hidden border-b border-slate-100">
+                      <img src={asset.image} alt="Asset" className="object-contain w-full h-full p-4" />
+                      {!asset.isDemo && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <button
+                            onClick={() => handleDeleteAsset(asset)}
+                            title="Excluir Ativo"
+                            className="p-2 rounded-lg bg-white/90 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className={`relative h-2 w-full shrink-0 ${asset.image || "bg-slate-700"}`}>
+                      {!asset.isDemo && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <button
+                            onClick={() => handleDeleteAsset(asset)}
+                            title="Excluir Ativo"
+                            className="p-2 rounded-lg bg-white/90 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-lg font-bold mb-1 truncate">{asset.name}</h3>
+                    <p className="text-xs text-slate-500 font-medium mb-4">{asset.type}</p>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div><p className="text-[10px] text-slate-400 font-bold uppercase">Preço</p><p className="font-extrabold text-slate-900">{(asset.tokenPrice ? Number(asset.tokenPrice) : 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p></div>
+                      <div><p className="text-[10px] text-slate-400 font-bold uppercase">Rendimento</p><p className="font-extrabold text-emerald-600">8.5% a.a.</p></div>
+                    </div>
+                    <div className="mt-auto">
+                      {asset.status === "APPROVED" || asset.status === "ACTIVE" || asset.status === "TOKENIZED" ? (
+                        <Link href={`/dashboard/manage/${asset.id}`} className="w-full block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
+                          Gerenciar Ativo
+                        </Link>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Link href={`/dashboard/manage/${asset.id}`} className="flex-1 block text-center py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
+                            Gerenciar
+                          </Link>
+                          <button
+                            onClick={() => handleForceApproval(asset.id)}
+                            className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-colors shadow-sm flex-1"
+                          >
+                            Aprovar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : null}
       </main>
 
       {/* Modal de Revenda */}

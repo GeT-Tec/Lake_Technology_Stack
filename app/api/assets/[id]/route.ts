@@ -73,7 +73,7 @@ export async function PATCH(
     const { searchParams } = new URL(req.url);
     const requestWallet = searchParams.get("wallet");
     const body = await req.json();
-    const { status, description } = body;
+    const { status, description, isListed } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -112,6 +112,7 @@ export async function PATCH(
     const updateData: any = {};
     if (status !== undefined) updateData.status = status;
     if (description !== undefined) updateData.description = description;
+    if (isListed !== undefined) updateData.isListed = isListed;
 
     const updatedAsset = await prisma.asset.update({
       where: { id },
@@ -154,7 +155,57 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, asset });
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const skip = (page - 1) * limit;
+
+    const aggregate = await prisma.investmentReceipt.aggregate({
+      where: { assetId: id, status: { not: "LISTED_FOR_SALE" } },
+      _sum: { quantity: true, amountPaidCrypto: true },
+    });
+
+    const tokensSold = aggregate._sum.quantity || 0;
+    const revenueRaised = aggregate._sum.amountPaidCrypto ? Number(aggregate._sum.amountPaidCrypto) : 0;
+    const royaltiesGenerated = 0; // Placeholder
+
+    const [receipts, totalReceipts] = await Promise.all([
+      prisma.investmentReceipt.findMany({
+        where: { assetId: id, status: { not: "LISTED_FOR_SALE" } },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.investmentReceipt.count({
+        where: { assetId: id, status: { not: "LISTED_FOR_SALE" } },
+      }),
+    ]);
+
+    const ledger = receipts.map((r) => ({
+      id: r.id,
+      date: r.createdAt.toISOString(),
+      quantity: r.quantity,
+      value: Number(r.amountPaidCrypto),
+      hash: r.txHash,
+      status: r.status,
+    }));
+
+    return NextResponse.json({ 
+      success: true, 
+      asset,
+      financials: {
+        tokensSold,
+        revenueRaised,
+        royaltiesGenerated,
+        ledger,
+        pagination: {
+          page,
+          limit,
+          total: totalReceipts,
+          totalPages: Math.ceil(totalReceipts / limit),
+        }
+      }
+    });
   } catch (error) {
     console.error("[GET /api/assets/[id]] Erro:", error);
     return NextResponse.json(

@@ -14,7 +14,7 @@ const navItems = [
   { name: "Aprenda", href: "/learn" },
   { name: "Marketplace", href: "/marketplace" },
   { name: "Tokenizar", href: "/tokenize" },
-  { name: "Meus Investimentos", href: "/dashboard/investor" },
+  { name: "Meu Portfólio", href: "/dashboard/investor" },
 ];
 
 export function Navbar() {

@@ -92,10 +92,18 @@ export async function POST(req: Request) {
         });
       } else {
         // Venda Parcial (Fissão)
+        // Cálculo Proporcional (Regra de Três)
+        const unitCostSol = Number(receipt.amountPaidCrypto) / receipt.quantity;
+        const newReceiptCostSol = unitCostSol * resaleQty;
+        const remainingCostSol = Number(receipt.amountPaidCrypto) - newReceiptCostSol;
+
         // Subtrair do recibo original
         await tx.investmentReceipt.update({
           where: { id: receiptId },
-          data: { quantity: receipt.quantity - resaleQty },
+          data: { 
+            quantity: receipt.quantity - resaleQty,
+            amountPaidCrypto: new Prisma.Decimal(remainingCostSol)
+          },
         });
 
         // Criar novo recibo listado
@@ -107,7 +115,7 @@ export async function POST(req: Request) {
             investorWallet: walletAddress,
             assetId: receipt.assetId,
             quantity: resaleQty,
-            amountPaidCrypto: receipt.amountPaidCrypto, // Manter o preço base pago inicialmente proporcional ou total. Para simplificar, copiaremos o total da fração.
+            amountPaidCrypto: new Prisma.Decimal(newReceiptCostSol),
             cryptoSymbol: receipt.cryptoSymbol,
             txHash: transactionSignature, // Usamos a transação de listagem como lastro do novo recibo fracionado
             child_fraction_hash: childFractionHash,

@@ -471,7 +471,7 @@ export default function MarketplacePage() {
 
       <div className="sticky top-20 z-30 bg-slate-50/95 backdrop-blur-sm border-b border-slate-200 py-4 px-6 flex flex-wrap justify-between gap-3">
         <div className="flex gap-2 flex-wrap">
-          {["Mercado Primário", "Mercado Secundário", "Meus Ativos"].map(f => (
+          {["Mercado Primário", "Mercado Secundário"].map(f => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
@@ -491,10 +491,9 @@ export default function MarketplacePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            {activeFilter === "Mercado Primário" || activeFilter === "Meus Ativos" ? (
+            {activeFilter === "Mercado Primário" ? (
               assets
               .filter(a => {
-                if (activeFilter === "Meus Ativos") return a.ownerWallet === connectedWallet;
                 // No mercado primário público, mostrar apenas listados
                 if (a.isDemo) return true;
                 return a.isListed !== false;
@@ -541,12 +540,12 @@ export default function MarketplacePage() {
                     <div className="mt-auto">
                       {isMyAsset(asset.ownerWallet) ? (
                         asset.status === "APPROVED" || asset.status === "ACTIVE" || asset.status === "TOKENIZED" ? (
-                          <Link href={`/manage/${asset.id}`} className="w-full block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
+                          <Link href={`/dashboard/manage/${asset.id}`} className="w-full block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
                             Gerenciar Ativo
                           </Link>
                         ) : (
                           <div className="flex gap-2">
-                            <Link href={`/manage/${asset.id}`} className="flex-1 block text-center py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
+                            <Link href={`/dashboard/manage/${asset.id}`} className="flex-1 block text-center py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
                               Gerenciar
                             </Link>
                             <button
