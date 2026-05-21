@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWallet } from "@/context/wallet-context";
+import { useMedals } from "@/context/medals-context";
+import { TrailHead } from "@/components/medals/TrailHead";
+import { MedalsGrid } from "@/components/medals/MedalsGrid";
 import {
-  BookOpen,
   Droplets,
-  AlertTriangle,
   ExternalLink,
   Wallet,
   ShieldCheck,
@@ -17,7 +18,6 @@ import {
   GraduationCap,
   Cpu,
   Coins,
-  SearchCheck,
   Key,
   Fingerprint,
   UserCheck,
@@ -27,20 +27,44 @@ import {
   AlertCircle
 } from "lucide-react";
 import Link from "next/link";
+import { useDict } from "@/lib/i18n/client";
 
 export default function LearnPage() {
   const { walletAddress } = useWallet();
+  const { award } = useMedals();
+  const dict = useDict();
+  const t = dict.learn;
   const [recipientAddress, setRecipientAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [txSignature, setTxSignature] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const rwaSectionRef = useRef<HTMLElement | null>(null);
 
-  // Preenche automaticamente se a carteira for conectada ou alterada
   useEffect(() => {
     if (walletAddress) {
       setRecipientAddress(walletAddress);
+      void award("wallet_connected");
     }
-  }, [walletAddress]);
+  }, [walletAddress, award]);
+
+  useEffect(() => {
+    const node = rwaSectionRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            void award("rwa_intro_read");
+            obs.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [award]);
 
   const handleRequestFaucet = async () => {
     if (!recipientAddress) return;
@@ -60,13 +84,14 @@ export default function LearnPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Falha ao solicitar fundos.");
+        throw new Error(data.error || t.faucet.requestFail);
       }
 
       setTxSignature(data.signature);
+      void award("faucet_claimed");
     } catch (err: any) {
       console.error("[Faucet Request Error]", err);
-      setErrorMsg(err.message || "Erro desconhecido ao acionar o LakeFaucet.");
+      setErrorMsg(err.message || t.faucet.unknownErr);
     } finally {
       setLoading(false);
     }
@@ -74,20 +99,27 @@ export default function LearnPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 scroll-smooth">
 
-      {/* --- HERO: AUTORIDADE IMEDIATA --- */}
+      <TrailHead />
+
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-5xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+          <MedalsGrid />
+        </div>
+      </div>
+
       <div className="bg-slate-900 text-white pt-24 pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 border border-slate-700 mb-6">
             <GraduationCap className="w-5 h-5 text-emerald-400" />
-            <span className="text-sm font-semibold tracking-wider uppercase text-emerald-400">Lake Academy</span>
+            <span className="text-sm font-semibold tracking-wider uppercase text-emerald-400">{t.academyBadge}</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-            Domine a Nova Economia <br />
-            <span className="text-emerald-400">Tokenizada.</span>
+            {t.heroTitle} <br />
+            <span className="text-emerald-400">{t.heroTitleAccent}</span>
           </h1>
           <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            De iniciante a investidor institucional. Este é o repositório definitivo de conhecimento sobre RWA, Blockchain e a infraestrutura LakeZero.
+            {t.heroLead}
           </p>
         </div>
       </div>
@@ -95,51 +127,47 @@ export default function LearnPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row gap-12">
 
-          {/* --- SIDEBAR DE NAVEGAÇÃO (STICKY) --- */}
           <aside className="lg:w-1/4 hidden lg:block">
             <div className="sticky top-24 space-y-8">
 
-              {/* Menu Conceitos */}
               <div className="space-y-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Fundamentos (Teoria)</h3>
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">{t.sideTheoryTitle}</h3>
                 <nav className="flex flex-col space-y-1">
                   <a href="#intro-rwa" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-emerald-700">
                     <Globe className="w-4 h-4" />
-                    <span className="font-medium">O que é RWA?</span>
+                    <span className="font-medium">{t.navRwa}</span>
                   </a>
                   <a href="#juridico" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-blue-700">
                     <ShieldCheck className="w-4 h-4" />
-                    <span className="font-medium">Segurança Jurídica</span>
+                    <span className="font-medium">{t.navLegal}</span>
                   </a>
                   <a href="#lakezero" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-yellow-700">
                     <Zap className="w-4 h-4" />
-                    <span className="font-medium">Tecnologia LakeZero</span>
+                    <span className="font-medium">{t.navLakezero}</span>
                   </a>
                 </nav>
               </div>
 
-              {/* Menu Identidade (NOVO) */}
               <div className="space-y-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Privacidade</h3>
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">{t.sidePrivacyTitle}</h3>
                 <nav className="flex flex-col space-y-1">
                   <a href="#identity" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-cyan-700">
                     <Fingerprint className="w-4 h-4" />
-                    <span className="font-medium">Identidade & Hash</span>
+                    <span className="font-medium">{t.navIdentity}</span>
                   </a>
                 </nav>
               </div>
 
-              {/* Menu Prático */}
               <div className="space-y-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Laboratório (Prática)</h3>
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">{t.sideLabTitle}</h3>
                 <nav className="flex flex-col space-y-1">
                   <a href="#wallet-masterclass" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-purple-700">
                     <Wallet className="w-4 h-4" />
-                    <span className="font-medium">Masterclass: Carteiras</span>
+                    <span className="font-medium">{t.navWallet}</span>
                   </a>
                   <a href="#faucets" className="group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white hover:shadow-md transition-all text-slate-600 hover:text-purple-700">
                     <Droplets className="w-4 h-4" />
-                    <span className="font-medium">Resgatar Tokens (Faucets)</span>
+                    <span className="font-medium">{t.navFaucets}</span>
                   </a>
                 </nav>
               </div>
@@ -147,110 +175,106 @@ export default function LearnPage() {
             </div>
           </aside>
 
-          {/* --- CONTEÚDO PRINCIPAL --- */}
           <main className="lg:w-3/4 space-y-24">
 
-            {/* SEÇÃO 1: RWA */}
-            <section id="intro-rwa" className="scroll-mt-24 space-y-6">
+            <section id="intro-rwa" ref={rwaSectionRef} className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-emerald-200 pb-4">
                 <div className="p-3 bg-emerald-100 rounded-xl">
                   <Globe className="w-8 h-8 text-emerald-700" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">A Revolução RWA (Real World Assets)</h2>
-                  <p className="text-slate-500">Por que a BlackRock chama isso de "A próxima geração de mercados".</p>
+                  <h2 className="text-3xl font-bold text-slate-900">{t.rwa.title}</h2>
+                  <p className="text-slate-500">{t.rwa.subtitle}</p>
                 </div>
               </div>
               <div className="prose prose-lg text-slate-600 max-w-none">
                 <p>
-                  <strong>Imagine poder comprar um pedaço de um prédio na Faria Lima ou de uma fazenda de soja no Mato Grosso com a mesma facilidade que envia um e-mail.</strong>
+                  <strong>{t.rwa.p1Bold}</strong>
                 </p>
                 <p>
-                  Ativos do Mundo Real (RWA) são a ponte definitiva entre o mercado financeiro tradicional (Web2) e a Blockchain (Web3). Não estamos falando de moedas meme ou especulação vazia. Estamos falando de colocar ativos de trilhões de dólares — Imóveis, Agronegócio, Crédito Privado — dentro da segurança da Blockchain.
+                  {t.rwa.p2}
                 </p>
                 <div className="grid md:grid-cols-2 gap-6 my-8 not-prose">
                   <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="font-bold text-slate-900 mb-2">💰 Fracionamento</h4>
-                    <p className="text-sm">Um imóvel de R$ 10 milhões é inacessível. Tokenizado, ele vira 1 milhão de pedaços de R$ 10,00. Qualquer um pode investir.</p>
+                    <h4 className="font-bold text-slate-900 mb-2">{t.rwa.cardFracTitle}</h4>
+                    <p className="text-sm">{t.rwa.cardFracDesc}</p>
                   </div>
                   <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="font-bold text-slate-900 mb-2">🌍 Liquidez Global 24/7</h4>
-                    <p className="text-sm">O mercado tradicional fecha às 17h e não funciona no fim de semana. A Blockchain nunca dorme. Venda seus ativos domingo às 3h da manhã.</p>
+                    <h4 className="font-bold text-slate-900 mb-2">{t.rwa.cardLiqTitle}</h4>
+                    <p className="text-sm">{t.rwa.cardLiqDesc}</p>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* SEÇÃO 2: SEGURANÇA JURÍDICA */}
             <section id="juridico" className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-blue-200 pb-4">
                 <div className="p-3 bg-blue-100 rounded-xl">
                   <ShieldCheck className="w-8 h-8 text-blue-700" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">O "Lastro" Jurídico</h2>
-                  <p className="text-slate-500">Código é Lei? Não. A Lei é a Lei. Nós unimos os dois.</p>
+                  <h2 className="text-3xl font-bold text-slate-900">{t.legal.title}</h2>
+                  <p className="text-slate-500">{t.legal.subtitle}</p>
                 </div>
               </div>
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 space-y-6">
                 <div className="flex gap-4 items-start">
                   <FileText className="w-6 h-6 text-blue-600 mt-1 shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900">O Token é o Espelho do Contrato</h3>
+                    <h3 className="text-xl font-bold text-slate-900">{t.legal.mirrorTitle}</h3>
                     <p className="text-slate-700 mt-2 leading-relaxed">
-                      Para cada ativo listado na LakeTokeniza, existe uma estrutura jurídica robusta no mundo real. Geralmente utilizamos:
+                      {t.legal.mirrorBody}
                     </p>
                     <ul className="list-disc ml-5 mt-3 space-y-2 text-slate-700">
-                      <li><strong>CCB (Cédula de Crédito Bancário):</strong> Para dívidas e recebíveis.</li>
-                      <li><strong>SPE (Sociedade de Propósito Específico):</strong> Para projetos imobiliários.</li>
-                      <li><strong>Tokens de Recebíveis:</strong> Registrados conforme normas da CVM.</li>
+                      <li>{t.legal.bullet1}</li>
+                      <li>{t.legal.bullet2}</li>
+                      <li>{t.legal.bullet3}</li>
                     </ul>
                   </div>
                 </div>
                 <div className="flex gap-4 items-start">
                   <Landmark className="w-6 h-6 text-blue-600 mt-1 shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900">Garantia de Execução</h3>
+                    <h3 className="text-xl font-bold text-slate-900">{t.legal.execTitle}</h3>
                     <p className="text-slate-700 mt-2">
-                      Se a plataforma sair do ar, se a internet cair, seu direito de propriedade persiste. O Token serve como prova de titularidade irrefutável para execução judicial se necessário. Isso é segurança institucional.
+                      {t.legal.execBody}
                     </p>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* SEÇÃO 3: TECNOLOGIA LAKEZERO */}
             <section id="lakezero" className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-yellow-200 pb-4">
                 <div className="p-3 bg-yellow-100 rounded-xl">
                   <Cpu className="w-8 h-8 text-yellow-700" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">Arquitetura LakeZero™</h2>
-                  <p className="text-slate-500">Por que cobramos uma taxa de sustentabilidade de $0.30?</p>
+                  <h2 className="text-3xl font-bold text-slate-900">{t.lakezero.title}</h2>
+                  <p className="text-slate-500">{t.lakezero.subtitle}</p>
                 </div>
               </div>
               <div className="prose prose-lg text-slate-600 max-w-none">
                 <p>
-                  O maior problema da Blockchain pura é o custo. Pagar R$ 15,00 de taxa ("Gas") para comprar R$ 50,00 de um ativo inviabiliza o negócio.
+                  {t.lakezero.p1}
                 </p>
                 <div className="bg-slate-900 text-white p-8 rounded-2xl my-8">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
                       <h4 className="text-emerald-400 font-bold text-lg mb-2 flex items-center gap-2">
-                        <Zap className="w-5 h-5" /> Off-Chain Speed
+                        <Zap className="w-5 h-5" /> {t.lakezero.offTitle}
                       </h4>
                       <p className="text-slate-400 text-sm">
-                        Todas as ordens de compra, venda e troca dentro da plataforma acontecem em nossos servidores seguros (Rust).
-                        <strong>Custo de Gás: ZERO. Velocidade: MILISSEGUNDOS.</strong>
+                        {t.lakezero.offBody}{" "}
+                        <strong>{t.lakezero.offBoldTail}</strong>
                       </p>
                     </div>
                     <div>
                       <h4 className="text-emerald-400 font-bold text-lg mb-2 flex items-center gap-2">
-                        <Lock className="w-5 h-5" /> On-Chain Settlement
+                        <Lock className="w-5 h-5" /> {t.lakezero.onTitle}
                       </h4>
                       <p className="text-slate-400 text-sm">
-                        O saldo final e a custódia são sincronizados com a Blockchain pública. Garantindo que ninguém (nem nós) possa alterar o histórico final.
+                        {t.lakezero.onBody}
                       </p>
                     </div>
                   </div>
@@ -258,11 +282,11 @@ export default function LearnPage() {
                     <div className="flex items-start gap-4">
                       <Coins className="w-6 h-6 text-yellow-400 shrink-0" />
                       <div>
-                        <h5 className="font-bold text-white">Taxa de Sustentabilidade ($0.30)</h5>
+                        <h5 className="font-bold text-white">{t.lakezero.feeTitle}</h5>
                         <p className="text-slate-400 text-sm mt-1">
-                          Manter servidores de alta performance, auditores de segurança e parcerias jurídicas custa caro.
-                          Cobramos uma taxa fixa simbólica para garantir que o sistema seja sustentável, auditável e livre de censura.
-                          Além disso, parte dessa taxa alimenta o <strong>Fundo de Liquidez</strong> do protocolo.
+                          {t.lakezero.feeBody}
+                          <strong>{t.lakezero.feeBodyHighlight}</strong>
+                          {t.lakezero.feeBodyEnd}
                         </p>
                       </div>
                     </div>
@@ -271,113 +295,108 @@ export default function LearnPage() {
               </div>
             </section>
 
-            {/* SEÇÃO NOVO: IDENTIDADE & PRIVACIDADE (BUSINESS LENS) */}
             <section id="identity" className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-cyan-200 pb-4">
                 <div className="p-3 bg-cyan-100 rounded-xl">
                   <Fingerprint className="w-8 h-8 text-cyan-700" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">Identidade: O "Código Estranho"</h2>
-                  <p className="text-slate-500">Por que usamos 0x71... em vez do seu Nome ou CPF?</p>
+                  <h2 className="text-3xl font-bold text-slate-900">{t.identity.title}</h2>
+                  <p className="text-slate-500">{t.identity.subtitle}</p>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div className="prose prose-lg text-slate-600 max-w-none mb-8">
                   <p>
-                    Muitos usuários se assustam ao ver um código como <code>0x71C...9A2</code>. Parece um erro de computador, mas na verdade é a sua <strong>Blindagem de Privacidade</strong>.
+                    {t.identity.p1Lead}<code>0x71C...9A2</code>{t.identity.p1End}<strong>{t.identity.p1Bold}</strong>{t.identity.p1Suffix}
                   </p>
                   <p>
-                    Pense nisso como uma "Conta Suíça Numerada". O sistema sabe que a conta existe e é válida, mas não precisa saber quem é o dono para deixar você operar. Isso garante que seus dados não vazem em ataques hackers.
+                    {t.identity.p2}
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-0 border border-slate-200 rounded-xl overflow-hidden">
-                  {/* Lado P2P */}
                   <div className="bg-slate-50 p-6 border-b md:border-b-0 md:border-r border-slate-200">
                     <div className="flex items-center gap-2 mb-4">
                       <Ghost className="w-6 h-6 text-slate-600" />
-                      <h3 className="font-bold text-lg text-slate-900">Modo P2P (Liberdade)</h3>
+                      <h3 className="font-bold text-lg text-slate-900">{t.identity.p2pTitle}</h3>
                     </div>
                     <p className="text-sm text-slate-600 mb-4 min-h-[40px]">
-                      Para trocas de créditos, tokens de utilidade e serviços digitais peer-to-peer.
+                      {t.identity.p2pDesc}
                     </p>
                     <ul className="space-y-2 text-sm text-slate-600">
-                      <li className="flex gap-2">✅ <strong>Login:</strong> Apenas Carteira (0x...)</li>
-                      <li className="flex gap-2">✅ <strong>Dados:</strong> Zero Exposição</li>
-                      <li className="flex gap-2">✅ <strong>Velocidade:</strong> Instantânea</li>
+                      <li className="flex gap-2">✅ <strong>{t.identity.p2pLogin}</strong> {t.identity.p2pLoginV}</li>
+                      <li className="flex gap-2">✅ <strong>{t.identity.p2pData}</strong> {t.identity.p2pDataV}</li>
+                      <li className="flex gap-2">✅ <strong>{t.identity.p2pSpeed}</strong> {t.identity.p2pSpeedV}</li>
                     </ul>
                   </div>
 
-                  {/* Lado KYC */}
                   <div className="bg-blue-50/50 p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <UserCheck className="w-6 h-6 text-blue-600" />
-                      <h3 className="font-bold text-lg text-slate-900">Modo Investidor (RWA)</h3>
+                      <h3 className="font-bold text-lg text-slate-900">{t.identity.kycTitle}</h3>
                     </div>
                     <p className="text-sm text-slate-600 mb-4 min-h-[40px]">
-                      Para comprar Imóveis ou Títulos de Dívida (Exigência da Lei/CVM).
+                      {t.identity.kycDesc}
                     </p>
                     <ul className="space-y-2 text-sm text-slate-600">
-                      <li className="flex gap-2">🛡️ <strong>Login:</strong> Carteira + LakeID</li>
-                      <li className="flex gap-2">🛡️ <strong>Dados:</strong> KYC (Validação de Doc)</li>
-                      <li className="flex gap-2">🛡️ <strong>Segurança:</strong> Proteção Legal Completa</li>
+                      <li className="flex gap-2">🛡️ <strong>{t.identity.kycLogin}</strong> {t.identity.kycLoginV}</li>
+                      <li className="flex gap-2">🛡️ <strong>{t.identity.kycData}</strong> {t.identity.kycDataV}</li>
+                      <li className="flex gap-2">🛡️ <strong>{t.identity.kycSec}</strong> {t.identity.kycSecV}</li>
                     </ul>
                   </div>
                 </div>
                 <p className="text-center text-xs text-slate-400 mt-4">
-                  Na LakeTokeniza, você escolhe como quer operar. Privacidade quando possível, Identificação quando necessário.
+                  {t.identity.footer}
                 </p>
               </div>
             </section>
 
-            {/* SEÇÃO 4: WALLET MASTERCLASS (PRÁTICA) */}
             <section id="wallet-masterclass" className="scroll-mt-24 space-y-6">
               <div className="flex items-center gap-4 border-b border-purple-200 pb-4">
                 <div className="p-3 bg-purple-100 rounded-xl">
                   <Wallet className="w-8 h-8 text-purple-700" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">Masterclass: Carteiras Digitais</h2>
-                  <p className="text-slate-500">Se você não tem a chave, o dinheiro não é seu.</p>
+                  <h2 className="text-3xl font-bold text-slate-900">{t.walletSec.title}</h2>
+                  <p className="text-slate-500">{t.walletSec.subtitle}</p>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-8">
                 <div className="flex flex-col md:flex-row gap-8 items-center">
                   <div className="flex-1 space-y-4">
-                    <h3 className="text-xl font-bold text-slate-800">O Cofre de Vidro</h3>
+                    <h3 className="text-xl font-bold text-slate-800">{t.walletSec.glassTitle}</h3>
                     <p className="text-slate-600 leading-relaxed">
-                      Pense na Blockchain como um cofre de vidro gigante na praça da cidade. Todos podem ver quanto dinheiro tem em cada caixa, mas ninguém pode tocar.
-                      A sua <strong>Wallet</strong> guarda a <strong>CHAVE</strong> que abre a sua caixa.
+                      {t.walletSec.glassBody} <strong>{t.walletSec.glassWalletBold}</strong> {t.walletSec.glassBodyEnd} <strong>{t.walletSec.glassKeyBold}</strong> {t.walletSec.glassBodyTail}
                     </p>
                   </div>
                   <div className="bg-purple-50 p-6 rounded-xl border border-purple-100 w-full md:w-1/3 text-center">
                     <Key className="w-12 h-12 text-purple-500 mx-auto mb-3" />
-                    <div className="font-bold text-purple-900">Seed Phrase (Semente)</div>
+                    <div className="font-bold text-purple-900">{t.walletSec.seedTitle}</div>
                     <p className="text-xs text-purple-700 mt-2">
-                      Aquelas 12 palavras são o seu dinheiro. Nunca digite em sites suspeitos.
+                      {t.walletSec.seedBody}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800">Tutorial de Instalação (Recomendado)</h3>
+                  <h3 className="text-lg font-bold text-slate-800">{t.walletSec.tutorialTitle}</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <Link href="https://phantom.app" target="_blank" className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600">1</div>
                       <div>
-                        <div className="font-bold text-slate-900 group-hover:text-blue-700">Phantom Wallet (A Favorita)</div>
-                        <div className="text-xs text-slate-500">O padrão da indústria na Solana. Interface impecável e super segura.</div>
+                        <div className="font-bold text-slate-900 group-hover:text-blue-700">{t.walletSec.phantomTitle}</div>
+                        <div className="text-xs text-slate-500">{t.walletSec.phantomDesc}</div>
                       </div>
                       <ExternalLink className="w-4 h-4 text-slate-400 ml-auto" />
                     </Link>
                     <Link href="https://solflare.com" target="_blank" className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl hover:border-orange-500 hover:bg-orange-50 transition-all group">
                       <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center font-bold text-orange-600">2</div>
                       <div>
-                        <div className="font-bold text-slate-900 group-hover:text-orange-700">Solflare (Institucional)</div>
-                        <div className="text-xs text-slate-500">Focada em segurança avançada, ideal para quem vai investir em RWA pesados.</div>
+                        <div className="font-bold text-slate-900 group-hover:text-orange-700">{t.walletSec.solflareTitle}</div>
+                        <div className="text-xs text-slate-500">{t.walletSec.solflareDesc}</div>
                       </div>
                       <ExternalLink className="w-4 h-4 text-slate-400 ml-auto" />
                     </Link>
@@ -386,39 +405,37 @@ export default function LearnPage() {
               </div>
             </section>
 
-            {/* SEÇÃO 5: FAUCETS */}
             <section id="faucets" className="scroll-mt-24 space-y-6 pb-20">
               <div className="flex items-center gap-4 border-b border-indigo-200 pb-4">
                 <div className="p-3 bg-indigo-100 rounded-xl">
                   <Coins className="w-8 h-8 text-indigo-700" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">Faucets: Dinheiro de Teste</h2>
-                  <p className="text-slate-500">Como conseguir "Devnet SOL" de forma imediata e simplificada para simular na plataforma.</p>
+                  <h2 className="text-3xl font-bold text-slate-900">{t.faucet.title}</h2>
+                  <p className="text-slate-500">{t.faucet.subtitle}</p>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                {/* CARD 1: LAKEFAUCET (INTERATIVO) */}
                 <div className="bg-white p-8 rounded-2xl border-2 border-indigo-100 shadow-md relative overflow-hidden flex flex-col justify-between">
                   <div>
                     <h3 className="font-extrabold text-xl text-slate-900 mb-2 flex items-center gap-2">
                       <Droplets className="w-5 h-5 text-indigo-500" />
-                      LakeFaucet Nativo (Recomendado)
+                      {t.faucet.nativeTitle}
                     </h3>
                     <p className="text-sm text-slate-500 mb-6">
-                      Colete 0.05 SOL Devnet diretamente de nossa tesouraria institucional com apenas um clique. Sem autenticação com GitHub ou mídias sociais (Limite de 2 resgates por carteira).
+                      {t.faucet.nativeDesc}
                     </p>
 
                     <div className="space-y-4 mb-6">
                       <div>
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                          Endereço de Destino (Solana Devnet)
+                          {t.faucet.addrLabel}
                         </label>
                         <input
                           type="text"
                           className="w-full p-3 text-sm font-mono border rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                          placeholder="Ex: HHyZWCu..."
+                          placeholder={t.faucet.addrPlaceholder}
                           value={recipientAddress}
                           onChange={(e) => setRecipientAddress(e.target.value)}
                         />
@@ -428,17 +445,17 @@ export default function LearnPage() {
                         <div className="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl text-emerald-800 text-sm space-y-1 animate-in fade-in duration-200">
                           <p className="font-bold flex items-center gap-1.5">
                             <CheckCircle className="w-4 h-4 text-emerald-600" />
-                            Transferência Realizada! (+0.05 SOL)
+                            {t.faucet.success}
                           </p>
                           <p className="text-xs text-emerald-600 font-mono break-all leading-relaxed">
-                            Signature: {txSignature}
+                            {t.faucet.signature} {txSignature}
                           </p>
-                          <Link 
-                            href={`https://solscan.io/tx/${txSignature}?cluster=devnet`} 
-                            target="_blank" 
+                          <Link
+                            href={`https://solscan.io/tx/${txSignature}?cluster=devnet`}
+                            target="_blank"
                             className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline mt-1"
                           >
-                            Ver no Solscan <ExternalLink className="w-3 h-3" />
+                            {t.faucet.viewOnSolscan} <ExternalLink className="w-3 h-3" />
                           </Link>
                         </div>
                       )}
@@ -447,7 +464,7 @@ export default function LearnPage() {
                         <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl text-red-800 text-sm space-y-1 animate-in fade-in duration-200">
                           <p className="font-bold flex items-center gap-1.5">
                             <AlertCircle className="w-4 h-4 text-red-600" />
-                            Falha ao Processar
+                            {t.faucet.failed}
                           </p>
                           <p className="text-xs leading-relaxed">{errorMsg}</p>
                         </div>
@@ -467,15 +484,14 @@ export default function LearnPage() {
                     {loading ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Transferindo SOL...
+                        {t.faucet.transferring}
                       </>
                     ) : (
-                      "Coletar 0.05 SOL Nativo (LakeFaucet)"
+                      t.faucet.claimBtn
                     )}
                   </button>
                 </div>
 
-                {/* CARD 2: QUICKNODE FAUCET (FALLBACK) */}
                 <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between group">
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
                     <Pickaxe className="w-16 h-16 text-slate-800" />
@@ -483,23 +499,23 @@ export default function LearnPage() {
                   <div>
                     <h3 className="font-extrabold text-xl text-slate-900 mb-2 flex items-center gap-2">
                       <ExternalLink className="w-5 h-5 text-slate-500" />
-                      QuickNode Faucet (Plano B)
+                      {t.faucet.qnTitle}
                     </h3>
                     <p className="text-sm text-slate-500 mb-6">
-                      Se o nosso faucet nativo estiver temporariamente sem fundos ou se você atingir a cota máxima, utilize a torneira de testes externa oficial da QuickNode.
+                      {t.faucet.qnDesc}
                     </p>
                     <ul className="text-sm text-slate-600 space-y-3 mb-8">
                       <li className="flex items-start gap-2">
                         <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
-                        <span>Acesse a página externa de airdrop da QuickNode.</span>
+                        <span>{t.faucet.qnStep1}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
-                        <span>Cole o endereço da sua carteira (NÃO exige login com GitHub).</span>
+                        <span>{t.faucet.qnStep2}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
-                        <span>Confirme e receba o SOL diretamente na sua carteira.</span>
+                        <span>{t.faucet.qnStep3}</span>
                       </li>
                     </ul>
                   </div>
@@ -508,7 +524,7 @@ export default function LearnPage() {
                     target="_blank"
                     className="w-full text-center py-4 rounded-xl bg-slate-800 text-white font-bold hover:bg-slate-900 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow"
                   >
-                    Ir para Faucet Externo (QuickNode)
+                    {t.faucet.qnGo}
                     <ExternalLink className="w-4 h-4" />
                   </Link>
                 </div>

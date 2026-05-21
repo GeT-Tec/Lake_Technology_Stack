@@ -7,6 +7,8 @@ import { useCredits } from "@/context/credits-context";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 import { useConnection, useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useDict } from "@/lib/i18n/client";
+import { useMedals } from "@/context/medals-context";
 
 const SECTOR_OPTIONS = ["Imóvel (Real Estate)", "Energia Renovável", "Agronegócio (Agro)", "Dívida / Precatórios", "Startups / Equity", "Créditos de Carbono", "Royalties Musicais", "Outros"];
 const NATURE_OPTIONS = ["Ativo de Renda/Security", "Token de Utilidade/Acesso", "NFT/Colecionável"];

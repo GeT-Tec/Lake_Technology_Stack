@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
+import { useDict } from "@/lib/i18n/client";
 
 const DEMO_ASSETS = [
   { id: "demo-1", name: "Edifício Faria Lima Prime", type: "Real Estate", price: 1200, yield: "12.5% a.a.", available: "45%", image: "bg-blue-900", locked: false, isDemo: true, ownerWallet: null },
