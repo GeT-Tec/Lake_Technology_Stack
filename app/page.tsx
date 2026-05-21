@@ -31,7 +31,7 @@ export default async function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-[1.02]">
-            Opening <span className="lake-gradient-text">digital horizons</span>
+            {dict.hero.titleLine1} <span className="lake-gradient-text">{dict.hero.titleLine2}</span>
             <br />
             <span className="text-slate-700">{dict.hero.titleSubline}</span>
           </h1>

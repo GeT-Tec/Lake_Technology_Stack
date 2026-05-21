@@ -19,7 +19,7 @@ export function Navbar() {
   // Rotas de navegação — preservando "Meu Portfólio" da nossa main + i18n do Cezar
   const navItems = [
     { name: dict.nav.home, href: "/" },
-    { name: dict.nav.trail, href: "/learn#trail-head-title" },
+    { name: dict.nav.trail, href: "/trail" },
     { name: dict.nav.learn, href: "/learn" },
     { name: dict.nav.marketplace, href: "/marketplace" },
     { name: dict.nav.tokenize, href: "/tokenize" },

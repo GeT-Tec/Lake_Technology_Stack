@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useWallet } from "@/context/wallet-context";
 import { useMedals } from "@/context/medals-context";
-import { TrailHead } from "@/components/medals/TrailHead";
-import { MedalsGrid } from "@/components/medals/MedalsGrid";
 import {
   Droplets,
   ExternalLink,
@@ -98,14 +96,6 @@ export default function LearnPage() {
   };
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 scroll-smooth">
-
-      <TrailHead />
-
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-          <MedalsGrid />
-        </div>
-      </div>
 
       <div className="bg-slate-900 text-white pt-24 pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>

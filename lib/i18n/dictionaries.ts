@@ -19,6 +19,8 @@ export const dictionaries = {
     },
     hero: {
       protocolBadge: "Lake Protocol · v1.0",
+      titleLine1: "Opening ",
+      titleLine2: "digital horizons",
       titleSubline: "for the real-world market.",
       lead: "The institutional platform combining the legal certainty of traditional markets with the instant liquidity of the Solana blockchain.",
       ctaPrimary: "Browse available assets",
@@ -490,6 +492,8 @@ export const dictionaries = {
     },
     hero: {
       protocolBadge: "Protocolo Lake · v1.0",
+      titleLine1: "Abrindo ",
+      titleLine2: "horizontes digitais",
       titleSubline: "para o mercado real.",
       lead: "A plataforma institucional que une a segurança jurídica do mercado tradicional com a liquidez instantânea da blockchain Solana.",
       ctaPrimary: "Ver ativos disponíveis",
