@@ -86,10 +86,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     validateUser();
   }, [connected, walletAddress, disconnect]);
 
-  // Força re-render do Next.js App Router em transições de estado para a UI reagir instantaneamente
-  useEffect(() => {
-    router.refresh();
-  }, [connected, walletAddress, router]);
+  // NOTA: router.refresh() foi removido intencionalmente.
+  // O React Context já propaga mudanças de 'connected'/'walletAddress'
+  // reativamente para todos os consumidores sem necessidade de revalidar
+  // o cache do servidor. O refresh() causava desmount/remount da árvore
+  // de componentes, quebrando a reatividade dos Client Components.
 
   const connectWallet = useCallback(() => {
     setValidationError(null);

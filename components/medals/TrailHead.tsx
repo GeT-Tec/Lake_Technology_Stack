@@ -9,6 +9,25 @@ import { cn } from "@/lib/utils";
 import { useDict } from "@/lib/i18n/client";
 import type { Dict } from "@/lib/i18n/dictionaries";
 
+/**
+ * Resolve o href correto de cada medalha.
+ * Todas as fases têm agora rotas dedicadas com conteúdo interativo.
+ * O ciclo linear da trilha é:
+ *   /trail/fundamentals → /trail/wallet → /trail/faucet
+ *   → /trail/identity → /trail/investor → /trail/legal → /trail
+ */
+function getHref(medal: MedalDefinition): string {
+  const DEDICATED_ROUTES: Record<string, string> = {
+    "fase-1-fundamentos":    "/trail/fundamentals",
+    "fase-2-carteira":       "/trail/wallet",
+    "fase-3-faucet":         "/trail/faucet",
+    "fase-4-marketplace":    "/trail/identity",
+    "fase-5-tokenizador":    "/trail/investor",
+    "fase-pro-institucional": "/trail/legal",
+  };
+  return DEDICATED_ROUTES[medal.id] ?? `/learn#${medal.anchorId}`;
+}
+
 interface BladeProps {
   medal: MedalDefinition;
   earned: boolean;
@@ -30,7 +49,7 @@ function Blade({ medal, earned, index, tMedals }: BladeProps) {
 
   return (
     <Link
-      href={`/learn#${medal.anchorId}`}
+      href={getHref(medal)}
       className={cn(
         "group relative block w-full transition-transform hover:-translate-y-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-lake-cyan rounded-full",
       )}

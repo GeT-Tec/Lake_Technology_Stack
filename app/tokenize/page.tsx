@@ -19,6 +19,11 @@ export default function TokenizePage() {
   const { credits, spendCredit, openModal, isLoading: isCreditLoading, addTransactionRecord, solPrice, refreshSolPrice } = useCredits();
   const { connection } = useConnection();
   const { sendTransaction } = useSolanaWallet();
+  // Medalhas: o hook já está importado — extraímos 'award' e 'isEarned' para uso no submit
+  const { award: awardMedal, isEarned } = useMedals();
+
+  // Detecta se o usuário já possui a medalha da Fase 5
+  const ja_tem_medalha_fase5 = isEarned("fase-5-tokenizador");
 
   const [hasAccess, setHasAccess] = useState(false);
   const [step, setStep] = useState(1);
@@ -242,8 +247,16 @@ export default function TokenizePage() {
 
       if (!res.ok) throw new Error(data.error || "Erro ao salvar ativo.");
 
-      alert("✅ Ativo enviado com sucesso! Acesse o Marketplace para acompanhar.");
-      router.push("/marketplace");
+      // ✅ GATILHO ON-CHAIN FASE 5
+      // Só alcança este ponto se:
+      //   1. A transação Solana (taxa de upload) foi confirmada em handleFileUpload (linha ~101)
+      //   2. O documento foi eternizado no Arweave com sucesso
+      //   3. O ativo foi persistido no banco via POST /api/assets com HTTP 201
+      // Este é o momento exato da confirmação da tokenização simulada real na Devnet.
+      await awardMedal("asset_tokenized");
+
+      alert("✅ Ativo forjado com sucesso! Redirecionando para a Fase 6 da Trilha...");
+      router.push("/trail/legal");
     } catch (e: any) {
       alert(`❌ Falha ao enviar: ${e.message}`);
     }
@@ -312,6 +325,17 @@ export default function TokenizePage() {
         </div>
 
         {errors && <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg flex items-center gap-3"><AlertCircle className="w-6 h-6" /> <span className="font-medium">{errors}</span></div>}
+
+        {/* Banner informativo: usuário já possui a medalha desta fase */}
+        {ja_tem_medalha_fase5 && (
+          <div className="mb-8 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-blue-500 shrink-0" />
+            <span className="text-sm">
+              <strong>Você já possui a medalha desta fase!</strong> Sinta-se livre
+              para simular novos ativos — não afeta seu progresso na Trilha.
+            </span>
+          </div>
+        )}
 
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4">

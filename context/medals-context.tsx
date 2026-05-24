@@ -86,11 +86,16 @@ export function MedalsProvider({ children }: { children: ReactNode }) {
   // ao trocar de wallet — o set sincrono e o caminho mais simples e correto.
   useEffect(() => {
     let cancelled = false;
+
+    // Sem carteira: limpa estado (zero medalhas exibidas) e encerra.
+    if (!walletAddress) {
+      setEarned([]);
+      return;
+    }
+
     const local = readLocal(walletAddress);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setEarned(local);
-
-    if (!walletAddress) return;
 
     setLoading(true);
     fetch(`/api/medals?wallet=${encodeURIComponent(walletAddress)}`)
@@ -146,6 +151,14 @@ export function MedalsProvider({ children }: { children: ReactNode }) {
 
   const persist = useCallback(
     async (medal: MedalDefinition) => {
+      // GUARD: medalhas só podem ser concedidas com carteira conectada
+      if (!walletAddress) {
+        console.warn(
+          `[Medals] Tentativa de conceder '${medal.id}' sem carteira conectada. Bloqueado.`
+        );
+        return;
+      }
+
       const now = new Date().toISOString();
       let actuallyAdded = false;
 
@@ -171,16 +184,14 @@ export function MedalsProvider({ children }: { children: ReactNode }) {
         }, 5000);
       }
 
-      if (walletAddress) {
-        try {
-          await fetch("/api/medals", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ wallet: walletAddress, medalId: medal.id }),
-          });
-        } catch {
-          // mantem so localStorage
-        }
+      try {
+        await fetch("/api/medals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ wallet: walletAddress, medalId: medal.id }),
+        });
+      } catch {
+        // mantem so localStorage
       }
     },
     [walletAddress],
