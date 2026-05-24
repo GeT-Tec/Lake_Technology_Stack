@@ -105,13 +105,14 @@ export async function POST(req: NextRequest) {
     // Registrar no audit log
     await prisma.auditLog.create({
       data: {
-        userWallet: walletAddress,
-        action: "SPEND_CREDITS",
-        metadata: {
+        actorWallet: walletAddress,
+        actionType: "SPEND_CREDITS",
+        targetId: "CREDIT_SPEND",
+        details: JSON.stringify({
           amount,
           previousBalance: user.credits,
           newBalance: updatedUser.credits,
-        },
+        }),
       },
     });
 
@@ -173,15 +174,16 @@ export async function PATCH(req: NextRequest) {
     // Registrar no audit log (BUY_CREDITS)
     await prisma.auditLog.create({
       data: {
-        userWallet: walletAddress,
-        action: "BUY_CREDITS",
-        metadata: {
+        actorWallet: walletAddress,
+        actionType: "BUY_CREDITS",
+        targetId: "CREDIT_BUY",
+        details: JSON.stringify({
           planId: planId || "unknown",
           credits: amount,
           txHash: txHash || null,
           previousBalance,
           newBalance: updatedUser.credits,
-        },
+        }),
       },
     });
 

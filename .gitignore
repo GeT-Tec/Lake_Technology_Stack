@@ -57,3 +57,6 @@ Lake_Presentation_Design.pptx
 .agents/
 .claude/
 
+# env vars
+.env
+prisma/.env
