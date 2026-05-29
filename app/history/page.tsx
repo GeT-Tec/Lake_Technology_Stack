@@ -203,7 +203,7 @@ export default function HistoryPage() {
                                                         </td>
 
                                                         <td className="px-6 py-4 text-center">
-                                                            {record.hash ? (
+                                                            {record.hash && !record.hash.startsWith("LZ-") ? (
                                                                 <a
                                                                     href={`https://solscan.io/tx/${record.hash}?cluster=devnet`}
                                                                     target="_blank"

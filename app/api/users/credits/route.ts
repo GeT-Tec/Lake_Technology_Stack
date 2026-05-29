@@ -5,6 +5,7 @@ import {
   getDatabaseUnavailablePayload,
   isDatabaseConfigured,
 } from "@/lib/database-status";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { walletAddress, amount = 1 } = body;
+    const { walletAddress, amount = 1, description, txHash, solAmount } = body;
 
     if (!isValidSolanaAddress(walletAddress)) {
       return NextResponse.json(
@@ -112,7 +113,24 @@ export async function POST(req: NextRequest) {
           amount,
           previousBalance: user.credits,
           newBalance: updatedUser.credits,
+          txHash,
+          solAmount,
         }),
+      },
+    });
+
+    // Registrar no credit_ledger
+    await prisma.credit_ledger.create({
+      data: {
+        user_id: user.id,
+        operation_type: "USAGE",
+        amount: -amount,
+        balance_before: user.credits,
+        balance_after: updatedUser.credits,
+        crypto_amount: solAmount ? new Prisma.Decimal(solAmount) : null,
+        crypto_symbol: solAmount ? "SOL" : null,
+        tx_hash: txHash || null,
+        description: description || "Gasto de créditos",
       },
     });
 

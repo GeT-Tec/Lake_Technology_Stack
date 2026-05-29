@@ -3,12 +3,14 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, TrendingUp, Briefcase, Trash2, Loader2, AlertTriangle, ShieldCheck, X, Zap, Coins, Lock, ExternalLink, ChevronRight, Store } from "lucide-react";
 import { useConnection, useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import { useCredits } from "@/context/credits-context";
+import { useNetworkHub } from "@/context/NetworkContext";
 import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 import { useDict } from "@/lib/i18n/client";
+import { useRequireWallet } from "@/hooks/useRequireWallet";
 
 const DEMO_ASSETS = [
   { id: "demo-1", name: "Edifício Faria Lima Prime", type: "Real Estate", price: 1200, yield: "12.5% a.a.", available: "45%", image: "bg-blue-900", locked: false, isDemo: true, ownerWallet: null },
@@ -40,6 +42,7 @@ function SecondaryInvestModal({ receipt, onClose, onRefresh }: { receipt: any; o
   const { connection } = useConnection();
   const { sendTransaction, publicKey } = useSolanaWallet();
   const { solPrice, refreshSolPrice } = useCredits();
+  const { isMainnet } = useNetworkHub();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -137,7 +140,10 @@ function SecondaryInvestModal({ receipt, onClose, onRefresh }: { receipt: any; o
                 const PLATFORM_L = Math.floor(platformSol * LAMPORTS_PER_SOL);
                 const ROYALTIES_L = Math.floor(royaltiesSol * LAMPORTS_PER_SOL);
 
-                const treasuryPubKey = new PublicKey(process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa");
+                const targetPubKeyStr = isMainnet
+                  ? (process.env.NEXT_PUBLIC_LIQUIDITY_RECEIVER_WALLET || "8DzctwAnUeXTy2xbUz1z5nfr3xfqCWYCxYAVTni7XvRH")
+                  : (process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa");
+                const treasuryPubKey = new PublicKey(targetPubKeyStr);
                 const sellerPubKey = new PublicKey(receipt.investorWallet);
                 const transaction = new Transaction();
 
@@ -230,6 +236,7 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
   const { connection } = useConnection();
   const { sendTransaction, publicKey } = useSolanaWallet();
   const { solPrice, refreshSolPrice, addTransactionRecord } = useCredits();
+  const { isMainnet } = useNetworkHub();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -308,7 +315,10 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
                 const ASSET_COST_L = Math.floor(exactAssetSol * 1.01 * LAMPORTS_PER_SOL);
                 const totalSolAmount = (PLATFORM_FEE_L + ASSET_COST_L) / LAMPORTS_PER_SOL;
 
-                const treasuryPubKey = new PublicKey(process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa");
+                const targetPubKeyStr = isMainnet
+                  ? (process.env.NEXT_PUBLIC_LIQUIDITY_RECEIVER_WALLET || "8DzctwAnUeXTy2xbUz1z5nfr3xfqCWYCxYAVTni7XvRH")
+                  : (process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa");
+                const treasuryPubKey = new PublicKey(targetPubKeyStr);
                 const ownerPubKey = new PublicKey(asset.ownerWallet || treasuryPubKey.toBase58());
 
                 const transaction = new Transaction();
@@ -366,6 +376,7 @@ export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { publicKey } = useSolanaWallet();
   const connectedWallet = publicKey?.toBase58() || null;
+  const requireWallet = useRequireWallet();
 
   const [assets, setAssets] = useState<AssetItem[]>(DEMO_ASSETS);
   const [secondaryReceipts, setSecondaryReceipts] = useState<any[]>([]);
@@ -558,7 +569,7 @@ export default function MarketplacePage() {
                           </div>
                         )
                       ) : (
-                        <button onClick={() => setInvestTarget(asset)} className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-sm transition-colors">
+                        <button onClick={() => requireWallet(() => setInvestTarget(asset))} className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-sm transition-colors">
                           Investir no Emissor
                         </button>
                       )}
@@ -591,7 +602,7 @@ export default function MarketplacePage() {
                             {isCanceling === receipt.id ? "Cancelando..." : "Cancelar Venda"}
                           </button>
                         ) : (
-                          <button onClick={() => setSecondaryInvestTarget(receipt)} className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">Comprar Lote P2P</button>
+                          <button onClick={() => requireWallet(() => setSecondaryInvestTarget(receipt))} className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">Comprar Lote P2P</button>
                         )}
                       </div>
                     </div>

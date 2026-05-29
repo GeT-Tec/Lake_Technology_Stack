@@ -96,7 +96,7 @@ export async function POST(req: Request) {
     console.error("[POST /api/upload Error]", error);
     return NextResponse.json(
       {
-        error: `Erro interno no upload para o Arweave via Irys: ${error?.message || error}`,
+        error: error?.message || String(error),
       },
       { status: 500 }
     );

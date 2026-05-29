@@ -10,11 +10,15 @@ import { LocaleToggle } from "@/components/locale-toggle";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useDict } from "@/lib/i18n/client";
+import { useRequireWallet } from "@/hooks/useRequireWallet";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dict = useDict();
+  const requireWallet = useRequireWallet();
+  const router = useRouter();
 
   // Rotas de navegação — preservando "Meu Portfólio" da nossa main + i18n do Cezar
   const navItems = [
@@ -48,6 +52,14 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={(e) => {
+                if (item.href === "/dashboard/investor") {
+                  e.preventDefault();
+                  requireWallet(() => {
+                    router.push(item.href);
+                  });
+                }
+              }}
               className={cn(
                 "text-sm font-bold transition-colors hover:text-lake-cyan",
                 pathname === item.href
@@ -91,7 +103,15 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  setIsMobileMenuOpen(false);
+                  if (item.href === "/dashboard/investor") {
+                    e.preventDefault();
+                    requireWallet(() => {
+                      router.push(item.href);
+                    });
+                  }
+                }}
                 className={cn(
                   "px-4 py-3 rounded-xl text-base font-bold transition-colors border border-transparent",
                   pathname === item.href

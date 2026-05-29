@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/context/wallet-context";
 import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
+import { useAdmin } from "@/hooks/useAdmin";
+import { useNetworkHub } from "@/context/NetworkContext";
 import { 
   Award, 
   ShieldCheck, 
@@ -96,6 +98,8 @@ export default function VIPProfilePage() {
   const { walletAddress, connectWallet } = useWallet();
   const { publicKey, connected } = useSolanaWallet();
   const router = useRouter();
+  const { isAdmin } = useAdmin();
+  const { sbtNickname, sbtAvatarUrl } = useNetworkHub();
   const [copied, setCopied] = useState(false);
   const [customImage, setCustomImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -122,6 +126,41 @@ export default function VIPProfilePage() {
   // Desmontagem Forçada para evitar Flicker visual de vazamento de dados
   if (!checking && !connected) {
     return null;
+  }
+
+  // Trava de segurança: Acesso Restrito se conectado mas não for VIP
+  if (!checking && connected && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+        <Card className="bg-slate-900/60 border-slate-800/80 shadow-2xl backdrop-blur-md max-w-md w-full text-center p-8">
+          <CardHeader className="pb-4">
+            <div className="w-16 h-16 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <ShieldCheck className="w-8 h-8 text-red-500" />
+            </div>
+            <CardTitle className="text-2xl font-black text-white">Acesso Restrito</CardTitle>
+            <CardDescription className="text-slate-400 text-xs mt-1">
+              Área Exclusiva de Governança
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400 leading-relaxed mb-6">
+              Esta seção é destinada exclusivamente aos Embaixadores VIP credenciados pela Lake. O status VIP é uma atribuição exclusiva de governança e não pode ser comprado ou ativado na UI.
+            </p>
+            <div className="bg-slate-950/40 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-500 text-left truncate">
+              Wallet: {walletAddress}
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              onClick={() => router.push("/dashboard/investor")} 
+              className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl"
+            >
+              Voltar ao Portfólio
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,9 +222,18 @@ export default function VIPProfilePage() {
             {/* Info do Usuário */}
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
               <div className="relative">
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-emerald-600 to-indigo-600 p-[2px] shadow-lg shadow-emerald-500/10">
-                  <div className="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center font-extrabold text-2xl tracking-wider text-white">
-                    CA
+                <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-emerald-600 to-indigo-600 p-[2px] shadow-lg shadow-emerald-500/10 overflow-hidden">
+                  <div className="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center font-extrabold text-2xl tracking-wider text-white overflow-hidden">
+                    {(sbtAvatarUrl || customImage) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img 
+                        src={sbtAvatarUrl || customImage || ""} 
+                        alt="Avatar" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      (sbtNickname ? sbtNickname.slice(0, 2).toUpperCase() : "CA")
+                    )}
                   </div>
                 </div>
                 <div className="absolute -bottom-2 -right-2 bg-emerald-500 border-2 border-slate-900 text-slate-950 p-1.5 rounded-xl shadow-md">
@@ -195,7 +243,9 @@ export default function VIPProfilePage() {
 
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                  <h1 className="text-3xl font-extrabold tracking-tight">Cezar Ambassador</h1>
+                  <h1 className="text-3xl font-extrabold tracking-tight">
+                    {sbtNickname || "Cezar Ambassador"}
+                  </h1>
                   <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold uppercase tracking-wider text-[10px] px-2.5 py-1">
                     Embaixador VIP • Nível 3
                   </Badge>
@@ -292,12 +342,12 @@ export default function VIPProfilePage() {
                   
                   {/* Símbolo do Embaixador / Imagem Customizada */}
                   <div className="relative my-4 flex items-center justify-center w-24 h-24">
-                    {customImage ? (
+                    {(sbtAvatarUrl || customImage) ? (
                       <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-emerald-400/50 shadow-inner group-hover:scale-105 transition-transform duration-300">
                         {/* Imagem do Usuário */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img 
-                          src={customImage} 
+                          src={sbtAvatarUrl || customImage || ""} 
                           alt="Preview do Crachá" 
                           className="w-full h-full object-cover filter saturate-125 contrast-110"
                         />
@@ -319,7 +369,9 @@ export default function VIPProfilePage() {
                   {/* Informações no Badge */}
                   <div className="space-y-1">
                     <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">Embaixador</p>
-                    <p className="text-sm font-black text-white tracking-tight uppercase">Lake VIP Ambassador</p>
+                    <p className="text-sm font-black text-white tracking-tight uppercase">
+                      {sbtNickname || "Lake VIP Ambassador"}
+                    </p>
                   </div>
 
                   {/* Detalhes de Emissão */}

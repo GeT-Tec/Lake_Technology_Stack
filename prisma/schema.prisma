@@ -9,23 +9,33 @@ datasource db {
 }
 
 model User {
-  id              String              @id @default(uuid())
-  walletAddress   String              @unique
-  nickname        String?
-  createdAt       DateTime            @default(now())
-  credits         Int                 @default(5)
-  role            String              @default("USER")
-  assets          Asset[]
-  investments     InvestmentReceipt[]
-  actions         AuditLog[]
-  credit_ledger   credit_ledger[]
-  kycRecord       KycRecord?
-  payment_orders  payment_orders[]
-  user_credits    user_credits?
-  medals          UserMedal[]
-  userProfile     UserProfile?
-  adminPermission AdminPermission?
+  id            String   @id @default(uuid())
+  walletAddress String   @unique
+  nickname      String?
+  createdAt     DateTime @default(now())
+  credits       Int      @default(5)
+  role          String   @default("USER")
 
+  // ── Soft-Delete (Auditoria Permanente) ──────────────────────────────────
+  // Nunca apagar um usuário fisicamente. isDeleted = true o torna inativo;
+  // deletedAt registra o timestamp para audit trail e compliance LGPD.
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  // ── Relações ─────────────────────────────────────────────────────────────
+  assets               Asset[]
+  investments          InvestmentReceipt[]
+  actions              AuditLog[]
+  credit_ledger        credit_ledger[]
+  kycRecord            KycRecord?
+  payment_orders       payment_orders[]
+  user_credits         user_credits?
+  medals               UserMedal[]
+  userProfile          UserProfile?
+  adminPermission      AdminPermission?
+  riskAcknowledgements RiskAcknowledgement[]
+
+  @@index([isDeleted])
   @@map("users")
 }
 
@@ -51,30 +61,31 @@ model AdminWhitelist {
 }
 
 model Asset {
-  id              String              @id @default(uuid())
-  ownerWallet     String
-  name            String
-  type            String
-  valuation       Decimal             @db.Decimal(20, 2)
-  tokenPrice      Decimal             @db.Decimal(20, 2)
-  totalTokens     Int
-  imageUrl        String?
-  contractUrl     String?
-  status          AssetStatus         @default(DRAFT)
-  contractAddress String?
-  isListed        Boolean             @default(true)
-  chainId         Int?
-  sector          String?
-  tokenNature     String?
-  treasuryTokens  Int                 @default(0)
-  marketTokens    Int                 @default(0)
-  tokensAvailable Int                 @default(0)
-  royalties       Float               @default(0.0)
-  description     String?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  owner           User                @relation(fields: [ownerWallet], references: [walletAddress])
-  investments     InvestmentReceipt[]
+  id                   String                @id @default(uuid())
+  ownerWallet          String
+  name                 String
+  type                 String
+  valuation            Decimal               @db.Decimal(20, 2)
+  tokenPrice           Decimal               @db.Decimal(20, 2)
+  totalTokens          Int
+  imageUrl             String?
+  contractUrl          String?
+  status               AssetStatus           @default(DRAFT)
+  contractAddress      String?
+  isListed             Boolean               @default(true)
+  chainId              Int?
+  sector               String?
+  tokenNature          String?
+  treasuryTokens       Int                   @default(0)
+  marketTokens         Int                   @default(0)
+  tokensAvailable      Int                   @default(0)
+  royalties            Float                 @default(0.0)
+  description          String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  owner                User                  @relation(fields: [ownerWallet], references: [walletAddress])
+  investments          InvestmentReceipt[]
+  riskAcknowledgements RiskAcknowledgement[]
 
   @@map("assets")
 }
@@ -225,7 +236,34 @@ model InvestmentReceipt {
 
   @@index([investorWallet])
   @@index([assetId])
+  // ── P0: índice em status para queries do Mercado Secundário (evita Full Scan)
+  @@index([status])
   @@map("investment_receipts")
+}
+
+/// Aceite de Ciência de Risco — CVM 175 e regulação de securities.
+/// Deve ser criado ANTES de qualquer investimento em ativos classificados
+/// como valores mobiliários. Imutável após criação (nunca atualizar, nunca deletar).
+model RiskAcknowledgement {
+  id String @id @default(uuid())
+
+  // Partes da operação
+  userWallet String
+  assetId    String
+
+  // Evidência de aceite
+  acceptedAt    DateTime @default(now())
+  ipAddress     String? // IP do cliente no momento do aceite (cabeçalho X-Forwarded-For)
+  signatureHash String // Hash da tx Solana que comprova a intenção on-chain
+
+  // Relações
+  user  User  @relation(fields: [userWallet], references: [walletAddress])
+  asset Asset @relation(fields: [assetId], references: [id])
+
+  @@index([userWallet])
+  @@index([assetId])
+  @@index([acceptedAt])
+  @@map("risk_acknowledgements")
 }
 
 model AdminPermission {
