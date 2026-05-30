@@ -53,8 +53,8 @@ test-ledger/
 Lake_Presentation_Base.pptx
 Lake_Presentation_Design.pptx
 
-# skills tooling (local por-dev, instalado via `npx skills add`)
-.agents/
+# agent governance rules — versionado intencionalmente (.agents/rules/)
+# tooling local de IDE permanece ignorado
 .claude/
 
 # env vars
