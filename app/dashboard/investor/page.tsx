@@ -220,7 +220,7 @@ export default function InvestorDashboard() {
   const router = useRouter();
 
   // ── Integração On-Chain de Visto de Visitante (Fase 1) ─────────────────
-  const { metadata: visitorOnChain, source: visitorSource } = useVisitorOnChainData(
+  const { metadata: visitorOnChain } = useVisitorOnChainData(
     process.env.NEXT_PUBLIC_VISITOR_PROGRAM_ID || "LKVist7pG9nQwZzYtB7mRqpXYZ11111111111111111"
   );
   const [isCertidaoModalOpen, setIsCertidaoModalOpen] = useState(false);
@@ -974,6 +974,16 @@ export default function InvestorDashboard() {
                     registro Intraferível
                   </a>
                 )}
+
+                {/* Botão "Ver Certidão" - posicionado embaixo do carimbo e alinhado visualmente */}
+                {isVisitor && sbtImageUrl && (
+                  <button
+                    onClick={() => setIsCertidaoModalOpen(true)}
+                    className="mt-1.5 w-full flex items-center justify-center gap-1.5 px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all whitespace-nowrap shadow-sm"
+                  >
+                    Ver Certidão
+                  </button>
+                )}
               </div>
 
 
@@ -995,20 +1005,10 @@ export default function InvestorDashboard() {
 
                   {/* ── DUAL-TIER: Badge Visto Provisório (VISITOR) / Visitante Lake ── */}
                   {isVisitor ? (
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[11px] font-bold uppercase tracking-wider">
-                        <AlertCircle className="w-3 h-3" />
-                        {sbtImageUrl ? `Visitante Lake (${visitorSource === 'on-chain' ? 'On-Chain' : 'Banco'})` : "Visto Provisório"}
-                      </span>
-                      {sbtImageUrl && (
-                        <button
-                          onClick={() => setIsCertidaoModalOpen(true)}
-                          className="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] font-extrabold uppercase tracking-wider rounded-lg transition-colors shadow-sm animate-pulse"
-                        >
-                          Ver Certidão
-                        </button>
-                      )}
-                    </div>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[11px] font-bold uppercase tracking-wider">
+                      <AlertCircle className="w-3 h-3" />
+                      {sbtImageUrl ? "Visitante Lake" : "Visto Provisório"}
+                    </span>
                   ) : (
                     /* Badge Cidadão Oficial (CITIZEN) */
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">

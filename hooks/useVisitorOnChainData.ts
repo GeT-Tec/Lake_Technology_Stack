@@ -5,14 +5,12 @@ import { useEffect, useState } from 'react';
 interface VisitorMetadata {
   nickname: string;
   avatarUrl: string;
-  source: 'on-chain' | 'fallback';
 }
 
 export function useVisitorOnChainData(programId: string): {
   metadata: VisitorMetadata | null;
   loading: boolean;
   error: string | null;
-  source: 'on-chain' | 'fallback' | null;
 } {
   const { connection } = useConnection();
   const { publicKey } = useWallet();
@@ -58,7 +56,6 @@ export function useVisitorOnChainData(programId: string): {
               setMetadata({
                 nickname: arweaveData.nickname,
                 avatarUrl: arweaveData.avatarUrl,
-                source: 'on-chain',
               });
               return;
             }
@@ -77,7 +74,6 @@ export function useVisitorOnChainData(programId: string): {
             setMetadata({
               nickname: arweaveData.nickname,
               avatarUrl: arweaveData.avatarUrl,
-              source: 'fallback',
             });
             return;
           }
@@ -96,5 +92,5 @@ export function useVisitorOnChainData(programId: string): {
     fetchVisitorData();
   }, [publicKey, connection, programId]);
 
-  return { metadata, loading, error, source: metadata?.source || null };
+  return { metadata, loading, error };
 }
