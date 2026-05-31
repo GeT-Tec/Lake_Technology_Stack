@@ -73,7 +73,10 @@ export async function PATCH(
     const { searchParams } = new URL(req.url);
     const requestWallet = searchParams.get("wallet");
     const body = await req.json();
-    const { status, description, isListed } = body;
+    const { 
+      status, description, isListed, contractUrl, imageUrl,
+      name, valuation, tokenPrice, totalTokens, treasuryTokens, royalties 
+    } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -109,10 +112,32 @@ export async function PATCH(
       );
     }
 
+    const isAttemptingTokenomicsUpdate = 
+      valuation !== undefined || tokenPrice !== undefined || 
+      totalTokens !== undefined || treasuryTokens !== undefined || 
+      royalties !== undefined;
+
+    if (isAttemptingTokenomicsUpdate && asset.status !== "DRAFT") {
+      return NextResponse.json(
+        {
+          error: "Não autorizado. As variáveis de tokenomics (Valuation, Preço, Emissão, Tesouraria e Royalties) não podem ser alteradas em um ativo que não esteja no status DRAFT.",
+        },
+        { status: 403 }
+      );
+    }
+
     const updateData: any = {};
     if (status !== undefined) updateData.status = status;
     if (description !== undefined) updateData.description = description;
     if (isListed !== undefined) updateData.isListed = isListed;
+    if (contractUrl !== undefined) updateData.contractUrl = contractUrl;
+    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+    if (name !== undefined) updateData.name = name;
+    if (valuation !== undefined) updateData.valuation = valuation.toString();
+    if (tokenPrice !== undefined) updateData.tokenPrice = tokenPrice.toString();
+    if (totalTokens !== undefined) updateData.totalTokens = totalTokens;
+    if (treasuryTokens !== undefined) updateData.treasuryTokens = treasuryTokens;
+    if (royalties !== undefined) updateData.royalties = royalties;
 
     const updatedAsset = await prisma.asset.update({
       where: { id },

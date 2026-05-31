@@ -35,6 +35,7 @@ interface AssetItem {
   totalTokens?: number;
   valuation?: number;
   isListed?: boolean;
+  contractUrl?: string | null;
 }
 
 // ─── Modal de Investimento Secundário ────────────────────────────────────────────────────
@@ -370,6 +371,229 @@ function InvestModal({ asset, onClose }: { asset: AssetItem; onClose: () => void
   );
 }
 
+function buildArweaveUrl(contractUrl: string | null | undefined): string | null {
+  if (!contractUrl) return null;
+  const t = contractUrl.trim();
+  if (t.startsWith("https://") || t.startsWith("http://")) return t;
+  return `https://gateway.irys.xyz/${t}`;
+}
+
+function AssetCardSkeleton() {
+  return (
+    <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-xl overflow-hidden shadow-sm flex flex-col h-[400px] animate-pulse">
+      <div className="w-full h-48 bg-[#ede9df] dark:bg-zinc-950" />
+      <div className="p-6 flex-1 flex flex-col justify-between">
+        <div className="space-y-3">
+          <div className="h-5 bg-slate-300 dark:bg-zinc-800 rounded w-3/4 animate-pulse" />
+          <div className="h-3 bg-slate-300 dark:bg-zinc-800 rounded w-1/2 animate-pulse" />
+          <div className="grid grid-cols-2 gap-4 pt-4">
+            <div>
+              <div className="h-2 bg-slate-200 dark:bg-zinc-800 rounded w-1/3 mb-1 animate-pulse" />
+              <div className="h-4 bg-slate-300 dark:bg-zinc-800 rounded w-2/3 animate-pulse" />
+            </div>
+            <div>
+              <div className="h-2 bg-slate-200 dark:bg-zinc-800 rounded w-1/3 mb-1 animate-pulse" />
+              <div className="h-4 bg-slate-300 dark:bg-zinc-800 rounded w-2/3 animate-pulse" />
+            </div>
+          </div>
+        </div>
+        <div className="h-10 bg-slate-300 dark:bg-zinc-800 rounded w-full mt-4 animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+function AssetCard({
+  asset,
+  connectedWallet,
+  onInvestClick,
+  onDeleteClick,
+  onApproveClick,
+  requireWallet,
+}: {
+  asset: AssetItem;
+  connectedWallet: string | null;
+  onInvestClick: (asset: AssetItem) => void;
+  onDeleteClick: (asset: AssetItem) => void;
+  onApproveClick: (id: string) => void;
+  requireWallet: (cb: () => void) => void;
+}) {
+  const [arweaveData, setArweaveData] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(!asset.isDemo && !!asset.contractUrl);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (asset.isDemo || !asset.contractUrl) {
+      setIsLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    const url = buildArweaveUrl(asset.contractUrl);
+
+    if (url) {
+      fetch(url)
+        .then((res) => {
+          if (!res.ok) throw new Error("Erro no fetch");
+          return res.json();
+        })
+        .then((data) => {
+          if (isMounted) {
+            setArweaveData(data);
+            setIsLoading(false);
+          }
+        })
+        .catch((err) => {
+          console.warn("[Marketplace Card] Falha ao carregar do Arweave:", err);
+          if (isMounted) {
+            setHasError(true);
+            setIsLoading(false);
+          }
+        });
+    } else {
+      setIsLoading(false);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [asset.isDemo, asset.contractUrl]);
+
+  if (isLoading) {
+    return <AssetCardSkeleton />;
+  }
+
+  // Resolve metadata (Arweave has precedence, DB as fallback)
+  const name = arweaveData?.name || asset.name;
+  const sector = arweaveData?.sector || arweaveData?.tokenNature || asset.type;
+  
+  // Format values
+  const price = arweaveData?.tokenPrice 
+    ? Number(arweaveData.tokenPrice) 
+    : asset.price || 0;
+  
+  const valuation = arweaveData?.valuation
+    ? Number(arweaveData.valuation)
+    : asset.valuation || 0;
+
+  // Resolve Cover Image URL
+  const rawImage = arweaveData?.imageUrl || asset.image;
+  const imageUrl = rawImage && !rawImage.startsWith("bg-")
+    ? buildArweaveUrl(rawImage)
+    : null;
+
+  const isDemoBg = rawImage && rawImage.startsWith("bg-");
+  const isMyAsset = connectedWallet !== null && asset.ownerWallet === connectedWallet;
+
+  const handleInvest = () => {
+    onInvestClick({
+      ...asset,
+      name,
+      type: sector,
+      price,
+      image: imageUrl || rawImage || "",
+      valuation,
+    });
+  };
+
+  return (
+    <div className="group bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
+      {imageUrl ? (
+        <div className="relative w-full h-48 bg-[#ede9df] dark:bg-zinc-950 flex items-center justify-center overflow-hidden border-b border-[#dbd7c9] dark:border-[#2e2c26]">
+          <img src={imageUrl} alt={name} className="object-contain p-4 w-full h-full" />
+          {isMyAsset && !asset.isDemo && (
+            <div className="absolute top-3 right-3 z-10">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteClick(asset);
+                }}
+                title="Excluir Ativo"
+                className="p-2 rounded-lg bg-white/90 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={`relative h-48 w-full shrink-0 flex items-center justify-center ${isDemoBg ? rawImage : "bg-slate-700"}`}>
+          {isDemoBg && <span className="text-white font-extrabold text-lg drop-shadow">{name}</span>}
+          {isMyAsset && !asset.isDemo && (
+            <div className="absolute top-3 right-3 z-10">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteClick(asset);
+                }}
+                title="Excluir Ativo"
+                className="p-2 rounded-lg bg-white/90 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      <div className="p-6 flex-1 flex flex-col">
+        <h3 className="text-lg font-bold mb-1 truncate text-slate-900 dark:text-zinc-50">{name}</h3>
+        <p className="text-xs text-slate-500 font-medium mb-4">{sector}</p>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <p className="text-[10px] text-slate-400 font-bold uppercase">Preço</p>
+            <p className="font-extrabold text-slate-900 dark:text-zinc-50">
+              {price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] text-slate-400 font-bold uppercase">Rendimento</p>
+            <p className="font-extrabold text-emerald-600">{asset.yield || "12.0% a.a."}</p>
+          </div>
+        </div>
+        <div className="mt-auto">
+          {isMyAsset ? (
+            asset.status === "APPROVED" || asset.status === "ACTIVE" || asset.status === "TOKENIZED" ? (
+              <Link
+                href={`/dashboard/manage/${asset.id}`}
+                className="w-full block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition-colors shadow-sm"
+              >
+                Gerenciar Ativo
+              </Link>
+            ) : (
+              <div className="flex gap-2">
+                <Link
+                  href={`/dashboard/manage/${asset.id}`}
+                  className="flex-1 block text-center py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-sm transition-colors shadow-sm"
+                >
+                  Gerenciar
+                </Link>
+                <button
+                  onClick={() => onApproveClick(asset.id)}
+                  className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-colors shadow-sm flex-1"
+                >
+                  Aprovar
+                </button>
+              </div>
+            )
+          ) : (
+            <button
+              disabled={(asset.tokensAvailable || 0) <= 0}
+              onClick={() => requireWallet(handleInvest)}
+              className={`w-full py-3 font-bold rounded-lg text-sm transition-colors ${
+                (asset.tokensAvailable || 0) <= 0
+                  ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  : "bg-slate-900 hover:bg-slate-800 text-white"
+              }`}
+            >
+              {(asset.tokensAvailable || 0) <= 0 ? "Esgotado" : "Investir no Emissor"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Componente Principal ────────────────────────────────────────────────────
 export default function MarketplacePage() {
   const [activeFilter, setActiveFilter] = useState("Mercado Primário");
@@ -398,6 +622,7 @@ export default function MarketplacePage() {
           isUserAsset: true, ownerWallet: a.ownerWallet, status: a.status, description: a.description,
           tokensAvailable: a.marketTokens || 0, totalTokens: a.totalTokens || 0, valuation: Number(a.valuation) || 0,
           isListed: a.isListed !== false,
+          contractUrl: a.contractUrl,
         }));
         setAssets([...dbAssets, ...DEMO_ASSETS]);
       }
@@ -506,76 +731,20 @@ export default function MarketplacePage() {
             {activeFilter === "Mercado Primário" ? (
               assets
               .filter(a => {
-                // No mercado primário público, mostrar apenas listados
+                // No mercado primário público, mostrar apenas listados e APPROVED (ou demos)
                 if (a.isDemo) return true;
-                return a.isListed !== false;
+                return a.status === "APPROVED" && a.isListed !== false;
               })
               .map(asset => (
-                <div key={asset.id} className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col">
-                  {asset.image && asset.image.startsWith("https://") ? (
-                    <div className="relative w-full h-48 bg-slate-50 flex items-center justify-center overflow-hidden border-b border-slate-100">
-                      <Image src={asset.image} alt="Asset" fill className="object-contain p-4" />
-                      {isMyAsset(asset.ownerWallet) && !asset.isDemo && (
-                        <div className="absolute top-3 right-3 z-10">
-                          <button
-                            onClick={() => handleDeleteAsset(asset)}
-                            title="Excluir Ativo"
-                            className="p-2 rounded-lg bg-white/90 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className={`relative h-2 w-full shrink-0 ${asset.image || "bg-slate-700"}`}>
-                      {isMyAsset(asset.ownerWallet) && !asset.isDemo && (
-                        <div className="absolute top-3 right-3 z-10">
-                          <button
-                            onClick={() => handleDeleteAsset(asset)}
-                            title="Excluir Ativo"
-                            className="p-2 rounded-lg bg-white/90 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-lg font-bold mb-1 truncate">{asset.name}</h3>
-                    <p className="text-xs text-slate-500 font-medium mb-4">{asset.type}</p>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div><p className="text-[10px] text-slate-400 font-bold uppercase">Preço</p><p className="font-extrabold text-slate-900">{(asset.price || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p></div>
-                      <div><p className="text-[10px] text-slate-400 font-bold uppercase">Rendimento</p><p className="font-extrabold text-emerald-600">{asset.yield}</p></div>
-                    </div>
-                    <div className="mt-auto">
-                      {isMyAsset(asset.ownerWallet) ? (
-                        asset.status === "APPROVED" || asset.status === "ACTIVE" || asset.status === "TOKENIZED" ? (
-                          <Link href={`/dashboard/manage/${asset.id}`} className="w-full block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
-                            Gerenciar Ativo
-                          </Link>
-                        ) : (
-                          <div className="flex gap-2">
-                            <Link href={`/dashboard/manage/${asset.id}`} className="flex-1 block text-center py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-sm transition-colors shadow-sm">
-                              Gerenciar
-                            </Link>
-                            <button
-                              onClick={() => handleForceApproval(asset.id)}
-                              className="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-colors shadow-sm flex-1"
-                            >
-                              Aprovar
-                            </button>
-                          </div>
-                        )
-                      ) : (
-                        <button onClick={() => requireWallet(() => setInvestTarget(asset))} className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-sm transition-colors">
-                          Investir no Emissor
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <AssetCard
+                  key={asset.id}
+                  asset={asset}
+                  connectedWallet={connectedWallet}
+                  onInvestClick={setInvestTarget}
+                  onDeleteClick={handleDeleteAsset}
+                  onApproveClick={handleForceApproval}
+                  requireWallet={requireWallet}
+                />
               ))
             ) : null}
 

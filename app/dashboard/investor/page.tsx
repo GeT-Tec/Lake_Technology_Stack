@@ -27,6 +27,7 @@ import {
   Pencil,
   Zap,
   ArrowRight,
+  Stamp,
 } from "lucide-react";
 import Link from "next/link";
 import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL, Connection, clusterApiUrl } from "@solana/web3.js";
@@ -211,9 +212,9 @@ const TABS: { key: ActiveTab; label: string; icon: React.ReactNode }[] = [
 ];
 
 export default function InvestorDashboard() {
-  const { publicKey, sendTransaction } = useWallet();
+  const { publicKey, sendTransaction, wallet } = useWallet();
   const { connection } = useConnection();
-  const { currentTier, setTier, isMainnet, userNetworkPreference, toggleNetworkPreference, sbtNickname, sbtAvatarUrl, setSbtIdentity } = useNetworkHub();
+  const { currentTier, setTier, isMainnet, userNetworkPreference, toggleNetworkPreference, sbtNickname, sbtAvatarUrl, setSbtIdentity, irysNodeUrl } = useNetworkHub();
   const router = useRouter();
 
   // ── Estados originais (preservados integralmente) ────────────────────────
@@ -264,6 +265,32 @@ export default function InvestorDashboard() {
   const [editPreview, setEditPreview] = useState<string | null>(null);
   const [editStep, setEditStep] = useState<1 | 2 | 3>(1);
   const [isEditingSaving, setIsEditingSaving] = useState(false);
+
+  // Carrega sbtImageUrl do banco de dados para travas de imutabilidade
+  const [sbtImageUrl, setSbtImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadProfileSbtUrl = async () => {
+      if (!publicKey) {
+        setSbtImageUrl(null);
+        return;
+      }
+      try {
+        const res = await fetch(`/api/users/profile?wallet=${publicKey.toBase58()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.sbtImageUrl) {
+            setSbtImageUrl(data.sbtImageUrl);
+          } else {
+            setSbtImageUrl(null);
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao carregar sbtImageUrl para imutabilidade:", err);
+      }
+    };
+    loadProfileSbtUrl();
+  }, [publicKey]);
 
   // O perfil agora é hidratado de forma passiva e global pelo WalletProvider no primeiro handshake.
 
@@ -381,7 +408,42 @@ export default function InvestorDashboard() {
     setIsEditProfileModalOpen(true);
   };
 
-  // ── Handler: Salva edição provisória (upload Arweave Devnet via /api/upload) ──
+  // Busca o preço do storage no nó Irys correspondente para estimativa on-chain
+  const getStorageFee = async (fileSize: number, nodeUrl: string): Promise<number> => {
+    try {
+      const totalBytes = fileSize + 500; // JSON metadata payload is around 500 bytes
+      const cleanNodeUrl = nodeUrl.replace(/\/$/, "");
+      const res = await fetch(`${cleanNodeUrl}/price?token=solana&bytes=${totalBytes}`);
+      if (!res.ok) throw new Error("Erro ao consultar preço do Irys");
+      const priceLamportsStr = await res.text();
+      const priceLamports = parseInt(priceLamportsStr, 10);
+      if (isNaN(priceLamports)) return 0.0001; 
+      return priceLamports / LAMPORTS_PER_SOL;
+    } catch (e) {
+      console.warn("[Irys Price Fetch] Erro ao buscar preço real do storage, usando fallback:", e);
+      return 0.0001; // safe fallback (100k lamports)
+    }
+  };
+
+  // Busca o endereço Solana de depósito/funding do nó Irys correspondente
+  const getIrysFundingAddress = async (nodeUrl: string): Promise<string> => {
+    try {
+      const cleanNodeUrl = nodeUrl.replace(/\/$/, "");
+      const res = await fetch(`${cleanNodeUrl}/info`);
+      if (!res.ok) throw new Error("Erro ao consultar info do Irys");
+      const info = await res.json();
+      const addr = info.addresses?.solana;
+      if (!addr) throw new Error("Endereço Solana não encontrado no info");
+      return addr;
+    } catch (e) {
+      console.warn("[Irys Address Fetch] Erro ao buscar endereço real do Irys, usando fallback:", e);
+      return nodeUrl.includes("devnet")
+        ? "4a7s9iC5NwfUtf8fXpKWxYXcekfqiN6mRqipYXMtcrUS"
+        : "5z2wM2R5QQ3qbg2Wtt8zX77BPrRsDaZueb1kLdidzKZE";
+    }
+  };
+
+  // ── Handler: Salva edição provisória (upload Arweave Devnet via Irys Web SDK) ──
   const handleEditProfileSave = async () => {
     if (!publicKey) {
       toast.error("Conecte sua carteira primeiro.");
@@ -393,8 +455,7 @@ export default function InvestorDashboard() {
     }
     setIsEditingSaving(true);
     try {
-      // ── PASSO 1: Transação SOL — Split 95/5 em SOL falso (Rede Simulada) ──
-      // Espelha exatamente a matemática do handleUpgradeConfirm para testar liquidez.
+      // ── PASSO 1: Transação SOL — Split 95/5 em SOL falso (Rede Simulada) + Custo de bytes ──
       let currentPrice = solPriceUSD;
       if (!currentPrice || currentPrice <= 0) {
         // Fallback oráculo AwesomeAPI (idêntico ao Upgrade)
@@ -409,9 +470,15 @@ export default function InvestorDashboard() {
       const platformLamports = Math.round(totalSol * 0.95 * LAMPORTS_PER_SOL);
       const liquidityLamports = totalLamports - platformLamports;
 
+      // Calcular custo estimado de storage on-chain
+      const fileSize = editFile ? editFile.size : 0;
+      const storageFeeSol = await getStorageFee(fileSize, irysNodeUrl);
+      const storageFeeLamports = Math.round(storageFeeSol * LAMPORTS_PER_SOL);
+
       const platformWallet = process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS;
       const liquidityWallet = process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS;
-      if (!platformWallet || !liquidityWallet) {
+      const storageDestination = await getIrysFundingAddress(irysNodeUrl);
+      if (!platformWallet || !liquidityWallet || !storageDestination) {
         throw new Error("Carteiras de destino não configuradas no ambiente.");
       }
 
@@ -419,7 +486,8 @@ export default function InvestorDashboard() {
       const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
       const splitTx = new Transaction().add(
         SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(platformWallet), lamports: platformLamports }),
-        SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(liquidityWallet), lamports: liquidityLamports })
+        SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(liquidityWallet), lamports: liquidityLamports }),
+        SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(storageDestination), lamports: storageFeeLamports })
       );
       splitTx.recentBlockhash = blockhash;
       splitTx.feePayer = publicKey;
@@ -428,43 +496,56 @@ export default function InvestorDashboard() {
       toast.info("Aguardando confirmação on-chain (Rede Simulada)...");
       await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
 
-      // ── PASSO 2: Cobrança Atômica $LKZ ──
-      // Só executa após confirmação da tx SOL.
-      toast.info(`Debitando ${EDIT_LKZ_COST} $LKZ...`);
-      const creditOk = await spendCredit(EDIT_LKZ_COST, "Edição de Identidade Provisória", signature, totalSol);
-      if (!creditOk) {
-        // spendCredit já exibiu o toast de erro / abre modal de compra
-        setIsEditingSaving(false);
-        return;
-      }
-
-      // ── PASSO 3: Upload via serviço DRY — imagem + JSON de metadados ──
+      // ── PASSO 2: Upload via Irys Web SDK diretamente no navegador (Não-Custodial) ──
       toast.info("Subindo identidade ao Arweave (Rede Simulada)...");
+      
+      const connectedWalletName = wallet?.adapter?.name;
+      if (!wallet || !wallet.adapter || wallet.adapter.name !== connectedWalletName) {
+        throw new Error("Conflito de carteira detectado");
+      }
+      const irysProvider = wallet.adapter;
+
       const { metadataUrl, avatarUrl: finalAvatarUrl } = await buildAndUploadIdentity(
         editNickname,
         editFile,
         sbtAvatarUrl || "",
         publicKey.toBase58(),
-        signature,        // signature da tx SOL — prova de autoria para o /api/upload guard
-        signature,
-        totalSol.toString()
+        irysProvider,
+        irysNodeUrl
       );
+
+      // ── PASSO 3: Cobrança Atômica $LAKE em créditos (no Prisma, após transação on-chain) ──
+      toast.info(`Debitando ${EDIT_LKZ_COST} $LKZ...`);
+      const creditOk = await spendCredit(EDIT_LKZ_COST, "Edição de Identidade Provisória", signature, totalSol);
+      if (!creditOk) {
+        console.warn("[EditProfile] Upload ok mas débito LKZ falhou. Salvando banco sem débito.");
+      }
 
       // ── PASSO 4: Persistir no banco apenas a URI do Arweave (Soberania de Dados) ──
       const profileRes = await fetch("/api/users/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ walletAddress: publicKey.toBase58(), sbtImageUrl: metadataUrl, isCitizen: false }),
+        body: JSON.stringify({
+          walletAddress: publicKey.toBase58(),
+          sbtImageUrl: metadataUrl,
+          isCitizen: false,
+          transactionSignature: signature,  // prova criptográfica de ownership
+        }),
       });
       if (!profileRes.ok) throw new Error("Erro ao salvar perfil provisório");
 
       // ── PASSO 5: Atualizar sessão global reativamente ──
       setSbtIdentity(editNickname.trim(), finalAvatarUrl);
+      setSbtImageUrl(metadataUrl);
       toast.success("Perfil provisório salvo na Rede Simulada!");
       setIsEditProfileModalOpen(false);
     } catch (err: any) {
       console.error("[EditProfile Error]", err);
-      toast.error(`Falha ao salvar: ${err.message || err}`);
+      const errMsg = err.message || String(err);
+      if (errMsg.includes("Provider Mismatch") || errMsg.includes("User Rejected") || errMsg.includes("Conflito") || errMsg.includes("Rejected") || errMsg.includes("Timeout")) {
+        setIsEditingSaving(false);
+      }
+      toast.error(`Falha ao salvar: ${errMsg}`);
     } finally {
       setIsEditingSaving(false);
     }
@@ -544,18 +625,25 @@ export default function InvestorDashboard() {
       const platformLamports = Math.round(totalSol * 0.95 * LAMPORTS_PER_SOL);
       const liquidityLamports = totalLamports - platformLamports;
 
-      // 3. Criar e enviar transação de split 95/5 em SOL na Rede Principal
+      // 3. Criar e enviar transação de split 95/5 em SOL na Rede Principal + Custo de bytes
       const platformWallet = process.env.NEXT_PUBLIC_PLATFORM_WALLET_ADDRESS;
       const liquidityWallet = process.env.NEXT_PUBLIC_LIQUIDITY_RECEIVER_WALLET;
-      if (!platformWallet || !liquidityWallet) {
+      const storageDestination = await getIrysFundingAddress(irysNodeUrl);
+      if (!platformWallet || !liquidityWallet || !storageDestination) {
         throw new Error("Carteiras de destino não configuradas no ambiente.");
       }
+
+      // Calcular custo estimado de storage on-chain
+      const fileSize = effectiveFile.size;
+      const storageFeeSol = await getStorageFee(fileSize, irysNodeUrl);
+      const storageFeeLamports = Math.round(storageFeeSol * LAMPORTS_PER_SOL);
 
       toast.info("Confirme a transação de split na sua carteira...");
       const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
       const transaction = new Transaction().add(
         SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(platformWallet), lamports: platformLamports }),
-        SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(liquidityWallet), lamports: liquidityLamports })
+        SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(liquidityWallet), lamports: liquidityLamports }),
+        SystemProgram.transfer({ fromPubkey: publicKey, toPubkey: new PublicKey(storageDestination), lamports: storageFeeLamports })
       );
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = publicKey;
@@ -564,27 +652,34 @@ export default function InvestorDashboard() {
       toast.info("Aguardando confirmação on-chain...");
       await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
 
-      // 3.5. COBRANÇA ATÔMICA DE $LKZ — débita UPGRADE_LKZ_COST
-      toast.info(`Debitando ${UPGRADE_LKZ_COST} $LKZ...`);
-      const creditOk = await spendCredit(UPGRADE_LKZ_COST, "Cidadania Definitiva (SBT)", signature, totalSol);
-      if (!creditOk) {
-        setIsUpgrading(false);
-        return;
+      // 3.5. REGRA DE ATOMICIDADE: Upload ANTES do débito de $LKZ
+      // 4. Upload via Irys Web SDK diretamente no navegador (Não-Custodial)
+      toast.info("Subindo identidade soberana ao Arweave (Mainnet — Permanente)...");
+      
+      const connectedWalletName = wallet?.adapter?.name;
+      if (!wallet || !wallet.adapter || wallet.adapter.name !== connectedWalletName) {
+        throw new Error("Conflito de carteira detectado");
       }
+      const irysProvider = wallet.adapter;
 
-      // 4. Upload via serviço DRY — imagem + JSON de metadados
-      toast.info("Subindo identidade soberana ao Arweave...");
       const { metadataUrl, avatarUrl: sbtUrl } = await buildAndUploadIdentity(
         upgradeNickname,
         effectiveFile,
         sbtAvatarUrl || "",
         publicKey.toBase58(),
-        signature,
-        signature,
-        totalSol.toString()
+        irysProvider,
+        irysNodeUrl
       );
 
-      // 5. Registrar cidadania no banco (apenas a URI do Arweave)
+      // 4.5. Cobrança de $LKZ — só após upload bem-sucedido
+      toast.info(`Debitando ${UPGRADE_LKZ_COST} $LKZ...`);
+      const creditOk = await spendCredit(UPGRADE_LKZ_COST, "Cidadania Definitiva (SBT)", signature, totalSol);
+      if (!creditOk) {
+        // Edge-case: upload ok, débito falhou. Prosseguir para garantir a cidadania.
+        console.warn("[Upgrade] Upload ok mas débito LKZ falhou. Prosseguindo com cidadania.");
+      }
+
+      // 5. Registrar cidadania no banco (apenas a URI do Arweave) com prova de ownership
       toast.info("Registrando cidadania no banco de dados...");
       const profileRes = await fetch("/api/users/profile", {
         method: "POST",
@@ -593,6 +688,7 @@ export default function InvestorDashboard() {
           walletAddress: publicKey.toBase58(),
           sbtImageUrl: metadataUrl, // O banco salva APENAS a URI do JSON do Arweave
           isCitizen: true,
+          transactionSignature: signature,  // prova criptográfica de ownership
         }),
       });
       if (!profileRes.ok) {
@@ -603,6 +699,7 @@ export default function InvestorDashboard() {
       // 6. Sincronizar sessão de identidade reativa do NetworkContext
       setTier("CITIZEN");
       setSbtIdentity(upgradeNickname.trim(), sbtUrl);
+      setSbtImageUrl(metadataUrl);
 
       // 7. Confetes e sucesso!
       toast.success("Parabéns! Você agora é um Cidadão Oficial da Lake!");
@@ -611,7 +708,11 @@ export default function InvestorDashboard() {
 
     } catch (error: any) {
       console.error("Erro no upgrade de Cidadão:", error);
-      toast.error(`Falha no upgrade: ${error.message || error}`);
+      const errMsg = error.message || String(error);
+      if (errMsg.includes("Provider Mismatch") || errMsg.includes("User Rejected") || errMsg.includes("Conflito") || errMsg.includes("Rejected") || errMsg.includes("Timeout")) {
+        setIsUpgrading(false);
+      }
+      toast.error(`Falha no upgrade: ${errMsg}`);
     } finally {
       setIsUpgrading(false);
     }
@@ -823,31 +924,47 @@ export default function InvestorDashboard() {
                       <User className="w-9 h-9 text-white/80" />
                     )}
                   </div>
-                  <button
-                    onClick={() => {
-                      if (isVisitor) {
-                        handleEditProfile();
-                      } else {
-                        toast.info("Identidade permanentemente cunhada on-chain (SBT).");
-                      }
-                    }}
-                    title={isVisitor ? "Editar perfil provisório" : "Identidade SBT"}
-                    className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-colors group-hover:border-white/40"
-                  >
-                    <Camera className="w-3.5 h-3.5 text-white/70" />
-                  </button>
+                  {!sbtImageUrl && (
+                    <button
+                      onClick={() => {
+                        if (isVisitor) {
+                          handleEditProfile();
+                        } else {
+                          toast.info("Identidade permanentemente cunhada on-chain (SBT).");
+                        }
+                      }}
+                      title={isVisitor ? "Editar perfil provisório" : "Identidade SBT"}
+                      className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-colors group-hover:border-white/40"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-white/70" />
+                    </button>
+                  )}
                 </div>
 
-                {/* Botão de edição provisória — exclusivo para VISITOR */}
-                {isVisitor && publicKey && (
+                {/* Botão de edição provisória — exclusivo para VISITOR sem sbtImageUrl */}
+                {isVisitor && publicKey && !sbtImageUrl && (
                   <button
                     onClick={handleEditProfile}
                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/30 hover:border-orange-400/50 text-orange-400 text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap"
                     title="Editar seus dados provisórios na Rede Simulada"
                   >
-                    <Pencil className="w-3 h-3" />
+                    <Pencil className="w-3.5 h-3.5" />
                     Editar Dados
                   </button>
+                )}
+
+                {/* Ícone de 'Carimbo' com o texto 'registro Intraferível' apontando para Arweave */}
+                {sbtImageUrl && (
+                  <a
+                    href={`/identity/${sbtImageUrl.split("/").pop()}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 hover:border-indigo-400/60 text-indigo-300 text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap shadow-sm shadow-indigo-500/10"
+                    title="Ver certidão de registro criptográfico eterno e imutável"
+                  >
+                    <Stamp className="w-3 h-3 text-indigo-400" />
+                    registro Intraferível
+                  </a>
                 )}
               </div>
 
@@ -863,21 +980,21 @@ export default function InvestorDashboard() {
                   {/* Badge Lake PRO (se isPro = true e CITIZEN) */}
                   {isUserPro && !isVisitor && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[11px] font-bold uppercase tracking-wider">
-                      <CheckCircle2 className="w-3 h-3" />
+                      <CheckCircle2 className="w-3.5 h-3.5" />
                       Lake PRO
                     </span>
                   )}
 
-                  {/* ── DUAL-TIER: Badge Visto Provisório (VISITOR) ── */}
+                  {/* ── DUAL-TIER: Badge Visto Provisório (VISITOR) / Visitante Lake ── */}
                   {isVisitor ? (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[11px] font-bold uppercase tracking-wider">
                       <AlertCircle className="w-3 h-3" />
-                      Visto Provisório
+                      {sbtImageUrl ? "Visitante Lake" : "Visto Provisório"}
                     </span>
                   ) : (
                     /* Badge Cidadão Oficial (CITIZEN) */
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
-                      <ShieldCheck className="w-3 h-3" />
+                      <ShieldCheck className="w-3.5 h-3.5" />
                       Cidadão Oficial
                     </span>
                   )}

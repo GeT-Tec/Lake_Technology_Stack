@@ -102,7 +102,7 @@ export async function POST(req: Request) {
             description: description || null,
             imageUrl: imageUrl || null,
             contractUrl: contractUrl || null,
-            status: "DRAFT",
+            status: "APPROVED",
           },
           ...getDatabaseUnavailablePayload(),
         },
@@ -134,7 +134,8 @@ export async function POST(req: Request) {
         description: description || null,
         imageUrl: imageUrl || null,
         contractUrl: contractUrl || null,
-        status: "DRAFT",
+        status: "APPROVED",
+        isListed: true,
       },
     });
 

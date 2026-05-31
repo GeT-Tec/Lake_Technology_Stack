@@ -19,7 +19,6 @@
 - [7. Stack Tecnológico](#7-stack-tecnológico)
 
 ---
-
 ## 1. Manifesto Lake Zero: O Fim do Medo Financeiro
 
 O sistema financeiro tradicional foi intencionalmente desenhado sob a métrica da opacidade e do medo. Ele afasta o cidadão comum através de jargões propositalmente complexos, barreiras geográficas artificiais e intermediários centralizados que controlam e mercantilizam o valor gerado pelo esforço humano.
