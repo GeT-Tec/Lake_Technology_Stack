@@ -38,6 +38,8 @@ import { useNetworkHub } from "@/context/NetworkContext";
 import { toast } from "sonner";
 import { useRequireWallet } from "@/hooks/useRequireWallet";
 import { buildAndUploadIdentity } from "@/lib/identity-metadata";
+import { useVisitorOnChainData } from "@/hooks/useVisitorOnChainData";
+import { CertidaoModal } from "@/components/CertidaoModal";
 
 // ════════════════════════════════════════════════════════════════════════════
 // MOCK SERVICE — Interfaces, Utilitários e Dados Sintéticos
@@ -216,6 +218,12 @@ export default function InvestorDashboard() {
   const { connection } = useConnection();
   const { currentTier, setTier, isMainnet, userNetworkPreference, toggleNetworkPreference, sbtNickname, sbtAvatarUrl, setSbtIdentity, irysNodeUrl } = useNetworkHub();
   const router = useRouter();
+
+  // ── Integração On-Chain de Visto de Visitante (Fase 1) ─────────────────
+  const { metadata: visitorOnChain, source: visitorSource } = useVisitorOnChainData(
+    process.env.NEXT_PUBLIC_VISITOR_PROGRAM_ID || "LKVist7pG9nQwZzYtB7mRqpXYZ11111111111111111"
+  );
+  const [isCertidaoModalOpen, setIsCertidaoModalOpen] = useState(false);
 
   // ── Estados originais (preservados integralmente) ────────────────────────
   const [receipts, setReceipts] = useState<any[]>([]);
@@ -877,8 +885,8 @@ export default function InvestorDashboard() {
   const earnedPct = totalMedals > 0 ? Math.round((earnedCount / totalMedals) * 100) : 0;
 
   // ── Identidade digital de sessão ─────────────────────────────────────────
-  const baseNickname = sbtNickname || null;
-  const avatarUrl = sbtAvatarUrl || null;
+  const baseNickname = visitorOnChain?.nickname || sbtNickname || null;
+  const avatarUrl = visitorOnChain?.avatarUrl || sbtAvatarUrl || null;
   const displayName = baseNickname
     ? generateUniqueNickname(baseNickname, publicKey ? publicKey.toBase58() : null)
     : publicKey
@@ -987,10 +995,20 @@ export default function InvestorDashboard() {
 
                   {/* ── DUAL-TIER: Badge Visto Provisório (VISITOR) / Visitante Lake ── */}
                   {isVisitor ? (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[11px] font-bold uppercase tracking-wider">
-                      <AlertCircle className="w-3 h-3" />
-                      {sbtImageUrl ? "Visitante Lake" : "Visto Provisório"}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[11px] font-bold uppercase tracking-wider">
+                        <AlertCircle className="w-3 h-3" />
+                        {sbtImageUrl ? `Visitante Lake (${visitorSource === 'on-chain' ? 'On-Chain' : 'Banco'})` : "Visto Provisório"}
+                      </span>
+                      {sbtImageUrl && (
+                        <button
+                          onClick={() => setIsCertidaoModalOpen(true)}
+                          className="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] font-extrabold uppercase tracking-wider rounded-lg transition-colors shadow-sm animate-pulse"
+                        >
+                          Ver Certidão
+                        </button>
+                      )}
+                    </div>
                   ) : (
                     /* Badge Cidadão Oficial (CITIZEN) */
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
@@ -2118,6 +2136,13 @@ export default function InvestorDashboard() {
           </div>
         </div>
       )}
+
+      <CertidaoModal
+        isOpen={isCertidaoModalOpen}
+        onClose={() => setIsCertidaoModalOpen(false)}
+        ownerWallet={publicKey?.toBase58() || ''}
+        certidaoId={`CERT-${publicKey?.toBase58().slice(0, 6)}`}
+      />
 
     </div>
   );
