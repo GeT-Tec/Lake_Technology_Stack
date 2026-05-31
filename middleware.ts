@@ -41,6 +41,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const ALLOWED_ORIGINS = new Set([
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://laketokeniza.vercel.app',
   // Adicionar domínio de produção aqui quando disponível
   // 'https://laketokeniza.com',
   // 'https://app.laketokeniza.com',
