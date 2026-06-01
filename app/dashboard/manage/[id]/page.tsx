@@ -16,6 +16,7 @@ import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
 import { useCredits } from "@/context/credits-context";
 import { useMedals } from "@/context/medals-context";
 import { useWallet } from "@/context/wallet-context";
+import { toast } from "sonner";
 import {
   loadDraftMeta, loadDraftImageBlob, loadDraftPdfBlob,
   clearDraft, PAYMENT_TX_KEY, META_KEY,
@@ -114,6 +115,7 @@ export default function ManageAssetPage({ params }: PageProps) {
 
   const { walletAddress } = useWallet();
   const solanaWallet = useSolanaWallet();
+  const { publicKey, connected } = solanaWallet;
   const { connection } = useConnection();
   const { solPrice, refreshSolPrice, addTransactionRecord } = useCredits();
   const { award: awardMedal } = useMedals();
@@ -220,6 +222,10 @@ export default function ManageAssetPage({ params }: PageProps) {
 
   // ─── MOTOR DE CUNHAGEM ──────────────────────────────────────────────────────
   const handleMint = useCallback(async () => {
+    if (!publicKey) {
+      toast.error("Conecte sua wallet para continuar");
+      return;
+    }
     if (!meta || !walletAddress) return;
     setMintError(null);
     setMintingPhase("idle");
@@ -238,7 +244,7 @@ export default function ManageAssetPage({ params }: PageProps) {
         const solAmount = (TREASURY_FEE_USD / currentPrice) * 1.01; // +1% slippage
         const lamports  = Math.floor(solAmount * LAMPORTS_PER_SOL);
 
-        const userPubKey     = new PublicKey(walletAddress);
+        const userPubKey     = new PublicKey(publicKey.toBase58());
         const treasuryPubKey = new PublicKey(
           process.env.NEXT_PUBLIC_TREASURY_WALLET_ADDRESS || "CXqfj7vFFrpBMVaj8fuyQkGwFgHktdyYVDju723hnmWa"
         );
@@ -358,11 +364,12 @@ export default function ManageAssetPage({ params }: PageProps) {
 
       // ── POST /api/assets ───────────────────────────────────────────────────
       setMintingPhase("saving");
+      console.log("Wallet Status:", { connected, publicKey: publicKey?.toBase58() });
       const res = await fetch("/api/assets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ownerWallet: walletAddress, name: meta.name,
+          ownerWallet: publicKey.toBase58(), name: meta.name,
           description: meta.description, type: meta.sector, sector: meta.sector,
           tokenNature: meta.tokenNature, valuation: meta.valuation,
           tokenPrice: meta.tokenPrice, totalTokens: meta.tokenCount,
@@ -377,7 +384,7 @@ export default function ManageAssetPage({ params }: PageProps) {
       const createdAssetId = resData.asset.id;
 
       // Executa PATCH pós-sucesso robusto para confirmar a hash exata no contractUrl
-      const patchRes = await fetch(`/api/assets/${createdAssetId}?wallet=${walletAddress}`, {
+      const patchRes = await fetch(`/api/assets/${createdAssetId}?wallet=${publicKey.toBase58()}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -410,7 +417,7 @@ export default function ManageAssetPage({ params }: PageProps) {
     }
   }, [meta, walletAddress, savedPaymentTx, solPrice, refreshSolPrice,
       connection, solanaWallet, addTransactionRecord, awardMedal,
-      extraPdfFile, pdfBlobForMint, router]);
+      extraPdfFile, pdfBlobForMint, router, publicKey, connected]);
 
   // ─── Ações Live ─────────────────────────────────────────────────────────────
   const handleToggleList = async () => {
