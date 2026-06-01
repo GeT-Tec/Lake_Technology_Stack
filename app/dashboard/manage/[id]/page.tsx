@@ -275,15 +275,10 @@ export default function ManageAssetPage({ params }: PageProps) {
       setMintingPhase("paid");
 
       // ── PASSO 2/2: UPLOAD VIA IRYS WEB SDK ────────────────────────────────
-      const phantomProvider =
-        (window as any)?.phantom?.solana;
-      const adapterProvider =
-        (solanaWallet as any)?.wallet?.adapter;
-
-      const irysProvider = phantomProvider ?? adapterProvider;
+      const irysProvider = solanaWallet?.wallet?.adapter;
       if (!irysProvider) {
         throw new Error(
-          "Provedor da Phantom Wallet não encontrado. Certifique-se de que a carteira está conectada e a extensão está ativa."
+          "Provedor da carteira conectada não encontrado. Certifique-se de que a carteira está conectada e ativa."
         );
       }
 
