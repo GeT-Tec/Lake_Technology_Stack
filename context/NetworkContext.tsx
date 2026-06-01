@@ -40,6 +40,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -224,6 +225,16 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
   const [isDevModeOverride, setDevModeOverrideState] = useState<boolean>(false);
   const [userNetworkPreference, setUserNetworkPreference] = useState<"MAINNET" | "DEVNET">("DEVNET");
 
+  // Hydrate from localStorage safely post-mount (avoids SSR hydration mismatches)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("lake_network_preference");
+      if (saved === "MAINNET" || saved === "DEVNET") {
+        setUserNetworkPreference(saved);
+      }
+    }
+  }, []);
+
   // Metadados de sessão da identidade do Cidadão
   const [sbtNickname, setSbtNickname] = useState<string | null>(null);
   const [sbtAvatarUrl, setSbtAvatarUrl] = useState<string | null>(null);
@@ -236,7 +247,15 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
    */
   const setTier = useCallback((tier: NetworkTier): void => {
     setCurrentTierState(tier);
-    setUserNetworkPreference(tier === "CITIZEN" ? "MAINNET" : "DEVNET");
+    // Respect existing localStorage choice if available
+    let initialPref: "MAINNET" | "DEVNET" = tier === "CITIZEN" ? "MAINNET" : "DEVNET";
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("lake_network_preference");
+      if (saved === "MAINNET" || saved === "DEVNET") {
+        initialPref = saved;
+      }
+    }
+    setUserNetworkPreference(initialPref);
     console.log(`[NetworkContext] Tier atualizado: ${tier}`);
   }, []);
 
@@ -257,6 +276,9 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
   const toggleNetworkPreference = useCallback((): void => {
     setUserNetworkPreference((prev) => {
       const nextPref = prev === "MAINNET" ? "DEVNET" : "MAINNET";
+      if (typeof window !== "undefined") {
+        localStorage.setItem("lake_network_preference", nextPref);
+      }
       console.log(`[NetworkContext] Preferência de rede alterada para: ${nextPref}`);
       return nextPref;
     });

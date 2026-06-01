@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/context/wallet-context";
 import { useCredits } from "@/context/credits-context";
+import { useNetworkHub } from "@/context/NetworkContext";
 import {
   Copy,
   History,
@@ -26,6 +27,12 @@ export function WalletControl() {
     validationError,
   } = useWallet();
   const { credits, openModal } = useCredits();
+  const {
+    currentTier,
+    userNetworkPreference,
+    toggleNetworkPreference,
+    isMainnet,
+  } = useNetworkHub();
   const dict = useDict();
   const t = dict.wallet;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -145,6 +152,29 @@ export function WalletControl() {
         <Plus className="w-3 h-3 opacity-70" />
       </button>
 
+      {isConnected && (
+        <button
+          onClick={currentTier === "CITIZEN" ? toggleNetworkPreference : undefined}
+          disabled={currentTier !== "CITIZEN"}
+          className={`
+            px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono transition-all duration-300 border
+            ${
+              isMainnet
+                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30"
+                : "bg-orange-500/20 text-orange-400 border-orange-500/30 hover:bg-orange-500/30"
+            }
+            ${currentTier !== "CITIZEN" ? "cursor-default opacity-85" : "cursor-pointer"}
+          `}
+          title={
+            currentTier === "CITIZEN"
+              ? `Rede ativa: ${isMainnet ? "Mainnet" : "Devnet"}. Clique para alterar.`
+              : "Rede ativa: Devnet. Acesso restrito a Visitantes."
+          }
+        >
+          {isMainnet ? "🟢 Mainnet" : "🟠 Devnet"}
+        </button>
+      )}
+
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className="
@@ -182,6 +212,13 @@ export function WalletControl() {
                 {validationError}
               </p>
             )}
+          </div>
+
+          <div className="px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
+            <span className="text-xs text-slate-400">Rede Ativa</span>
+            <span className={`text-xs font-bold font-mono ${isMainnet ? "text-emerald-400" : "text-orange-400"}`}>
+              {isMainnet ? "Mainnet" : "Devnet"}
+            </span>
           </div>
 
           <button
