@@ -29,8 +29,8 @@ export async function GET(req: Request) {
     }
 
     const where = wallet
-      ? { OR: [{ status: "APPROVED" as const }, { ownerWallet: wallet }] }
-      : { status: "APPROVED" as const };
+      ? { OR: [{ status: { in: ["APPROVED" as const, "TOKENIZED" as const] } }, { ownerWallet: wallet }] }
+      : { status: { in: ["APPROVED" as const, "TOKENIZED" as const] } };
 
     const assets = await prisma.asset.findMany({
       where,

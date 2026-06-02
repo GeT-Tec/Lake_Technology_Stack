@@ -375,7 +375,7 @@ export default function InvestorDashboard() {
   const fetchPrimaryAssets = async () => {
     if (!publicKey) return;
     try {
-      const res = await fetch("/api/assets");
+      const res = await fetch(`/api/assets?wallet=${publicKey.toBase58()}`);
       const data = await res.json();
       if (data.assets) {
         setCreatedAssets(data.assets.filter((a: any) => a.ownerWallet === publicKey.toBase58()));
@@ -1523,7 +1523,22 @@ export default function InvestorDashboard() {
                         </div>
                       )}
                       <div className="p-6 flex-1 flex flex-col">
-                        <h3 className="text-lg font-bold mb-1 truncate">{asset.name}</h3>
+                        <div className="flex justify-between items-start gap-2 mb-1">
+                          <h3 className="text-lg font-bold truncate">{asset.name}</h3>
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border shrink-0 ${
+                            asset.status === "DRAFT"
+                              ? "bg-slate-100 text-slate-600 border-slate-200"
+                              : asset.status === "PENDING_REVIEW"
+                              ? "bg-amber-50 text-amber-600 border-amber-200"
+                              : asset.status === "APPROVED"
+                              ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                              : "bg-blue-50 text-blue-600 border-blue-200"
+                          }`}>
+                            {asset.status === "DRAFT" ? "Rascunho" :
+                             asset.status === "PENDING_REVIEW" ? "Em Aprovação" :
+                             asset.status === "APPROVED" ? "Aprovado" : "Tokenizado"}
+                          </span>
+                        </div>
                         <p className="text-xs text-slate-500 font-medium mb-4">{asset.type}</p>
                         <div className="grid grid-cols-2 gap-4 mb-6">
                           <div><p className="text-[10px] text-slate-400 font-bold uppercase">Preço</p><p className="font-extrabold text-slate-900">{(asset.tokenPrice ? Number(asset.tokenPrice) : 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p></div>

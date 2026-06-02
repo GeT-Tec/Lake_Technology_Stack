@@ -142,6 +142,99 @@ export default function ManageAssetPage({ params }: PageProps) {
   const [isSimulating, setIsSimulating]     = useState(false);
   const [simulatedPayout, setSimulatedPayout] = useState<number | null>(null);
 
+  // ─── Modal de Edição (DRAFT) ────────────────────────────────────────────────
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editSector, setEditSector] = useState("");
+  const [editValuation, setEditValuation] = useState(0);
+  const [editTokenPrice, setEditTokenPrice] = useState(0);
+  const [editTotalTokens, setEditTotalTokens] = useState(0);
+  const [editTreasuryTokens, setEditTreasuryTokens] = useState(0);
+  const [editRoyalties, setEditRoyalties] = useState(0);
+  const [editDescText, setEditDescText] = useState("");
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+  const handleOpenEditModal = () => {
+    if (isDraft) {
+      if (!meta) return;
+      setEditName(meta.name || "");
+      setEditSector(meta.sector || "");
+      setEditValuation(meta.valuation || 0);
+      setEditTokenPrice(meta.tokenPrice || 0);
+      setEditTotalTokens(meta.tokenCount || 0);
+      setEditTreasuryTokens(meta.treasuryTokens || 0);
+      setEditRoyalties(meta.royalties || 0);
+      setEditDescText(meta.description || "");
+    } else if (asset) {
+      setEditName(asset.name || "");
+      setEditSector(asset.type || "");
+      setEditValuation(Number(asset.valuation) || 0);
+      setEditTokenPrice(Number(asset.tokenPrice) || 0);
+      setEditTotalTokens(Number(asset.totalTokens) || 0);
+      setEditTreasuryTokens(Number(asset.treasuryTokens) || 0);
+      setEditRoyalties(Number(asset.royalties) || 0);
+      setEditDescText(asset.description || "");
+    }
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    setIsSavingEdit(true);
+    try {
+      if (isDraft) {
+        if (!meta) return;
+        const updated = {
+          ...meta,
+          name: editName,
+          sector: editSector,
+          valuation: editValuation,
+          tokenPrice: editTokenPrice,
+          tokenCount: editTotalTokens,
+          treasuryTokens: editTreasuryTokens,
+          royalties: editRoyalties,
+          description: editDescText,
+        } as DraftMeta;
+        setMeta(updated);
+        localStorage.setItem(META_KEY, JSON.stringify(updated));
+        setIsEditModalOpen(false);
+      } else {
+        if (!asset || !publicKey) return;
+        const res = await fetch(`/api/assets/${asset.id}?wallet=${publicKey.toBase58()}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: editName,
+            description: editDescText,
+            type: editSector,
+            valuation: editValuation,
+            tokenPrice: editTokenPrice,
+            totalTokens: editTotalTokens,
+            treasuryTokens: editTreasuryTokens,
+            royalties: editRoyalties,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        setAsset((p) => p ? {
+          ...p,
+          name: editName,
+          description: editDescText,
+          type: editSector,
+          valuation: String(editValuation),
+          tokenPrice: String(editTokenPrice),
+          totalTokens: editTotalTokens,
+          treasuryTokens: editTreasuryTokens,
+          royalties: editRoyalties,
+        } : p);
+        setIsEditModalOpen(false);
+      }
+    } catch (err: unknown) {
+      alert(`Erro ao salvar: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
+
   // ─── Motor de Cunhagem ──────────────────────────────────────────────────────
   const [mintingPhase, setMintingPhase] = useState<MintingPhase>("idle");
   const [mintError, setMintError]       = useState<string | null>(null);
@@ -595,8 +688,8 @@ export default function ManageAssetPage({ params }: PageProps) {
             )}
             <div className="flex items-center gap-3">
               <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-zinc-50">{d.name}</h1>
-              {isDraft && (
-                <button onClick={() => { setEditDescription(d.description); setIsEditingDesc(true); }}
+              {(isDraft || asset?.status === "DRAFT") && (
+                <button onClick={handleOpenEditModal}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-violet-700 bg-white border border-violet-200 rounded-lg hover:bg-violet-50 transition shadow-sm dark:bg-zinc-900 dark:text-violet-400 dark:border-violet-800">
                   <Settings className="w-3.5 h-3.5" /> Editar Ativo
                 </button>
@@ -727,7 +820,7 @@ export default function ManageAssetPage({ params }: PageProps) {
                 ) : (
                   <div className="space-y-3">
                     <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">{d.description}</p>
-                    {isDraft && (
+                    {(isDraft || asset?.status === "DRAFT") && (
                       <button onClick={() => { setEditDescription(d.description === "—" ? "" : d.description); setIsEditingDesc(true); }}
                         className="text-sm font-bold text-blue-600 hover:text-blue-700 underline underline-offset-2">
                         Editar Descrição
@@ -1122,6 +1215,111 @@ export default function ManageAssetPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 text-slate-800 dark:text-zinc-100">
+            <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-zinc-50">Editar Ativo (Metadados)</h2>
+            <div className="space-y-4 text-left">
+              <div>
+                <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Nome do Ativo</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Setor</label>
+                  <input
+                    type="text"
+                    value={editSector}
+                    onChange={(e) => setEditSector(e.target.value)}
+                    className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Royalties (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={editRoyalties}
+                    onChange={(e) => setEditRoyalties(parseFloat(e.target.value) || 0)}
+                    className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Valuation (R$)</label>
+                  <input
+                    type="number"
+                    value={editValuation}
+                    onChange={(e) => setEditValuation(parseFloat(e.target.value) || 0)}
+                    className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Preço do Token (R$)</label>
+                  <input
+                    type="number"
+                    value={editTokenPrice}
+                    onChange={(e) => setEditTokenPrice(parseFloat(e.target.value) || 0)}
+                    className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Qtd. Total de Tokens</label>
+                  <input
+                    type="number"
+                    value={editTotalTokens}
+                    onChange={(e) => setEditTotalTokens(parseInt(e.target.value) || 0)}
+                    className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Tokens Retidos (Tesouraria)</label>
+                  <input
+                    type="number"
+                    value={editTreasuryTokens}
+                    onChange={(e) => setEditTreasuryTokens(parseInt(e.target.value) || 0)}
+                    className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-400 dark:text-zinc-550 uppercase tracking-wide">Descrição</label>
+                <textarea
+                  value={editDescText}
+                  onChange={(e) => setEditDescText(e.target.value)}
+                  rows={4}
+                  className="w-full mt-1 p-3 border border-[#dbd7c9] dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-zinc-950 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+            <div className="mt-8 flex gap-3 justify-end">
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                disabled={isSavingEdit}
+                className="px-5 py-2.5 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold text-sm rounded-xl hover:bg-slate-200 transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={isSavingEdit}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50"
+              >
+                {isSavingEdit ? "Salvando..." : "Salvar Alterações"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

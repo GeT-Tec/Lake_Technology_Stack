@@ -731,9 +731,9 @@ export default function MarketplacePage() {
             {activeFilter === "Mercado Primário" ? (
               assets
               .filter(a => {
-                // No mercado primário público, mostrar apenas listados e APPROVED (ou demos)
+                // No mercado primário público, mostrar apenas listados e APPROVED ou TOKENIZED (ou demos)
                 if (a.isDemo) return true;
-                return a.status === "APPROVED" && a.isListed !== false;
+                return (a.status === "APPROVED" || a.status === "TOKENIZED") && a.isListed !== false;
               })
               .map(asset => (
                 <AssetCard
