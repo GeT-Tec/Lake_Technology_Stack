@@ -861,88 +861,120 @@ export default function ManageAssetPage({ params }: PageProps) {
             
             {/* LINHA 1 DE MÉTRICAS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex items-center justify-between">
-                <div className="flex flex-col justify-center items-start space-y-1 min-w-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">VALUATION TOTAL</div>
-                  <CurrencyDisplay variant="transparent" brlValue={d.valuation} />
-                  <div className="text-[10px] font-medium text-slate-500">Avaliação do lastro físico</div>
-                </div>
-                <div className="p-2.5 bg-blue-50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/30 text-blue-600 shrink-0">
-                  <DollarSign className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex items-center justify-between">
-                <div className="flex flex-col justify-center items-start space-y-1 min-w-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">TOKENS EMITIDOS</div>
-                  <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">{d.totalTokens.toLocaleString("pt-BR")}</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    {isDraft ? (
-                      <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-full border border-amber-200 dark:border-amber-900/50">
-                        Pendente
-                      </span>
-                    ) : (
-                      <>
-                        <span className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-200 dark:border-emerald-900/50 shrink-0">
-                          100% Sincronizado
-                        </span>
-                        {d.isListed !== undefined && (
-                          <button onClick={handleToggleList} disabled={isTogglingList}
-                            className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border transition-colors disabled:opacity-50 bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/40 hover:bg-amber-200 shrink-0`}>
-                            {isTogglingList ? "..." : (d.isListed !== false ? "PAUSAR VENDAS" : "RETOMAR VENDAS")}
-                          </button>
-                        )}
-                      </>
-                    )}
+              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[140px] w-full min-w-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">VALUATION TOTAL</span>
+                  <div className="p-2 bg-blue-50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0">
+                    <DollarSign className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="p-2.5 bg-purple-50 dark:bg-purple-950/20 rounded-xl border border-purple-100 dark:border-purple-900/30 text-purple-600 shrink-0">
-                  <Layers className="w-5 h-5" />
+                <div className="flex-1 flex flex-col justify-center my-2 min-w-0">
+                  <CurrencyDisplay variant="transparent" brlValue={d.valuation} />
+                </div>
+                <div className="text-[10px] font-medium text-slate-500 dark:text-zinc-400 truncate">
+                  Avaliação do lastro físico
                 </div>
               </div>
-              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex items-center justify-between">
-                <div className="flex flex-col justify-center items-start space-y-1 min-w-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">PREÇO DO TOKEN</div>
-                  <CurrencyDisplay variant="transparent" brlValue={d.tokenPrice} />
-                  <div className="text-[10px] font-medium text-slate-500">Custo unitário fracionado</div>
+
+              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[140px] w-full min-w-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">TOKENS EMITIDOS</span>
+                  <div className="p-2 bg-purple-50 dark:bg-purple-950/20 rounded-xl border border-purple-100 dark:border-purple-900/30 text-purple-600 dark:text-purple-400 shrink-0">
+                    <Layers className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="p-2.5 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-100 dark:border-amber-900/30 text-amber-600 shrink-0">
-                  <Share2 className="w-5 h-5" />
+                <div className="flex-1 flex flex-col justify-center my-2 min-w-0">
+                  <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">
+                    {d.totalTokens.toLocaleString("pt-BR")}
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 min-w-0 w-full mt-auto">
+                  {isDraft ? (
+                    <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-full border border-amber-200 dark:border-amber-900/50">
+                      Pendente
+                    </span>
+                  ) : (
+                    <>
+                      <span className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-200 dark:border-emerald-900/50 shrink-0">
+                        100% Sincronizado
+                      </span>
+                      {d.isListed !== undefined && (
+                        <button onClick={handleToggleList} disabled={isTogglingList}
+                          className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border transition-colors disabled:opacity-50 bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/40 hover:bg-amber-200 shrink-0">
+                          {isTogglingList ? "..." : (d.isListed !== false ? "PAUSAR VENDAS" : "RETOMAR VENDAS")}
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[140px] w-full min-w-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">PREÇO DO TOKEN</span>
+                  <div className="p-2 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-100 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0">
+                    <Share2 className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col justify-center my-2 min-w-0">
+                  <CurrencyDisplay variant="transparent" brlValue={d.tokenPrice} />
+                </div>
+                <div className="text-[10px] font-medium text-slate-500 dark:text-zinc-400 truncate">
+                  Custo unitário fracionado
                 </div>
               </div>
             </div>
 
             {/* LINHA 2 DE MÉTRICAS EXTRAS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex items-center justify-between">
-                <div className="flex flex-col justify-center items-start space-y-1 min-w-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">TOKENS RETIDOS (TESOURARIA)</div>
-                  <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">{d.treasuryTokens.toLocaleString("pt-BR")}</div>
-                  <div className="text-[10px] font-medium text-slate-500">Mercado: {(d.totalTokens - d.treasuryTokens).toLocaleString("pt-BR")}</div>
+              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[140px] w-full min-w-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">TOKENS RETIDOS (TESOURARIA)</span>
+                  <div className="p-2 bg-cyan-50 dark:bg-cyan-950/20 rounded-xl border border-cyan-100 dark:border-cyan-900/30 text-cyan-600 dark:text-cyan-400 shrink-0">
+                    <Briefcase className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="p-2.5 bg-cyan-50 dark:bg-cyan-950/20 rounded-xl border border-cyan-100 dark:border-cyan-900/30 text-cyan-600 shrink-0">
-                  <Briefcase className="w-5 h-5" />
+                <div className="flex-1 flex flex-col justify-center my-2 min-w-0">
+                  <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">
+                    {d.treasuryTokens.toLocaleString("pt-BR")}
+                  </div>
                 </div>
-              </div>
-              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex items-center justify-between">
-                <div className="flex flex-col justify-center items-start space-y-1 min-w-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ROYALTIES DO CRIADOR</div>
-                  <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">{d.royalties}%</div>
-                  <div className="text-[10px] font-medium text-slate-500">Taxa cobrada no mercado secundário</div>
-                </div>
-                <div className="p-2.5 bg-rose-50 dark:bg-rose-950/20 rounded-xl border border-rose-100 dark:border-rose-900/30 text-rose-600 shrink-0">
-                  <Share2 className="w-5 h-5" />
+                <div className="text-[10px] font-medium text-slate-500 dark:text-zinc-400 truncate">
+                  Mercado: {(d.totalTokens - d.treasuryTokens).toLocaleString("pt-BR")}
                 </div>
               </div>
-              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex items-center justify-between">
-                <div className="flex flex-col justify-center items-start space-y-1 min-w-0">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">TOKENS DISPONÍVEIS</div>
+
+              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[140px] w-full min-w-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">ROYALTIES DO CRIADOR</span>
+                  <div className="p-2 bg-rose-50 dark:bg-rose-950/20 rounded-xl border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 shrink-0">
+                    <Share2 className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col justify-center my-2 min-w-0">
+                  <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">
+                    {d.royalties}%
+                  </div>
+                </div>
+                <div className="text-[10px] font-medium text-slate-500 dark:text-zinc-400 truncate">
+                  Taxa cobrada no mercado secundário
+                </div>
+              </div>
+
+              <div className="bg-[#f5f3ef] dark:bg-[#1c1b18] border border-[#dbd7c9] dark:border-[#2e2c26] rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[140px] w-full min-w-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">TOKENS DISPONÍVEIS</span>
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col justify-center my-2 min-w-0">
                   <div className="text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none">
                     {(!isDraft && asset?.tokensAvailable !== undefined) ? asset.tokensAvailable.toLocaleString("pt-BR") : (d.totalTokens - d.treasuryTokens).toLocaleString("pt-BR")}
                   </div>
-                  <div className="text-[10px] font-medium text-slate-500">Saldo liberado para investidores</div>
                 </div>
-                <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/30 text-emerald-600 shrink-0">
-                  <CheckCircle2 className="w-5 h-5" />
+                <div className="text-[10px] font-medium text-slate-500 dark:text-zinc-400 truncate">
+                  Saldo liberado para investidores
                 </div>
               </div>
             </div>

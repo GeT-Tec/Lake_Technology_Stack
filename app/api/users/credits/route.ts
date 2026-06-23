@@ -175,44 +175,75 @@ export async function PATCH(req: NextRequest) {
       });
     }
 
-    // Buscar saldo anterior para o audit log
-    const previousUser = await prisma.user.findUnique({
-      where: { walletAddress: walletAddress },
-      select: { credits: true },
-    });
+    // Usar prisma.$transaction para garantir atomicidade e segurança contra concorrência
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Verificação de idempotência por txHash DENTRO da transação
+      if (txHash) {
+        const existingLog = await tx.auditLog.findFirst({
+          where: { details: { contains: txHash } }
+        });
+        if (existingLog) {
+          // Se já foi processado, busca o saldo atual e retorna sem fazer nada
+          const user = await tx.user.findUnique({
+            where: { walletAddress: walletAddress },
+            select: { credits: true }
+          });
+          return {
+            credits: user?.credits ?? 0,
+            added: 0,
+            alreadyProcessed: true
+          };
+        }
+      }
 
-    const previousBalance = previousUser?.credits || 0;
+      // 2. Buscar saldo anterior para o audit log
+      const previousUser = await tx.user.findUnique({
+        where: { walletAddress: walletAddress },
+        select: { credits: true },
+      });
+      const previousBalance = previousUser?.credits || 0;
 
-    // Incrementar créditos
-    const updatedUser = await prisma.user.update({
-      where: { walletAddress: walletAddress },
-      data: { credits: { increment: amount } },
-    });
-
-    // Registrar no audit log (BUY_CREDITS)
-    await prisma.auditLog.create({
-      data: {
-        actorWallet: walletAddress,
-        actionType: "BUY_CREDITS",
-        targetId: "CREDIT_BUY",
-        details: JSON.stringify({
-          planId: planId || "unknown",
+      // 3. Upsert do usuário: cria se não existir, atualiza/incrementa se existir
+      const updatedUser = await tx.user.upsert({
+        where: { walletAddress: walletAddress },
+        update: { credits: { increment: amount } },
+        create: {
+          walletAddress: walletAddress,
           credits: amount,
-          txHash: txHash || null,
-          previousBalance,
-          newBalance: updatedUser.credits,
-        }),
-      },
+        }
+      });
+
+      // 4. Inserir no auditLog (BUY_CREDITS)
+      await tx.auditLog.create({
+        data: {
+          actorWallet: walletAddress,
+          actionType: "BUY_CREDITS",
+          targetId: "CREDIT_BUY",
+          details: JSON.stringify({
+            planId: planId || "unknown",
+            credits: amount,
+            txHash: txHash || null,
+            previousBalance,
+            newBalance: updatedUser.credits,
+          }),
+        },
+      });
+
+      return {
+        credits: updatedUser.credits,
+        added: amount,
+        alreadyProcessed: false
+      };
     });
 
     console.log(
-      `✅ Créditos adicionados: ${amount}. Plano: ${planId}. Novo saldo: ${updatedUser.credits}`
+      `✅ Créditos processados. Já processado? ${result.alreadyProcessed}. Novo saldo: ${result.credits}`
     );
 
     return NextResponse.json({
       success: true,
-      credits: updatedUser.credits,
-      added: amount,
+      credits: result.credits,
+      added: result.added,
       planId,
     });
   } catch (error: any) {
@@ -223,3 +254,4 @@ export async function PATCH(req: NextRequest) {
     );
   }
 }
+

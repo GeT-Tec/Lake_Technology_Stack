@@ -252,6 +252,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     }
 
     setIsLoading(true);
+    let txHash: string | undefined = undefined;
 
     try {
       console.log(
@@ -324,7 +325,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         "confirmed"
       );
 
-      const txHash = signature;
+      txHash = signature;
       console.log(`📤 Transação confirmada: ${txHash}`);
 
       // Add credits via API (with audit log)
@@ -370,8 +371,21 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || "Erro ao adicionar créditos");
       }
     } catch (error: any) {
-      console.error("Erro na compra de créditos:", error);
-      toast.error(error?.message || "Compra cancelada ou falhou. Tente novamente.");
+      console.error(
+        "[RESGATE MANUAL]",
+        JSON.stringify({
+          txHash: txHash || "N/A",
+          amount: plan.credits,
+          walletAddress,
+          error: error?.message || error
+        })
+      );
+
+      if (error?.message?.includes("500") || error?.message?.includes("Erro ao adicionar créditos")) {
+        toast.error("Créditos não atribuídos. Seu SOL foi debitado — o suporte será notificado.");
+      } else {
+        toast.error(error?.message || "Compra cancelada ou falhou. Tente novamente.");
+      }
       return false;
     } finally {
       setIsLoading(false);

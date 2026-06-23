@@ -33,14 +33,14 @@ export function CurrencyDisplay({ brlValue, variant = 'default' }: CurrencyDispl
     : "flex flex-col space-y-2 animate-pulse bg-slate-50 dark:bg-zinc-900 p-4 rounded-xl border border-slate-100 dark:border-zinc-800 w-full";
 
   const textClasses = isSuccess
-    ? "text-3xl xl:text-4xl font-bold text-emerald-600 leading-none"
-    : "text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none";
+    ? "text-2xl sm:text-3xl xl:text-4xl font-bold text-emerald-600 leading-none whitespace-nowrap"
+    : "text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-zinc-50 leading-none whitespace-nowrap";
 
   const subTextClasses = isSuccess
-    ? "text-sm text-emerald-700/80 dark:text-emerald-450/80 font-medium mt-1.5 flex flex-wrap items-center gap-1.5"
+    ? "text-[11px] sm:text-xs text-emerald-700/80 dark:text-emerald-450/80 font-medium mt-1 flex flex-wrap items-center gap-1.5"
     : isSubtextOnly
-    ? "text-sm text-slate-500 dark:text-zinc-400 font-medium flex flex-wrap items-center gap-1.5"
-    : "text-sm text-slate-500 dark:text-zinc-400 font-medium mt-1.5 flex flex-wrap items-center gap-1.5";
+    ? "text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-medium flex flex-wrap items-center gap-1.5"
+    : "text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-medium mt-1 flex flex-wrap items-center gap-1.5";
 
   if (isLoading) {
     return (
