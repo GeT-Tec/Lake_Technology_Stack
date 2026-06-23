@@ -12,7 +12,6 @@ import {
   Transaction,
   PublicKey,
   LAMPORTS_PER_SOL,
-  Connection,
 } from "@solana/web3.js";
 import { getSolPrice } from "@/lib/solana-oracle";
 import { useNetworkHub } from "@/context/NetworkContext";
@@ -107,66 +106,10 @@ interface CreditsContextType {
 
 const CreditsContext = createContext<CreditsContextType | undefined>(undefined);
 
-// ─── Constantes de RPC seguras para uso interno ───────────────────────────────
-const DEVNET_RPC_ENDPOINT = "https://api.devnet.solana.com";
-const MAINNET_RPC_ENDPOINT =
-  process.env.NEXT_PUBLIC_SOLANA_MAINNET_RPC ?? "https://api.mainnet-beta.solana.com";
-
-/**
- * Infere o cluster real da carteira física conectada pelo usuário.
- *
- * Estratégia:
- *   1. Lê `wallet.adapter.url` (exposto por alguns adapters como Phantom/Solflare)
- *      — se o URL contiver "devnet", usa Devnet RPC.
- *   2. Fallback seguro: se não conseguir inferir, retorna Devnet (mais seguro para testes).
- *
- * Por que não usar `useConnection()`?
- *   O ConnectionProvider é controlado pelo NetworkContext (perfil do usuário),
- *   que pode estar em Mainnet enquanto a carteira física ainda aponta para Devnet.
- *   Usar o RPC errado para `getLatestBlockhash` causa o erro `custom program error: 0x1`
- *   (blockhash de rede incorreta rejeitado pelo validator).
- *
- * @param walletAdapter - Adapter da carteira atualmente conectada
- * @returns Connection apontando para o cluster real da carteira
- */
-function resolveConnectionFromWallet(walletAdapter: any): Connection {
-  try {
-    // Tenta ler a URL do cluster diretamente do adapter (Phantom, Solflare, etc.)
-    const adapterUrl: string | undefined =
-      walletAdapter?.url ||
-      walletAdapter?.endpoint ||
-      walletAdapter?._cluster ||
-      walletAdapter?.network;
-
-    if (adapterUrl) {
-      const isDevnet =
-        adapterUrl.includes("devnet") ||
-        adapterUrl.includes("127.0.0.1") ||
-        adapterUrl.includes("localhost");
-
-      const endpoint = isDevnet ? DEVNET_RPC_ENDPOINT : MAINNET_RPC_ENDPOINT;
-      console.log(
-        `[resolveConnectionFromWallet] Cluster inferido via adapter.url: ${
-          isDevnet ? "Devnet" : "Mainnet"
-        } → ${endpoint}`
-      );
-      return new Connection(endpoint, "confirmed");
-    }
-  } catch (e) {
-    console.warn("[resolveConnectionFromWallet] Erro ao inspecionar adapter URL:", e);
-  }
-
-  // Fallback seguro: Devnet — evita custo real inesperado em produção
-  console.warn(
-    "[resolveConnectionFromWallet] Não foi possível inferir o cluster da carteira. " +
-      "Usando Devnet como fallback seguro."
-  );
-  return new Connection(DEVNET_RPC_ENDPOINT, "confirmed");
-}
 
 export function CreditsProvider({ children }: { children: ReactNode }) {
-  const { publicKey, connected, sendTransaction, wallet } = useWallet();
-  const { connection } = useConnection(); // Usado para consultas de dados (créditos, preço oracle)
+  const { publicKey, connected, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   const { isMainnet } = useNetworkHub();
   const walletAddress = publicKey?.toBase58();
 
@@ -331,22 +274,31 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         `📊 [Transação] Cotação: $${currentPrice.toFixed(2)} USD | Plano: $${plan.priceUSD} USD | SOL: ${solAmount.toFixed(6)} | Lamports: ${lamportsAmount}`
       );
 
-      // ── Resolução do RPC correto para esta transação ──────────────────────
-      // CRÍTICO: Não usar `connection` do useConnection() aqui.
-      // Aquele connection reflete o perfil de rede do usuário (NetworkContext),
-      // que pode estar em MAINNET enquanto a carteira física está em DEVNET.
-      // Usar o RPC errado para getLatestBlockhash causa custom program error: 0x1.
-      // A função abaixo inspeciona o adapter da carteira para inferir o cluster real.
-      const txConnection = resolveConnectionFromWallet(wallet?.adapter);
+      // A connection do useConnection() reflete o RPC do ConnectionProvider
+      // (controlado pelo NetworkContext via SolanaConnectionAdapter).
+      // É a fonte de verdade para blockhash, envio e confirmação da transação.
+      const txConnection = connection;
       console.log(
-        `🔗 [buyCredits] RPC da transação resolvido: ${
-          txConnection.rpcEndpoint
-        } (perfil do usuário: ${isMainnet ? "Mainnet" : "Devnet"})`
+        `🔗 [buyCredits] RPC: ${txConnection.rpcEndpoint} | Rede: ${isMainnet ? "Mainnet" : "Devnet"}`
       );
 
-      // TODO: Implementar lógica de 'Gasless Transaction' (Fee Payer) para contas novas com 0 SOL no futuro.
-      const { blockhash, lastValidBlockHeight } =
-        await txConnection.getLatestBlockhash("confirmed");
+      // Busca blockhash com validação de conectividade à rede correta.
+      // Se a wallet do usuário estiver em rede diferente do perfil, o validator
+      // rejeitará a transação — o toast abaixo orienta o usuário a alinhar.
+      let blockhash: string;
+      let lastValidBlockHeight: number;
+      try {
+        const latestBlock = await txConnection.getLatestBlockhash("confirmed");
+        blockhash = latestBlock.blockhash;
+        lastValidBlockHeight = latestBlock.lastValidBlockHeight;
+      } catch (blockError) {
+        console.error("❌ [buyCredits] Falha ao obter blockhash:", blockError);
+        const networkLabel = isMainnet ? "Mainnet-beta" : "Devnet";
+        throw new Error(
+          `Não foi possível conectar à rede ${networkLabel}. ` +
+          `Verifique se sua carteira está configurada para ${networkLabel}.`
+        );
+      }
 
       const transaction = new Transaction().add(
         SystemProgram.transfer({
@@ -362,8 +314,8 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       transaction.feePayer = publicKey;
 
       // Execute blockchain transaction to Treasury Wallet
-      const signature = await sendTransaction(transaction, txConnection);
-      await txConnection.confirmTransaction(
+      const signature = await sendTransaction(transaction, connection);
+      await connection.confirmTransaction(
         {
           signature,
           blockhash,
@@ -419,7 +371,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       }
     } catch (error: any) {
       console.error("Erro na compra de créditos:", error);
-      toast.error("Compra cancelada ou falhou. Tente novamente.");
+      toast.error(error?.message || "Compra cancelada ou falhou. Tente novamente.");
       return false;
     } finally {
       setIsLoading(false);
