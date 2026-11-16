@@ -14,6 +14,10 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Generated Codama files:
     "app/generated/**",
+    // Archived legacy EVM code:
+    "archive-evm/**",
+    "anchor/**",
+    "scripts/**",
   ]),
 ]);
 

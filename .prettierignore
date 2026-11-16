@@ -3,3 +3,14 @@ node_modules
 pnpm-lock.yaml
 app/generated
 .agents
+archive-evm/**
+anchor/**
+*.log
+scratch_*
+temp_*
+old_marketplace*
+COLOSSEUM_FIT.html
+Lake_Technology_Stack_Docs/**
+.ref/**
+package-lock.json
+
